@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1097101798010",
+    "project_id": "whitestone-bagel-factory",
+    "storage_bucket": "whitestone-bagel-factory.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1097101798010:android:93eba5ba244c1b433da9c3",
+        "android_client_info": {
+          "package_name": "com.whitestonebagelfactory.wbfactory"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1097101798010-5k8e9d7l0cgt5u2ihrnaf5at79pu554h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2E8-WseQa4_0mhzmKihUYeWk_gMg49o8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1097101798010-5k8e9d7l0cgt5u2ihrnaf5at79pu554h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
