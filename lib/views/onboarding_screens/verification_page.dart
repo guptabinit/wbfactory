@@ -23,17 +23,20 @@ class _VerificationPageState extends State<VerificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        title: GestureDetector(
+          onTap: () => Get.back(),
+          child: backButton(),
+        ),
+        elevation: 0,
+        backgroundColor: lightColor,
+        automaticallyImplyLeading: false,
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            64.heightBox,
-            GestureDetector(
-              onTap: () => Get.back(),
-              child: backButton(),
-            ),
-            12.heightBox,
             const Text(
               "Phone Verification",
               style: TextStyle(

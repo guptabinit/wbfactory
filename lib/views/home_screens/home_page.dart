@@ -1,3 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_controller.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,6 +11,8 @@ import 'package:wbfactory/views/home_screens/main_nav_page.dart';
 import 'package:wbfactory/views/other_screens/search_screen.dart';
 
 import '../../constants/consts.dart';
+import '../../data/categories.dart';
+import '../other_screens/product_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,6 +22,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List imageList = [
+    {"id": 1, "image_path": 'https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/banners%2F32.png?alt=media&token=f3eb973b-b25c-4ba9-92ec-c1a702b2b4ca'},
+    {"id": 2, "image_path": 'https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/banners%2F17.png?alt=media&token=32311171-efb9-4193-9018-0a2a3d7d5d4d'},
+    {"id": 3, "image_path": 'https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/banners%2F2.png?alt=media&token=c0ec93c8-3302-4d59-b1c1-08f8e1e6f07e'},
+    {"id": 4, "image_path": 'https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/banners%2F23.png?alt=media&token=38097785-dc88-4b4c-bd78-bbe273932e25'},
+  ];
+
+  final CarouselController carouselController = CarouselController();
+  int currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,11 +74,58 @@ class _HomePageState extends State<HomePage> {
             12.heightBox,
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 12),
-              height: 160,
               decoration: BoxDecoration(
-                color: lightGreyColor,
+                color: veryLightGreyColor,
                 borderRadius: BorderRadius.circular(8),
               ),
+              child: GestureDetector(
+                onTap: () {},
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: CarouselSlider(
+                    items: imageList
+                        .map(
+                          (item) => CachedNetworkImage(
+                            imageUrl: item["image_path"],
+                            fit: BoxFit.cover,
+                            progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                            errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
+                            width: double.infinity,
+                          ),
+                        )
+                        .toList(),
+                    carouselController: carouselController,
+                    options: CarouselOptions(
+                      scrollPhysics: const BouncingScrollPhysics(),
+                      autoPlay: true,
+                      aspectRatio: 16 / 9,
+                      viewportFraction: 1,
+                      onPageChanged: (index, reason) {
+                        setState(() {
+                          currentIndex = index;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            12.heightBox,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: imageList.asMap().entries.map((entry) {
+                return GestureDetector(
+                    onTap: () => carouselController.animateToPage(entry.key),
+                    child: Container(
+                      width: currentIndex == entry.key ? 17 : 7,
+                      height: 7.0,
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: currentIndex == entry.key ? secondaryColor : lightGreyColor,
+                      ),
+                    ));
+              }).toList(),
             ),
             16.heightBox,
             GestureDetector(
@@ -155,7 +217,13 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Get.offAll(
+                            () => const NavScreen(
+                              currentIndex: 1,
+                            ),
+                          );
+                        },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 4),
                           child: Row(
@@ -185,19 +253,18 @@ class _HomePageState extends State<HomePage> {
                     scrollDirection: Axis.horizontal,
                     physics: const BouncingScrollPhysics(decelerationRate: ScrollDecelerationRate.fast),
                     child: Row(
-                      children: [
-                        itemWidget(),
-                        12.widthBox,
-                        itemWidget(),
-                        12.widthBox,
-                        itemWidget(),
-                        12.widthBox,
-                        itemWidget(),
-                        12.widthBox,
-                        itemWidget(),
-                        12.widthBox,
-                        itemWidget(),
-                      ],
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: categories
+                          .map(
+                            (item) => Container(
+                              margin: const EdgeInsets.only(right: 12),
+                              child: itemWidget(
+                                item['image_path'],
+                                item['name'],
+                              ),
+                            ),
+                          )
+                          .toList(),
                     ),
                   ),
                 ],
@@ -253,17 +320,17 @@ class _HomePageState extends State<HomePage> {
                     physics: const BouncingScrollPhysics(decelerationRate: ScrollDecelerationRate.fast),
                     child: Row(
                       children: [
-                        itemWidget(),
+                        itemWidget("https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/categories%2Fsandwiches.jpg?alt=media&token=3354a79b-0d71-4b9c-8713-0fdf2be8d43b", "Category Name"),
                         12.widthBox,
-                        itemWidget(),
+                        itemWidget("https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/categories%2Fsandwiches.jpg?alt=media&token=3354a79b-0d71-4b9c-8713-0fdf2be8d43b", "Category Name"),
                         12.widthBox,
-                        itemWidget(),
+                        itemWidget("https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/categories%2Fsandwiches.jpg?alt=media&token=3354a79b-0d71-4b9c-8713-0fdf2be8d43b", "Category Name"),
                         12.widthBox,
-                        itemWidget(),
+                        itemWidget("https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/categories%2Fsandwiches.jpg?alt=media&token=3354a79b-0d71-4b9c-8713-0fdf2be8d43b", "Category Name"),
                         12.widthBox,
-                        itemWidget(),
+                        itemWidget("https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/categories%2Fsandwiches.jpg?alt=media&token=3354a79b-0d71-4b9c-8713-0fdf2be8d43b", "Category Name"),
                         12.widthBox,
-                        itemWidget(),
+                        itemWidget("https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/categories%2Fsandwiches.jpg?alt=media&token=3354a79b-0d71-4b9c-8713-0fdf2be8d43b", "Category Name"),
                       ],
                     ),
                   ),
@@ -277,28 +344,49 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget itemWidget() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          height: 160,
-          width: 160,
-          decoration: BoxDecoration(
-            color: lightGreyColor,
-            borderRadius: BorderRadius.circular(8),
+  Widget itemWidget(String imgUrl, String title) {
+    return GestureDetector(
+      onTap: () {
+        Get.to(() => ProductPage(title: title));
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 160,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: CachedNetworkImage(
+                  imageUrl: imgUrl,
+                  progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                  errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
           ),
-        ),
-        8.heightBox,
-        const Text(
-          "Category Name",
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: darkColor,
+          8.heightBox,
+          SizedBox(
+            width: 160,
+            child: Text(
+              title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: darkColor,
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -27,16 +27,20 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        title: GestureDetector(
+          onTap: () => Get.back(),
+          child: backButton(),
+        ),
+        elevation: 0,
+        backgroundColor: lightColor,
+        automaticallyImplyLeading: false,
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            64.heightBox,
-            GestureDetector(
-              onTap: () => Get.back(),
-                child: backButton()),
-            12.heightBox,
             const Text(
               "Create Account",
               style: TextStyle(

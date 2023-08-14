@@ -49,6 +49,7 @@ dependencies:
   flutter_svg: ^2.0.7
   flutter_styled_toast: ^2.1.3
   carousel_slider: ^4.2.1
+  sliding_up_panel: ^2.0.0+1
 
 dev_dependencies:
   flutter_test:
@@ -79,7 +80,8 @@ flutter:
     - assets/images/transparent_logo.webp
     - assets/images/vertical_transparent_logo.webp
     - assets/images/coins.webp
-    - assets/images/food_sample.jpeg
+    - assets/images/coins.webp
+    - assets/images/32.png
     - assets/icons/bag_ic.svg
     - assets/icons/category_ic.svg
     - assets/icons/hide_ic.svg

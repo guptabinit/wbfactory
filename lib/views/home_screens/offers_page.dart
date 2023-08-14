@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/constants/consts.dart';
@@ -138,82 +139,104 @@ class OffersPage extends StatelessWidget {
   Widget promotionCard(context) {
     return Container(
       decoration: BoxDecoration(
-        color: lightGreyColor,
+        color: veryLightGreyColor,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Container(
-        margin: const EdgeInsets.only(left: 120),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 16,
-        ),
-        decoration: const BoxDecoration(
-          color: veryLightGreyColor,
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(12),
-            bottomRight: Radius.circular(12),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "30% off on your first offer",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-                color: darkColor,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: AspectRatio(
+              aspectRatio: 3/4,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), bottomLeft: Radius.circular(12), ),
+                child: CachedNetworkImage(
+                  imageUrl: "https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/categories%2Ffrom_our_grill.jpg?alt=media&token=a535b8f0-79bd-450f-8d09-5e6d42218a58",
+                  fit: BoxFit.cover,
+                  progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                  errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
+                  width: double.infinity,
+                ),
               ),
             ),
-            4.heightBox,
-            const Row(
+          ),
+          Container(
+            width: screenWidth(context)*0.6,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 16,
+            ),
+            decoration: const BoxDecoration(
+              color: veryLightGreyColor,
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(12),
+                bottomRight: Radius.circular(12),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Apply code: ",
+                const Text(
+                  "15% off on your first order",
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w400,
-                    color: darkGreyColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    color: darkColor,
                   ),
                 ),
-                Text(
-                  "SUMMER30",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: secondaryColor,
+                4.heightBox,
+                const Row(
+                  children: [
+                    Text(
+                      "Apply code: ",
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w400,
+                        color: darkGreyColor,
+                      ),
+                    ),
+                    Text(
+                      "FIRST15",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: secondaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+                8.heightBox,
+                Material(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      customToast("Code copied successfully", secondaryColor, context);
+                    },
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: secondaryColor),
+                      ),
+                      child: const Text(
+                        "COPY",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: secondaryColor,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
-            8.heightBox,
-            Material(
-              borderRadius: BorderRadius.circular(8),
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
-                  customToast("Code copied successfully", secondaryColor, context);
-                },
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: secondaryColor),
-                  ),
-                  child: const Text(
-                    "COPY",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: secondaryColor,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

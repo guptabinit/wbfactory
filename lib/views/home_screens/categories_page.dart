@@ -1,9 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../../constants/colors.dart';
+import '../../data/categories.dart';
+import '../other_screens/product_page.dart';
 import '../other_screens/search_screen.dart';
 
 class CategoriesPage extends StatefulWidget {
@@ -66,23 +69,24 @@ class _CategoriesPageState extends State<CategoriesPage> {
               ),
             ),
             8.heightBox,
-            GridView.builder(
+            GridView(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 12,
-                childAspectRatio: 1 / 1.2,
+                childAspectRatio: 1 / 1.32,
                 mainAxisSpacing: 12,
               ),
               padding: const EdgeInsets.all(12),
-              itemCount: 12,
-              itemBuilder: (BuildContext context, index) {
-                return GestureDetector(
-                  onTap: () {},
-                  child: itemWidget(),
-                );
-              },
+              children: categories
+                  .map(
+                    (item) => itemWidget(
+                      item['image_path'],
+                      item['name'],
+                    ),
+                  )
+                  .toList(),
             ),
           ],
         ),
@@ -90,27 +94,48 @@ class _CategoriesPageState extends State<CategoriesPage> {
     );
   }
 
-  Widget itemWidget() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          height: 160,
-          decoration: BoxDecoration(
-            color: lightGreyColor,
-            borderRadius: BorderRadius.circular(8),
+  Widget itemWidget(String imgUrl, String title) {
+    return GestureDetector(
+      onTap: () {
+        Get.to(() => ProductPage(title: title));
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: CachedNetworkImage(
+                  imageUrl: imgUrl,
+                  progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                  errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
           ),
-        ),
-        8.heightBox,
-        const Text(
-          "Category Name",
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: darkColor,
+          8.heightBox,
+          SizedBox(
+            width: 160,
+            child: Text(
+              title,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: darkColor,
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -99,9 +99,9 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 Expanded(
                   child: MainButton(
-                    title: "Continue",
+                    title: "Login",
                     onTap: () {
-                      Get.to(() => const NavScreen());
+                      Get.offAll(() => const NavScreen());
                     },
                   ),
                 ),
@@ -112,7 +112,9 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextButton(
-                  onPressed: () { },
+                  onPressed: () {
+                    Get.offAll(() => const NavScreen());
+                  },
                   child: const Text(
                     "Continue without login",
                     style: TextStyle(

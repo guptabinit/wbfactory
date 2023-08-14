@@ -4,6 +4,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../../constants/colors.dart';
+import '../home_screens/main_nav_page.dart';
+import '../onboarding_screens/login_page.dart';
 
 class DrawerList extends StatefulWidget {
   const DrawerList({super.key});
@@ -20,6 +22,7 @@ class _DrawerListState extends State<DrawerList> {
         children: [
           ListTile(
             onTap: (){
+              Get.offAll(() => const NavScreen(currentIndex: 2,));
             },
             title: const Text("Your orders"),
             trailing: const Icon(
@@ -65,6 +68,7 @@ class _DrawerListState extends State<DrawerList> {
           ),
           ListTile(
             onTap: (){
+              Get.offAll(() => const LoginPage());
             },
             title: const Text("Log out"),
             trailing: const Icon(
