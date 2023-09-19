@@ -1,17 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../models/user_model.dart' as user_model;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/components/buttons/main_button.dart';
 import 'package:wbfactory/constants/colors.dart';
+import 'package:wbfactory/constants/consts.dart';
+import 'package:wbfactory/resources/shop_methods.dart';
 
 import '../../components/buttons/back_button.dart';
+import '../../resources/auth_methods.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final snap;
 
-  const ProductDetailPage({super.key, required this.snap});
+  ProductDetailPage({super.key, required this.snap});
 
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();
@@ -19,36 +23,110 @@ class ProductDetailPage extends StatefulWidget {
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
   TextEditingController searchController = TextEditingController();
+  var selected = {};
+  bool isFavourite = false;
+  bool isLoading = false;
 
-  List<bool> selections = [];
+  getUserFavouriteData() async {
+    var tempUser = await AuthMethods().getUserDetails();
+
+    if(tempUser.favouriteList.contains(widget.snap['pid'])){
+      setState(() {
+        isFavourite = true;
+      });
+    }
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    try {
-      setState(() {
-        selections = List.generate(widget.snap['variantInfo'].length, (_) => false);
-      });
+    try{
+      getUserFavouriteData();
     } catch (e) {
-      print("Error: variant unavailable");
+      print("Some error occurred while retrieving user's data");
     }
+    try {
+      selected = widget.snap['variantInfo'][0];
+    } catch (e) {
+      print("Error: No variant present.");
+    }
+  }
 
+  showToast(String msg, Color color){
+    return customToast(msg, greenColor, context);
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: lightColor,
         automaticallyImplyLeading: false,
         elevation: 0.0,
-        title: GestureDetector(
+        leading: backButton(
           onTap: () {
             Get.back();
           },
-          child: backButton(),
         ),
+        leadingWidth: 90,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              setState(() {
+                isLoading = true;
+              });
+
+              if(isFavourite == false){
+                // add to favourite
+                String result = await ShopMethods().addFavourite(product: widget.snap, pid: widget.snap["pid"]);
+
+                if (result == 'success') {
+                  setState(() {
+                    isFavourite = true;
+                    isLoading = false;
+                  });
+                  showToast("Added to favourites", greenColor);
+                } else {
+                  setState(() {
+                    isLoading = false;
+                  });
+                  showToast("Some error occurred while adding this product to favourites", redColor);
+                }
+              } else {
+                // remove from favourite
+                String result = await ShopMethods().removeFavourite(product: widget.snap, pid: widget.snap["pid"]);
+
+                if (result == 'success') {
+                  setState(() {
+                    isFavourite = false;
+                    isLoading = false;
+                  });
+                  showToast("Removed from favourites", greenColor);
+                } else {
+                  setState(() {
+                    isLoading = false;
+                  });
+                  showToast("Some error occurred while removing this product from favourites", redColor);
+                }
+              }
+
+            },
+            icon: isLoading
+                ? const SizedBox(
+                    height: 16,
+                    width: 16,
+                    child: CircularProgressIndicator(
+                      color: secondaryColor,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : Icon(
+                    isFavourite ? Icons.favorite : Icons.favorite_border_outlined,
+                    color: isFavourite ? redColor : secondaryColor,
+                  ),
+          ),
+          4.widthBox,
+        ],
       ),
       body: Stack(
         children: [
@@ -134,17 +212,32 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                       color: darkGreyColor,
                                     ),
                                   )
-                                : ToggleButtons(
-                                    children: widget.snap['variantInfo']
-                                        .map<Widget>(
-                                          (item) => Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: widget.snap['variantInfo'].map<Widget>(
+                                      (item) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              selected = item;
+                                            });
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: selected == item ? secondaryColor.withOpacity(0.1) : Colors.transparent,
+                                              borderRadius: BorderRadius.circular(4),
+                                              border: Border.all(
+                                                color: selected == item ? secondaryColor : darkGreyColor,
+                                              ),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                                            margin: const EdgeInsets.only(bottom: 4),
                                             child: Row(
                                               children: [
                                                 Expanded(child: Text("${item['variantName']}")),
                                                 8.widthBox,
                                                 Text(
-                                                  "\$ ${item['variantPrice'].toStringAsFixed(2)}",
+                                                  "+ \$ ${item['variantPrice'].toStringAsFixed(2)}",
                                                   style: const TextStyle(
                                                     color: secondaryColor,
                                                     fontWeight: FontWeight.w500,
@@ -153,16 +246,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                               ],
                                             ),
                                           ),
-                                        )
-                                        .toList(),
-                                    selectedBorderColor: secondaryColor,
-                                    direction: Axis.vertical,
-                                    isSelected: selections,
-                                    onPressed: (int index) {
-                                      setState(() {
-                                        selections[index] = !selections[index];
-                                      });
-                                    },
+                                        );
+                                      },
+                                    ).toList(),
                                   ),
                             86.heightBox,
                           ],

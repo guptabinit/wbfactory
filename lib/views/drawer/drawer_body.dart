@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:wbfactory/views/drawer/drawer_screens/your_favourites_page.dart';
+import 'package:wbfactory/views/drawer/drawer_screens/your_reviews_page.dart';
 
 import '../../constants/colors.dart';
+import '../../constants/consts.dart';
+import '../../resources/auth_methods.dart';
 import '../home_screens/main_nav_page.dart';
 import '../onboarding_screens/login_page.dart';
 
@@ -15,6 +20,33 @@ class DrawerList extends StatefulWidget {
 }
 
 class _DrawerListState extends State<DrawerList> {
+
+  bool isLoading = false;
+
+  void logoutUser() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    String message = await AuthMethods().signOut();
+
+    setState(() {
+      isLoading = false;
+    });
+    if (message == 'success') {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLogin', false);
+      Get.offAll(() => const LoginPage());
+    } else {
+      await toast(message);
+    }
+  }
+
+  Future<dynamic> toast(message) async {
+    return customToast("error: $message", redColor, context);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -32,6 +64,7 @@ class _DrawerListState extends State<DrawerList> {
           ),
           ListTile(
             onTap: (){
+              Get.to(() => const YourReviewsPage());
             },
             title: const Text("Your reviews"),
             trailing: const Icon(
@@ -41,6 +74,7 @@ class _DrawerListState extends State<DrawerList> {
           ),
           ListTile(
             onTap: (){
+              Get.to(() => const YourFavouritesPage());
             },
             title: const Text("Your favourites"),
             trailing: const Icon(
@@ -67,8 +101,8 @@ class _DrawerListState extends State<DrawerList> {
             ),
           ),
           ListTile(
-            onTap: (){
-              Get.offAll(() => const LoginPage());
+            onTap: () async {
+              logoutUser();
             },
             title: const Text("Log out"),
             trailing: const Icon(

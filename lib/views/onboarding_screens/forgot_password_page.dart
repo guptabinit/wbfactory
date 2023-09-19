@@ -24,10 +24,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: GestureDetector(
-          onTap: () => Get.back(),
-          child: backButton(),
+        leading: backButton(
+          onTap: () {
+            Get.back();
+          },
         ),
+        leadingWidth: 90,
         elevation: 0,
         backgroundColor: lightColor,
         automaticallyImplyLeading: false,

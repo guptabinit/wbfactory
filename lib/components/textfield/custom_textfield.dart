@@ -9,6 +9,7 @@ class CustomTextfield extends StatefulWidget {
   final bool isPass;
   final Widget? suffixIcon;
   final TextInputType? keyboardType;
+  final void Function()? onEditingCompleted;
 
   const CustomTextfield({
     super.key,
@@ -18,6 +19,7 @@ class CustomTextfield extends StatefulWidget {
     this.isPass = false,
     this.suffixIcon,
     this.keyboardType,
+    this.onEditingCompleted,
   });
 
   @override
@@ -37,6 +39,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
             borderRadius: BorderRadius.circular(8)
           ),
           child: TextField(
+            onEditingComplete: widget.onEditingCompleted,
             keyboardType: widget.keyboardType,
             obscureText: widget.isPass,
             controller: widget.controller,

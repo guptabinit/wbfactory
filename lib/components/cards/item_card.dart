@@ -75,6 +75,7 @@ class _ItemCardState extends State<ItemCard> {
               Text(
                 widget.snap != null ? "${widget.snap["itemName"]}" :"Food Name",
                 overflow: TextOverflow.ellipsis,
+                maxLines: 1,
                 style: const TextStyle(
                   fontSize: 14,
                   color: darkColor,
@@ -85,6 +86,7 @@ class _ItemCardState extends State<ItemCard> {
               Text(
                 widget.snap != null ? "${widget.snap["category"]}" : "Category",
                 overflow: TextOverflow.ellipsis,
+                maxLines: 1,
                 style: const TextStyle(
                   fontSize: 11,
                   color: darkGreyColor,

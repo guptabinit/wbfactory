@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -7,6 +8,7 @@ import 'package:wbfactory/constants/colors.dart';
 import 'package:wbfactory/views/onboarding_screens/enter_phone_page.dart';
 
 import '../../components/textfield/onboarding_textfield.dart';
+import '../../constants/consts.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({super.key});
@@ -24,14 +26,25 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   bool isVisibleCP = false;
 
   @override
+  void dispose() {
+    fullNameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: GestureDetector(
-          onTap: () => Get.back(),
-          child: backButton(),
+        leading: backButton(
+          onTap: () {
+            Get.back();
+          },
         ),
+        leadingWidth: 90,
         elevation: 0,
         backgroundColor: lightColor,
         automaticallyImplyLeading: false,
@@ -60,6 +73,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
               controller: emailController,
               title: "Email Address",
               hintText: "e.g. alex@company.com",
+              keyboardType: TextInputType.emailAddress,
             ),
             12.heightBox,
             OnboardingTextField(
@@ -105,13 +119,32 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   child: MainButton(
                     title: "Continue",
                     onTap: () {
-                      Get.to(() => const EnterPhonePage(), transition: Transition.rightToLeftWithFade);
+                      if (fullNameController.text.isNotEmpty && emailController.text.isNotEmpty && passwordController.text.isNotEmpty && confirmPasswordController.text.isNotEmpty) {
+                        if (passwordController.text.length < 6) {
+                          customToast("Please enter a password greater than 6 characters", redColor, context);
+                        } else if (passwordController.text != confirmPasswordController.text) {
+                          customToast("Password does not match with confirm password", redColor, context);
+                        } else if (!EmailValidator.validate(emailController.text)) {
+                          customToast("Enter a correct email address", redColor, context);
+                        } else {
+                          final Map<String, String> data = {
+                            'full_name': fullNameController.text,
+                            'email': emailController.text,
+                            'password': passwordController.text,
+                          };
+                          Get.to(() => EnterPhonePage(signUpData: data), transition: Transition.rightToLeftWithFade);
+                        }
+                      } else {
+                        customToast("Please enter all the details", redColor, context);
+                      }
                     },
                   ),
                 ),
               ],
             ),
-            Expanded(child: Container(),),
+            Expanded(
+              child: Container(),
+            ),
             Center(
               child: Row(
                 mainAxisSize: MainAxisSize.min,

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/constants/colors.dart';
 import 'package:wbfactory/constants/consts.dart';
+import 'package:wbfactory/views/home_screens/main_nav_page.dart';
 
 import 'login_page.dart';
 
@@ -19,7 +21,16 @@ class _SplashScreenState extends State<SplashScreen> {
   changeScreen() {
     Future.delayed(
       const Duration(seconds: 2),
-      () => Get.off(() => const LoginPage()),
+      () async {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        final bool? isLogin = prefs.getBool('isLogin');
+
+        if(isLogin == true){
+          Get.off(() => const NavScreen());
+        } else {
+          Get.off(() => const LoginPage());
+        }
+      },
     );
   }
 

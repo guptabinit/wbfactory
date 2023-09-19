@@ -3,8 +3,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/constants/colors.dart';
 
-Widget backButton() => Container(
-      padding: const EdgeInsets.all(4),
+Widget backButton({required void Function()? onTap}) => TextButton(
+      onPressed: onTap,
+      style: const ButtonStyle(splashFactory: NoSplash.splashFactory),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

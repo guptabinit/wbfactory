@@ -4,12 +4,42 @@ import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/constants/consts.dart';
 
 import '../../constants/colors.dart';
+import '../../models/user_model.dart' as user_model;
+import '../../resources/auth_methods.dart';
 
-class OffersPage extends StatelessWidget {
+class OffersPage extends StatefulWidget {
+
   const OffersPage({super.key});
 
   @override
+  State<OffersPage> createState() => _OffersPageState();
+}
+
+class _OffersPageState extends State<OffersPage> {
+
+  user_model.User? user;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    try {
+      getUserData();
+    } catch (e) {
+      print("Error while fetching user");
+    }
+  }
+
+  getUserData() async {
+    var tempUser = await AuthMethods().getUserDetails();
+    setState(() {
+      user = tempUser;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(decelerationRate: ScrollDecelerationRate.fast),
@@ -66,14 +96,23 @@ class OffersPage extends StatelessWidget {
                             ),
                           ),
                           2.heightBox,
-                          const Text(
-                            "120 WB Coins",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: lightColor,
-                            ),
-                          ),
+                          user == null
+                              ? const Text(
+                                  "-- WB Coins",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                    color: lightColor,
+                                  ),
+                                )
+                              : Text(
+                                  "${user!.coins} WB Coins",
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                    color: lightColor,
+                                  ),
+                                ),
                           6.heightBox,
                           const Text(
                             "1 WB Coin = \$1.00",
@@ -147,9 +186,12 @@ class OffersPage extends StatelessWidget {
         children: [
           Expanded(
             child: AspectRatio(
-              aspectRatio: 3/4,
+              aspectRatio: 3 / 4,
               child: ClipRRect(
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), bottomLeft: Radius.circular(12), ),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  bottomLeft: Radius.circular(12),
+                ),
                 child: CachedNetworkImage(
                   imageUrl: "https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/categories%2Ffrom_our_grill.jpg?alt=media&token=a535b8f0-79bd-450f-8d09-5e6d42218a58",
                   fit: BoxFit.cover,
@@ -161,7 +203,7 @@ class OffersPage extends StatelessWidget {
             ),
           ),
           Container(
-            width: screenWidth(context)*0.6,
+            width: screenWidth(context) * 0.6,
             padding: const EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 16,

@@ -2,17 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:wbfactory/models/user_model.dart' as user_model;
 
 import '../../constants/colors.dart';
 
-class HeaderDrawer extends StatefulWidget {
-  const HeaderDrawer({super.key});
+class HeaderDrawer extends StatelessWidget {
+  final user_model.User? user;
+  const HeaderDrawer({super.key, this.user});
 
-  @override
-  State<HeaderDrawer> createState() => _HeaderDrawerState();
-}
-
-class _HeaderDrawerState extends State<HeaderDrawer> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -45,10 +42,10 @@ class _HeaderDrawerState extends State<HeaderDrawer> {
                   color: lightBlue,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(
+                    const Text(
                       "Hello",
                       style: TextStyle(
                         fontSize: 14,
@@ -56,16 +53,23 @@ class _HeaderDrawerState extends State<HeaderDrawer> {
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    Text(
-                      "Mr. June Park",
+                    user == null ? const Text(
+                      "Error",
                       style: TextStyle(
                         fontSize: 24,
                         color: darkColor,
                         fontWeight: FontWeight.w500,
                       ),
+                    ) : Text(
+                      user!.fullName,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        color: darkColor,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                    Divider(color: darkGreyColor,),
-                    Text("20+ orders so far")
+                    const Divider(color: darkGreyColor,),
+                    user == null ? const Text("You haven't order anything") : Text("${user!.totalOrders}+ orders so far")
                   ],
                 ),
               )

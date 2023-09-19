@@ -4,15 +4,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:wbfactory/resources/auth_methods.dart';
 import 'package:wbfactory/views/drawer/drawer_body.dart';
 import 'package:wbfactory/views/drawer/drawer_header.dart';
 import 'package:wbfactory/views/home_screens/categories_page.dart';
 import 'package:wbfactory/views/home_screens/home_page.dart';
 import 'package:wbfactory/views/home_screens/offers_page.dart';
 import 'package:wbfactory/views/home_screens/orders_page.dart';
-
+import 'package:wbfactory/models/user_model.dart' as user_model;
+import 'package:wbfactory/views/other_screens/cart_page.dart';
 import '../../constants/colors.dart';
+import '../../constants/consts.dart';
 
 class NavScreen extends StatefulWidget {
   final int currentIndex;
@@ -26,11 +30,34 @@ class NavScreen extends StatefulWidget {
 class _NavScreenState extends State<NavScreen> {
   int currentIndex = 0;
 
+  user_model.User? user;
+  bool userAvailable = false;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     currentIndex = widget.currentIndex;
+    try {
+      getUser();
+    } catch (e) {
+      print("Error while fetching user");
+    }
+    getSharedPrefDetails();
+  }
+
+  getSharedPrefDetails() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final bool? isLogin = prefs.getBool('isLogin');
+    setState(() {
+      userAvailable = isLogin ?? false;
+    });
+  }
+
+  getUser() async {
+    var tempUser = await AuthMethods().getUserDetails();
+    setState(() {
+      user = tempUser;
+    });
   }
 
   void onTap(int index) {
@@ -49,15 +76,17 @@ class _NavScreenState extends State<NavScreen> {
     ];
 
     return Scaffold(
-      drawer: const Drawer(
-        shape: RoundedRectangleBorder(),
+      drawer: Drawer(
+        shape: const RoundedRectangleBorder(),
         child: SingleChildScrollView(
           child: Column(
             children: [
               SafeArea(
-                child: HeaderDrawer(),
+                child: HeaderDrawer(
+                  user: user,
+                ),
               ),
-              DrawerList(),
+              const DrawerList(),
             ],
           ),
         ),
@@ -88,7 +117,9 @@ class _NavScreenState extends State<NavScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 8),
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                userAvailable ? Get.to(() => const CartPage()) : showLoginDialog(context);
+              },
               icon: const Icon(
                 CupertinoIcons.shopping_cart,
                 color: secondaryColor,

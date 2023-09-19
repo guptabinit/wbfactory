@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -5,8 +6,10 @@ import 'package:wbfactory/components/buttons/main_button.dart';
 import 'package:wbfactory/constants/colors.dart';
 import 'package:wbfactory/views/onboarding_screens/create_account_page.dart';
 import 'package:wbfactory/views/onboarding_screens/forgot_password_page.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../components/textfield/onboarding_textfield.dart';
+import '../../constants/consts.dart';
+import '../../resources/auth_methods.dart';
 import '../home_screens/main_nav_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -20,6 +23,38 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool isVisible = false;
+  bool isLoading = false;
+
+  void loginUser() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    String message = await AuthMethods().loginUser(
+      email: emailController.text,
+      password: passwordController.text,
+    );
+
+    if (message == 'success') {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLogin', true);
+
+      setState(() {
+        isLoading = false;
+      });
+
+      Get.offAll(() => const NavScreen());
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      await toast(message);
+    }
+  }
+
+  Future<dynamic> toast(message) async {
+    return customToast("error: $message", redColor, context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,8 +135,33 @@ class _LoginPageState extends State<LoginPage> {
                 Expanded(
                   child: MainButton(
                     title: "Login",
-                    onTap: () {
-                      Get.offAll(() => const NavScreen());
+                    load: true,
+                    mainWidget: isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: lightColor,
+                            ),
+                          )
+                        : const Text(
+                            "Login",
+                            style: TextStyle(
+                              color: lightColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                    onTap: () async {
+                      if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+                        if (passwordController.text.length < 6) {
+                          customToast("Please enter a password greater than 6 characters", redColor, context);
+                        } else if (!EmailValidator.validate(emailController.text)) {
+                          customToast("Enter a correct email address", redColor, context);
+                        } else {
+                          loginUser();
+                        }
+                      } else {
+                        customToast("Please enter all the details", redColor, context);
+                      }
                     },
                   ),
                 ),
@@ -113,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 TextButton(
                   onPressed: () {
-                    Get.offAll(() => const NavScreen());
+                    customToast("Under Development", Colors.grey, context);
                   },
                   child: const Text(
                     "Continue without login",

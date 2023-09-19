@@ -4,11 +4,17 @@ import 'package:wbfactory/constants/colors.dart';
 class MainButton extends StatelessWidget {
   final String title;
   final void Function()? onTap;
+  final double? fontSize;
+  final bool load;
+  final Widget? mainWidget;
 
   const MainButton({
     super.key,
     required this.title,
     required this.onTap,
+    this.fontSize = 16,
+    this.load = false,
+    this.mainWidget,
   });
 
   @override
@@ -25,11 +31,11 @@ class MainButton extends StatelessWidget {
           ),
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Center(
-            child: Text(
+            child: load ? mainWidget : Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 color: lightColor,
-                fontSize: 16,
+                fontSize: fontSize,
                 fontWeight: FontWeight.w500,
               ),
             ),
