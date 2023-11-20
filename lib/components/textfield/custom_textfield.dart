@@ -10,6 +10,7 @@ class CustomTextfield extends StatefulWidget {
   final Widget? suffixIcon;
   final TextInputType? keyboardType;
   final void Function()? onEditingCompleted;
+  final bool showTitle;
 
   const CustomTextfield({
     super.key,
@@ -20,6 +21,7 @@ class CustomTextfield extends StatefulWidget {
     this.suffixIcon,
     this.keyboardType,
     this.onEditingCompleted,
+    this.showTitle = false,
   });
 
   @override
@@ -33,6 +35,10 @@ class _CustomTextfieldState extends State<CustomTextfield> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        widget.showTitle ? Text(
+          widget.title,
+        ) : Container(),
+        widget.showTitle ? 4.heightBox: 0.heightBox,
         Container(
           decoration: BoxDecoration(
             color: veryLightGreyColor,

@@ -11,6 +11,7 @@ import '../../constants/consts.dart';
 import '../../resources/auth_methods.dart';
 import '../home_screens/main_nav_page.dart';
 import '../onboarding_screens/login_page.dart';
+import 'drawer_screens/settings_page.dart';
 
 class DrawerList extends StatefulWidget {
   const DrawerList({super.key});
@@ -84,6 +85,7 @@ class _DrawerListState extends State<DrawerList> {
           ),
           ListTile(
             onTap: (){
+              Get.to(() => const SettingsPage());
             },
             title: const Text("Settings"),
             trailing: const Icon(

@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:wbfactory/components/cards/order_card.dart';
 import '../../constants/colors.dart';
 
 class OrdersPage extends StatefulWidget {
@@ -11,7 +15,6 @@ class OrdersPage extends StatefulWidget {
 }
 
 class _OrdersPageState extends State<OrdersPage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,172 +43,49 @@ class _OrdersPageState extends State<OrdersPage> {
                   color: darkGreyColor,
                 ),
               ),
-              12.heightBox,
-              orderWidget(true, false),
-              12.heightBox,
-              orderWidget(true, true),
-              12.heightBox,
-              orderWidget(false, true),
-              12.heightBox,
-              orderWidget(false, true),
-              12.heightBox,
-              orderWidget(false, true),
-              12.heightBox,
-              orderWidget(false, true),
-              12.heightBox,
-              orderWidget(false, true),
-              12.heightBox,
+              StreamBuilder(
+                stream: FirebaseFirestore.instance.collection('orders').doc(FirebaseAuth.instance.currentUser!.uid).snapshots(),
+                builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: primaryColor,
+                      ),
+                    );
+                  }
+
+                  var snap = snapshot.data!;
+                  var orderLength = snap['orders'].length;
+
+                  return orderLength == 0
+                      ? Expanded(
+                          child: Center(
+                            child: Lottie.network(
+                              'https://lottie.host/1c93e52f-afdd-4f2e-9697-d66e27256df4/5jlcTbp7Ss.json',
+                              repeat: true,
+                              width: MediaQuery.of(context).size.width * 0.7,
+                              height: MediaQuery.of(context).size.width * 0.7,
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.only(top: 12),
+                          itemCount: orderLength,
+                          shrinkWrap: true,
+                          itemBuilder: (BuildContext context, index) {
+                            var mainSnap = snap[snap['orders'][index]];
+
+                            return OrderCard(
+                              snap: mainSnap,
+                            );
+                          },
+                        );
+                },
+              ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget orderWidget(bool isActive, bool isPaid) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: lightBlue.withOpacity(0.6),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: secondaryColor,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  CupertinoIcons.bag,
-                  color: lightColor,
-                  size: 28,
-                ),
-              ),
-              8.widthBox,
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Order #121323",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: darkColor,
-                    ),
-                  ),
-                  2.heightBox,
-                  const Text(
-                    "Pickup/Delivery",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: darkColor,
-                    ),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: Container(),
-              ),
-              8.widthBox,
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    isActive ? "ACTIVE" : "FINISHED",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: isActive ? greenColor : darkGreyColor,
-                    ),
-                  ),
-                  2.heightBox,
-                  const Text(
-                    "12 October 2023",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: darkGreyColor,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          8.heightBox,
-          const Divider(
-            color: darkGreyColor,
-          ),
-          6.heightBox,
-          Row(
-            children: [
-              const Text(
-                "Item Ordered: 12 nos",
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: darkColor,
-                ),
-              ),
-              Expanded(
-                child: Container(),
-              ),
-              8.widthBox,
-              const Text(
-                "\$ 42.00",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: darkColor,
-                ),
-              ),
-            ],
-          ),
-          6.heightBox,
-          Row(
-            children: [
-              const Text(
-                "Payment Status: ",
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: darkColor,
-                ),
-              ),
-              Text(
-                isPaid ? "PAID" : "UNPAID",
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: isPaid ? greenColor : redColor,
-                ),
-              ),
-              Expanded(
-                child: Container(),
-              ),
-              8.widthBox,
-              GestureDetector(
-                onTap: () {},
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 2.0),
-                  child: Text(
-                    "MORE INFO",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: secondaryColor,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

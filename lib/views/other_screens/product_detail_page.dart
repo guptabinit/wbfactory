@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../models/user_model.dart' as user_model;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -23,14 +23,29 @@ class ProductDetailPage extends StatefulWidget {
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
   TextEditingController searchController = TextEditingController();
-  var selected = {};
   bool isFavourite = false;
   bool isLoading = false;
+  var cartData = {};
+
+  String? selectedVarient;
+  double selectedVarientPrice = 0.00;
 
   getUserFavouriteData() async {
+    try {
+      var cartSnap = await FirebaseFirestore.instance
+          .collection('cart')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      cartData = cartSnap.data()!;
+      setState(() {});
+    } catch (e) {}
+  }
+
+  getCartData() async {
     var tempUser = await AuthMethods().getUserDetails();
 
-    if(tempUser.favouriteList.contains(widget.snap['pid'])){
+    if (tempUser.favouriteList.contains(widget.snap['pid'])) {
       setState(() {
         isFavourite = true;
       });
@@ -40,20 +55,101 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   @override
   void initState() {
     super.initState();
-    try{
+    try {
       getUserFavouriteData();
     } catch (e) {
       print("Some error occurred while retrieving user's data");
     }
-    try {
-      selected = widget.snap['variantInfo'][0];
-    } catch (e) {
-      print("Error: No variant present.");
-    }
   }
 
-  showToast(String msg, Color color){
-    return customToast(msg, greenColor, context);
+  showCustomToast(String msg, Color color) {
+    return customToast(msg, color, context);
+  }
+
+  void addToCart() async {
+
+    if(widget.snap["haveVarient"]){
+      if(selectedVarient == null){
+        showCustomToast("Select a varient first", darkGreyColor);
+      }else {
+        setState(() {
+          isLoading = true;
+        });
+
+        double packagePrice = widget.snap["price"].toDouble() + selectedVarientPrice;
+
+        double cartAmount = cartData["cart_amount"] + packagePrice;
+
+        String message = await ShopMethods().addToCart(
+          pid: widget.snap["pid"],
+          itemName: widget.snap["itemName"],
+          quantity: 1,
+          itemPrice: widget.snap["price"],
+          packagePrice: packagePrice,
+          totalPrice: packagePrice,
+          category: widget.snap["category"],
+          itemImage: widget.snap["imageUrl"],
+          selectedVarient: selectedVarient,
+          haveVarient: widget.snap["haveVarient"],
+          selectedVarientPrice: selectedVarientPrice,
+          context: context,
+          cartAmount: cartAmount,
+        );
+
+        if (message == 'success') {
+          setState(() {
+            isLoading = false;
+          });
+          showCustomToast("Item added successfully", greenColor);
+          Get.back();
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+          showCustomToast("Error: $message", darkGreyColor);
+        }
+      }
+    } else {
+
+      setState(() {
+        isLoading = true;
+      });
+
+      double packagePrice = widget.snap["price"].toDouble() + selectedVarientPrice;
+
+      double cartAmount = cartData["cart_amount"] + packagePrice;
+
+      String message = await ShopMethods().addToCart(
+        pid: widget.snap["pid"],
+        itemName: widget.snap["itemName"],
+        quantity: 1,
+        itemPrice: widget.snap["price"],
+        packagePrice: packagePrice,
+        category: widget.snap["category"],
+        totalPrice: packagePrice,
+        itemImage: widget.snap["imageUrl"],
+        selectedVarient: selectedVarient,
+        haveVarient: widget.snap["haveVarient"],
+        selectedVarientPrice: selectedVarientPrice,
+        context: context,
+        cartAmount: cartAmount,
+      );
+
+      if (message == 'success') {
+        setState(() {
+          isLoading = false;
+        });
+        showCustomToast("Item added successfully", greenColor);
+        Get.back();
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        showCustomToast("Error: $message", darkGreyColor);
+      }
+    }
+
+
   }
 
   @override
@@ -76,7 +172,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 isLoading = true;
               });
 
-              if(isFavourite == false){
+              if (isFavourite == false) {
                 // add to favourite
                 String result = await ShopMethods().addFavourite(product: widget.snap, pid: widget.snap["pid"]);
 
@@ -85,12 +181,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     isFavourite = true;
                     isLoading = false;
                   });
-                  showToast("Added to favourites", greenColor);
+                  showCustomToast("Added to favourites", greenColor);
                 } else {
                   setState(() {
                     isLoading = false;
                   });
-                  showToast("Some error occurred while adding this product to favourites", redColor);
+                  showCustomToast("Some error occurred while adding this product to favourites", redColor);
                 }
               } else {
                 // remove from favourite
@@ -101,15 +197,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     isFavourite = false;
                     isLoading = false;
                   });
-                  showToast("Removed from favourites", greenColor);
+                  showCustomToast("Removed from favourites", greenColor);
                 } else {
                   setState(() {
                     isLoading = false;
                   });
-                  showToast("Some error occurred while removing this product from favourites", redColor);
+                  showCustomToast("Some error occurred while removing this product from favourites", redColor);
                 }
               }
-
             },
             icon: isLoading
                 ? const SizedBox(
@@ -192,64 +287,41 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                               thickness: 1,
                             ),
                             8.heightBox,
-                            const Text(
-                              "VARIANTS",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                                color: darkColor,
-                              ),
-                            ),
-                            16.heightBox,
-                            widget.snap['haveVarient'] == false
+                            widget.snap['haveVarient']
                                 ? const Text(
-                                    "No such variants found",
+                                    "Choose a varient",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: darkGreyColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: darkColor,
                                     ),
                                   )
-                                : Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: widget.snap['variantInfo'].map<Widget>(
-                                      (item) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              selected = item;
-                                            });
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: selected == item ? secondaryColor.withOpacity(0.1) : Colors.transparent,
-                                              borderRadius: BorderRadius.circular(4),
-                                              border: Border.all(
-                                                color: selected == item ? secondaryColor : darkGreyColor,
-                                              ),
-                                            ),
-                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                                            margin: const EdgeInsets.only(bottom: 4),
-                                            child: Row(
-                                              children: [
-                                                Expanded(child: Text("${item['variantName']}")),
-                                                8.widthBox,
-                                                Text(
-                                                  "+ \$ ${item['variantPrice'].toStringAsFixed(2)}",
-                                                  style: const TextStyle(
-                                                    color: secondaryColor,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ).toList(),
-                                  ),
+                                : Container(),
+                            widget.snap['haveVarient'] ? 16.heightBox : Container(),
+                            widget.snap['haveVarient']
+                                ? ListView.builder(
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    itemCount: widget.snap["variantInfo"].length,
+                                    shrinkWrap: true,
+                                    itemBuilder: (BuildContext context, index) {
+                                      var docSnap = widget.snap["variantInfo"][index];
+
+                                      return RadioListTile<String>(
+                                        title: Text(docSnap['variantName']),
+                                        subtitle: Text("Price: +\$ ${docSnap['variantPrice'].toDouble().toStringAsFixed(2)}"),
+                                        value: docSnap['variantName'],
+                                        groupValue: selectedVarient,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedVarient = value;
+                                            selectedVarientPrice = docSnap['variantPrice'].toDouble();
+                                          });
+                                        },
+                                      );
+                                    },
+                                  )
+                                : Container(),
                             86.heightBox,
                           ],
                         ),
@@ -265,10 +337,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             bottom: 16,
             left: 12,
             right: 12,
-            child: MainButton(
-              title: "Add to cart",
-              onTap: () {},
-            ),
+            child: isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : MainButton(
+                    title: "Add to cart",
+                    onTap: addToCart,
+                  ),
           ),
         ],
       ),

@@ -11,6 +11,7 @@ class User {
   final double cartAmount;
   final int totalOrders;
   final int coins;
+  final List address;
 
   User({
     required this.uid,
@@ -23,6 +24,7 @@ class User {
     required this.cartAmount,
     required this.totalOrders,
     required this.coins,
+    required this.address,
   });
 
   Map<String, dynamic> toJson() => {
@@ -36,6 +38,7 @@ class User {
     'cart_amount' : cartAmount,
     'total_orders' : totalOrders,
     'coins' : coins,
+    'address' : address,
   };
 
   static User fromSnap(DocumentSnapshot snap){
@@ -52,6 +55,7 @@ class User {
       cartAmount: snapshot['cart_amount'],
       totalOrders: snapshot['total_orders'],
       coins: snapshot['coins'],
+      address: snapshot['address'],
     );
   }
 

@@ -53,6 +53,21 @@ dependencies:
   shared_preferences: ^2.2.0
   email_validator: ^2.1.17
 
+  #  authorize_net_plugin: ^0.1.2
+  google_maps_flutter: ^2.5.0
+  #  flutter_geocoder: ^0.2.2-nullsafety
+  geocoding: ^2.1.1
+  geolocator: ^10.1.0
+  crypto: ^3.0.3
+
+  flutter_credit_card: ^4.0.1
+  intl: ^0.18.1
+  credit_card_type_detector: ^3.0.0
+  equatable: ^2.0.5
+  json_annotation: ^4.8.1
+  nanoid: ^1.0.0
+  jose: ^0.3.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -48,7 +48,8 @@ class AuthMethods {
             favouriteList: [],
             cartAmount: 0.00,
             totalOrders: 0,
-            coins: 0
+            coins: 0,
+            address: [],
           );
 
           order_model.Order order = order_model.Order(
@@ -64,6 +65,11 @@ class AuthMethods {
           // adding user info in database
           await _firestore.collection('users').doc(cred.user!.uid).set(user.toJson());
           await _firestore.collection('orders').doc(cred.user!.uid).set(order.toJson());
+          await _firestore.collection('cart').doc(cred.user!.uid).set({
+            'uid': cred.user!.uid,
+            'cart_amount': 0.00,
+            'items': [],
+          });
 
           res = "success";
         } else {
@@ -179,7 +185,6 @@ class AuthMethods {
       // customToast("Successfully Login", greenColor, context);
 
       res = 'success';
-
     } catch (e) {
       customToast("error: $e", redColor, context);
       res = 'error: $e';

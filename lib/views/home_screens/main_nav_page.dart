@@ -15,6 +15,7 @@ import 'package:wbfactory/views/home_screens/offers_page.dart';
 import 'package:wbfactory/views/home_screens/orders_page.dart';
 import 'package:wbfactory/models/user_model.dart' as user_model;
 import 'package:wbfactory/views/other_screens/cart_page.dart';
+import 'package:wbfactory/views/other_screens/test_screen.dart';
 import '../../constants/colors.dart';
 import '../../constants/consts.dart';
 
