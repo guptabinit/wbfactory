@@ -143,12 +143,43 @@ class _CartCardState extends State<CartCard> {
               ),
               6.heightBox,
               Text(
-                widget.itemSnap["haveVarient"] ? "Varient: ${widget.itemSnap["selectedVarient"]} (\$ ${widget.itemSnap["selectedVarientPrice"].toDouble().toStringAsFixed(2)})" : "Varient: No Variants Chosen.",
+                widget.itemSnap["isQuantity"] ? "Choice: ${widget.itemSnap["selectedQuantity"]} (\$ ${widget.itemSnap["selectedQuantityPrice"].toDouble().toStringAsFixed(2)})" : "Choice: No Choices Chosen.",
                 style: const TextStyle(
                   color: darkGreyColor,
                   fontStyle: FontStyle.italic,
                 ),
               ),
+              4.heightBox,
+              widget.itemSnap['selectedVarient'].length == 0
+                  ? Container()
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Variants: ",
+                          style: TextStyle(
+                            color: darkGreyColor,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: widget.itemSnap['selectedVarient'].length,
+                            shrinkWrap: true,
+                            itemBuilder: (BuildContext context, index) {
+                              return Text(
+                                "${widget.itemSnap['selectedVarient'][index]} : +\$${widget.itemSnap['selectedVarientPrice'][index].toStringAsFixed(2)}, ",
+                                style: const TextStyle(
+                                  color: darkGreyColor,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
             ],
           ),
         ),
@@ -180,6 +211,9 @@ class _CartCardState extends State<CartCard> {
         selectedVarientPrice: widget.itemSnap['selectedVarientPrice'],
         category: widget.itemSnap['category'],
         haveVarient: widget.itemSnap['haveVarient'],
+        isQuantity: widget.itemSnap['isQuantity'],
+        selectedQuantity: widget.itemSnap['selectedQuantity'],
+        selectedQuantityPrice: widget.itemSnap['selectedQuantityPrice'],
       );
 
       if (message == 'success') {
@@ -207,7 +241,6 @@ class _CartCardState extends State<CartCard> {
   }
 
   void addCart() async {
-
     int quantity = widget.itemSnap['quantity'] + 1;
     double totalPrice = quantity.toDouble() * double.parse(widget.itemSnap['package_price'].toDouble().toStringAsFixed(2));
     double cartAmount = widget.snap['cart_amount'] + double.parse(widget.itemSnap['package_price'].toDouble().toStringAsFixed(2));
@@ -226,6 +259,9 @@ class _CartCardState extends State<CartCard> {
       selectedVarientPrice: widget.itemSnap['selectedVarientPrice'],
       category: widget.itemSnap['category'],
       haveVarient: widget.itemSnap['haveVarient'],
+      isQuantity: widget.itemSnap['isQuantity'],
+      selectedQuantity: widget.itemSnap['selectedQuantity'],
+      selectedQuantityPrice: widget.itemSnap['selectedQuantityPrice'],
     );
 
     if (message == 'success') {

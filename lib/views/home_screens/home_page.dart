@@ -15,7 +15,8 @@ import '../../data/categories.dart';
 import '../other_screens/product_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final bool userAvailable;
+  const HomePage({super.key, required this.userAvailable});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -347,7 +348,7 @@ class _HomePageState extends State<HomePage> {
   Widget itemWidget(String imgUrl, String title) {
     return GestureDetector(
       onTap: () {
-        Get.to(() => ProductPage(title: title));
+        Get.to(() => ProductPage(title: title, userAvailable: widget.userAvailable,));
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,

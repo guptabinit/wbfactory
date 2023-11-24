@@ -19,20 +19,6 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: secondaryColor,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          "Order Placed",
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: lightColor,
-          ),
-        ),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -43,8 +29,14 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text("Sample Order Placed Screen"),
-                    28.heightBox,
+                    Center(
+                      child: Lottie.network(
+                        'https://lottie.host/285fe519-94f2-46d2-a26a-618a4bfcae2f/wgzKJxovQm.json',
+                        repeat: true,
+                        width: MediaQuery.of(context).size.width * 0.85,
+                        height: MediaQuery.of(context).size.width * 0.85,
+                      ),
+                    ),
                     const Text(
                       "Order Placed Successfully",
                       textAlign: TextAlign.center,

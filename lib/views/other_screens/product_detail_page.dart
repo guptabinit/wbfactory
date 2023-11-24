@@ -15,7 +15,7 @@ import '../../resources/auth_methods.dart';
 class ProductDetailPage extends StatefulWidget {
   final snap;
 
-  ProductDetailPage({super.key, required this.snap});
+  const ProductDetailPage({super.key, required this.snap});
 
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();
@@ -27,15 +27,16 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   bool isLoading = false;
   var cartData = {};
 
-  String? selectedVarient;
-  double selectedVarientPrice = 0.00;
+  // String? selectedVarient;
+  // double selectedVarientPrice = 0.00;
+  List<bool?> selectedVarientList = [];
+
+  String? selectedQuantity;
+  double selectedQuantityPrice = 0.00;
 
   getUserFavouriteData() async {
     try {
-      var cartSnap = await FirebaseFirestore.instance
-          .collection('cart')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
+      var cartSnap = await FirebaseFirestore.instance.collection('cart').doc(FirebaseAuth.instance.currentUser!.uid).get();
 
       cartData = cartSnap.data()!;
       setState(() {});
@@ -60,6 +61,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     } catch (e) {
       print("Some error occurred while retrieving user's data");
     }
+    if (widget.snap["haveVarient"]) {
+      for (int i = 0; i < widget.snap["variantInfo"].length; i++) {
+        selectedVarientList.add(false);
+      }
+    }
   }
 
   showCustomToast(String msg, Color color) {
@@ -67,16 +73,71 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   void addToCart() async {
+    if (widget.snap["haveVarient"] == true && widget.snap["isQuantity"] == false) {
+      setState(() {
+        isLoading = true;
+      });
 
-    if(widget.snap["haveVarient"]){
-      if(selectedVarient == null){
-        showCustomToast("Select a varient first", darkGreyColor);
-      }else {
+      List<String> selectedVarientNames = [];
+      List<double> selectedVarientAlternatePrices = [];
+      double totalVarientPrice = 0.00;
+
+      if (widget.snap['haveVarient']) {
+        for (int i = 0; i < widget.snap['variantInfo'].length; i++) {
+          if (selectedVarientList[i] == true) {
+            selectedVarientNames.add(widget.snap['variantInfo'][i]['variantName']);
+            selectedVarientAlternatePrices.add(widget.snap['variantInfo'][i]['variantPrice'].toDouble());
+            setState(() {
+              totalVarientPrice = totalVarientPrice + widget.snap['variantInfo'][i]['variantPrice'].toDouble();
+            });
+          }
+        }
+      }
+
+      double packagePrice = widget.snap["price"].toDouble() + totalVarientPrice;
+
+      double cartAmount = cartData["cart_amount"] + packagePrice;
+
+      String message = await ShopMethods().addToCart(
+        pid: widget.snap["pid"],
+        itemName: widget.snap["itemName"],
+        quantity: 1,
+        itemPrice: widget.snap["price"],
+        packagePrice: packagePrice,
+        totalPrice: packagePrice,
+        category: widget.snap["category"],
+        itemImage: widget.snap["imageUrl"],
+        selectedVarient: selectedVarientNames,
+        haveVarient: widget.snap["haveVarient"],
+        selectedVarientPrice: selectedVarientAlternatePrices,
+        context: context,
+        cartAmount: cartAmount,
+        isQuantity: widget.snap["isQuantity"],
+        selectedQuantity: selectedQuantity,
+        selectedQuantityPrice: selectedQuantityPrice,
+      );
+
+      if (message == 'success') {
+        setState(() {
+          isLoading = false;
+        });
+        showCustomToast("Item added successfully", greenColor);
+        Get.back();
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        showCustomToast("Error: $message", darkGreyColor);
+      }
+    } else if (widget.snap["haveVarient"] == false && widget.snap["isQuantity"] == true) {
+      if (selectedQuantity == null) {
+        showCustomToast("Select all the choice first", darkGreyColor);
+      } else {
         setState(() {
           isLoading = true;
         });
 
-        double packagePrice = widget.snap["price"].toDouble() + selectedVarientPrice;
+        double packagePrice = widget.snap["price"].toDouble() + selectedQuantityPrice;
 
         double cartAmount = cartData["cart_amount"] + packagePrice;
 
@@ -89,11 +150,75 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           totalPrice: packagePrice,
           category: widget.snap["category"],
           itemImage: widget.snap["imageUrl"],
-          selectedVarient: selectedVarient,
+          selectedVarient: [],
           haveVarient: widget.snap["haveVarient"],
-          selectedVarientPrice: selectedVarientPrice,
+          selectedVarientPrice: [],
           context: context,
           cartAmount: cartAmount,
+          isQuantity: widget.snap["isQuantity"],
+          selectedQuantity: selectedQuantity,
+          selectedQuantityPrice: selectedQuantityPrice,
+        );
+
+        if (message == 'success') {
+          setState(() {
+            isLoading = false;
+          });
+          showCustomToast("Item added successfully", greenColor);
+          Get.back();
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+          showCustomToast("Error: $message", darkGreyColor);
+        }
+      }
+    } else if (widget.snap["haveVarient"] == true && widget.snap["isQuantity"] == true) {
+      // when there exist both
+      if (selectedQuantity == null) {
+        showCustomToast("Select all the choices first", darkGreyColor);
+      } else {
+        setState(() {
+          isLoading = true;
+        });
+
+        List<String> selectedVarientNames = [];
+        List<double> selectedVarientAlternatePrices = [];
+        double totalVarientPrice = 0.00;
+
+        if (widget.snap['haveVarient']) {
+          for (int i = 0; i < widget.snap['variantInfo'].length; i++) {
+            if (selectedVarientList[i] == true) {
+              selectedVarientNames.add(widget.snap['variantInfo'][i]['variantName']);
+              selectedVarientAlternatePrices.add(widget.snap['variantInfo'][i]['variantPrice'].toDouble());
+              setState(() {
+                totalVarientPrice = totalVarientPrice + widget.snap['variantInfo'][i]['variantPrice'].toDouble();
+              });
+            }
+          }
+        }
+
+        double packagePrice = widget.snap["price"].toDouble() + selectedQuantityPrice + totalVarientPrice;
+
+        double cartAmount = cartData["cart_amount"] + packagePrice;
+
+        String message = await ShopMethods().addToCart(
+          pid: widget.snap["pid"],
+          itemName: widget.snap["itemName"],
+          quantity: 1,
+          itemPrice: widget.snap["price"],
+          packagePrice: packagePrice,
+          totalPrice: packagePrice,
+          category: widget.snap["category"],
+          itemImage: widget.snap["imageUrl"],
+          selectedVarient: selectedVarientNames,
+          haveVarient: widget.snap["haveVarient"],
+          selectedVarientPrice: selectedVarientAlternatePrices,
+          context: context,
+          cartAmount: cartAmount,
+          isQuantity: widget.snap["isQuantity"],
+          selectedQuantity: selectedQuantity,
+          selectedQuantityPrice: selectedQuantityPrice,
         );
 
         if (message == 'success') {
@@ -110,12 +235,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         }
       }
     } else {
-
       setState(() {
         isLoading = true;
       });
 
-      double packagePrice = widget.snap["price"].toDouble() + selectedVarientPrice;
+      double packagePrice = widget.snap["price"].toDouble();
 
       double cartAmount = cartData["cart_amount"] + packagePrice;
 
@@ -128,11 +252,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         category: widget.snap["category"],
         totalPrice: packagePrice,
         itemImage: widget.snap["imageUrl"],
-        selectedVarient: selectedVarient,
+        selectedVarient: [],
         haveVarient: widget.snap["haveVarient"],
-        selectedVarientPrice: selectedVarientPrice,
+        selectedVarientPrice: [],
         context: context,
         cartAmount: cartAmount,
+        isQuantity: widget.snap["isQuantity"],
+        selectedQuantity: selectedQuantity,
+        selectedQuantityPrice: selectedQuantityPrice,
       );
 
       if (message == 'success') {
@@ -148,8 +275,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         showCustomToast("Error: $message", darkGreyColor);
       }
     }
-
-
   }
 
   @override
@@ -281,12 +406,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                 color: secondaryColor,
                               ),
                             ),
-                            12.heightBox,
-                            const Divider(
-                              color: darkGreyColor,
-                              thickness: 1,
-                            ),
-                            8.heightBox,
+                            widget.snap['haveVarient'] ? 12.heightBox : Container(),
+                            widget.snap['haveVarient']
+                                ? const Divider(
+                                    color: darkGreyColor,
+                                    thickness: 1,
+                                  )
+                                : Container(),
+                            widget.snap['haveVarient'] ? 8.heightBox : Container(),
                             widget.snap['haveVarient']
                                 ? const Text(
                                     "Choose a varient",
@@ -298,7 +425,30 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                     ),
                                   )
                                 : Container(),
-                            widget.snap['haveVarient'] ? 16.heightBox : Container(),
+                            widget.snap['haveVarient'] ? 12.heightBox : Container(),
+                            // widget.snap['haveVarient']
+                            //     ? ListView.builder(
+                            //         physics: const NeverScrollableScrollPhysics(),
+                            //         itemCount: widget.snap["variantInfo"].length,
+                            //         shrinkWrap: true,
+                            //         itemBuilder: (BuildContext context, index) {
+                            //           var docSnap = widget.snap["variantInfo"][index];
+                            //
+                            //           return RadioListTile<String>(
+                            //             title: Text(docSnap['variantName']),
+                            //             subtitle: Text("Price: +\$ ${docSnap['variantPrice'].toDouble().toStringAsFixed(2)}"),
+                            //             value: docSnap['variantName'],
+                            //             groupValue: selectedVarient,
+                            //             onChanged: (value) {
+                            //               setState(() {
+                            //                 selectedVarient = value;
+                            //                 selectedVarientPrice = docSnap['variantPrice'].toDouble();
+                            //               });
+                            //             },
+                            //           );
+                            //         },
+                            //       )
+                            //     : Container(),
                             widget.snap['haveVarient']
                                 ? ListView.builder(
                                     physics: const NeverScrollableScrollPhysics(),
@@ -307,15 +457,56 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                     itemBuilder: (BuildContext context, index) {
                                       var docSnap = widget.snap["variantInfo"][index];
 
-                                      return RadioListTile<String>(
+                                      return CheckboxListTile(
                                         title: Text(docSnap['variantName']),
                                         subtitle: Text("Price: +\$ ${docSnap['variantPrice'].toDouble().toStringAsFixed(2)}"),
-                                        value: docSnap['variantName'],
-                                        groupValue: selectedVarient,
+                                        value: selectedVarientList[index],
+                                        onChanged: (bool? value) {
+                                          setState(() {
+                                            selectedVarientList[index] = value;
+                                          });
+                                        },
+                                      );
+                                    },
+                                  )
+                                : Container(),
+                            widget.snap['isQuantity'] ? 8.heightBox : Container(),
+                            widget.snap['isQuantity']
+                                ? const Divider(
+                                    color: darkGreyColor,
+                                    thickness: 1,
+                                  )
+                                : Container(),
+                            8.heightBox,
+                            widget.snap['isQuantity']
+                                ? const Text(
+                                    "Choose your choice",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: darkColor,
+                                    ),
+                                  )
+                                : Container(),
+                            widget.snap['isQuantity'] ? 12.heightBox : Container(),
+                            widget.snap['isQuantity']
+                                ? ListView.builder(
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    itemCount: widget.snap["quantityInfo"].length,
+                                    shrinkWrap: true,
+                                    itemBuilder: (BuildContext context, index) {
+                                      var docSnap = widget.snap["quantityInfo"][index];
+
+                                      return RadioListTile<String>(
+                                        title: Text(docSnap['quantityName']),
+                                        subtitle: Text("Price: +\$ ${docSnap['quantityPrice'].toDouble().toStringAsFixed(2)}"),
+                                        value: docSnap['quantityName'],
+                                        groupValue: selectedQuantity,
                                         onChanged: (value) {
                                           setState(() {
-                                            selectedVarient = value;
-                                            selectedVarientPrice = docSnap['variantPrice'].toDouble();
+                                            selectedQuantity = value;
+                                            selectedQuantityPrice = docSnap['quantityPrice'].toDouble();
                                           });
                                         },
                                       );

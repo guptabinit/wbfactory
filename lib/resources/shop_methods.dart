@@ -111,8 +111,11 @@ class ShopMethods {
     required double totalPrice,
     required String itemImage,
     required bool? haveVarient,
-    required String? selectedVarient,
-    required double? selectedVarientPrice,
+    required bool? isQuantity,
+    required List<String> selectedVarient,
+    required List<double> selectedVarientPrice,
+    required String? selectedQuantity,
+    required double? selectedQuantityPrice,
     required context,
     required double cartAmount,
   }) async {
@@ -134,6 +137,9 @@ class ShopMethods {
           'haveVarient': haveVarient,
           'selectedVarient': selectedVarient,
           'selectedVarientPrice': selectedVarientPrice,
+          'isQuantity': isQuantity,
+          'selectedQuantity': selectedQuantity,
+          'selectedQuantityPrice': selectedQuantityPrice,
         }
       }, SetOptions(merge: true));
 
@@ -155,8 +161,11 @@ class ShopMethods {
     required double totalPrice,
     required String itemImage,
     required bool? haveVarient,
-    required String? selectedVarient,
-    required double? selectedVarientPrice,
+    required bool? isQuantity,
+    required List<String> selectedVarient,
+    required List<double> selectedVarientPrice,
+    required String? selectedQuantity,
+    required double? selectedQuantityPrice,
     required context,
     required double cartAmount,
   }) async {
@@ -177,6 +186,9 @@ class ShopMethods {
           'haveVarient': haveVarient,
           'selectedVarient': selectedVarient,
           'selectedVarientPrice': selectedVarientPrice,
+          'isQuantity': isQuantity,
+          'selectedQuantity': selectedQuantity,
+          'selectedQuantityPrice': selectedQuantityPrice,
         }
       });
 

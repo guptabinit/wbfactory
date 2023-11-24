@@ -10,7 +10,9 @@ import '../other_screens/product_page.dart';
 import '../other_screens/search_screen.dart';
 
 class CategoriesPage extends StatefulWidget {
-  const CategoriesPage({super.key});
+
+  final bool userAvailable;
+  const CategoriesPage({super.key, required this.userAvailable});
 
   @override
   State<CategoriesPage> createState() => _CategoriesPageState();
@@ -97,7 +99,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
   Widget itemWidget(String imgUrl, String title) {
     return GestureDetector(
       onTap: () {
-        Get.to(() => ProductPage(title: title));
+        Get.to(() => ProductPage(title: title, userAvailable: widget.userAvailable,));
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,

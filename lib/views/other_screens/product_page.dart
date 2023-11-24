@@ -13,11 +13,17 @@ import 'package:wbfactory/views/other_screens/product_panel.dart';
 
 import '../../components/buttons/back_button.dart';
 import '../../components/cards/item_card.dart';
+import 'cart_page.dart';
 
 class ProductPage extends StatefulWidget {
   final String title;
+  final bool userAvailable;
 
-  const ProductPage({super.key, required this.title});
+  const ProductPage({
+    super.key,
+    required this.title,
+    required this.userAvailable,
+  });
 
   @override
   State<ProductPage> createState() => _ProductPageState();
@@ -39,6 +45,20 @@ class _ProductPageState extends State<ProductPage> {
           },
         ),
         leadingWidth: 90,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: IconButton(
+              onPressed: () {
+                widget.userAvailable ? Get.to(() => const CartPage()) : showLoginDialog(context);
+              },
+              icon: const Icon(
+                CupertinoIcons.shopping_cart,
+                color: secondaryColor,
+              ),
+            ),
+          ),
+        ],
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('products').where('category', isEqualTo: widget.title).snapshots(),

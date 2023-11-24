@@ -70,8 +70,8 @@ class _NavScreenState extends State<NavScreen> {
   @override
   Widget build(BuildContext context) {
     List pages = [
-      const HomePage(),
-      const CategoriesPage(),
+      HomePage(userAvailable: userAvailable,),
+      CategoriesPage(userAvailable: userAvailable,),
       const OrdersPage(),
       const OffersPage(),
     ];

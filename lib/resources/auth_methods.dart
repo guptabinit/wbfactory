@@ -131,7 +131,7 @@ class AuthMethods {
     try {
       // Start the phone number verification process
       await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: phoneNumber,
+        phoneNumber: "+1$phoneNumber",
         verificationCompleted: (PhoneAuthCredential credential) async {
           // Automatically handle verification if the user's phone number is instantly verified
         },
@@ -147,7 +147,7 @@ class AuthMethods {
           Get.to(
             () => VerificationPage(
               verificationId: verificationId,
-              mobileNumber: phoneNumber,
+              mobileNumber: "+1$phoneNumber",
               signUpData: signUpData,
             ),
           );

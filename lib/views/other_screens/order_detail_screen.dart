@@ -275,7 +275,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                   ),
                             ),
                                 Text(
-                                  " * ${itemSnap['quantity']}",
+                                  " • Qty: ${itemSnap['quantity']}",
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                     fontSize: 14,

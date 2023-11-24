@@ -106,12 +106,35 @@ class _FixedCartTileState extends State<FixedCartTile> {
                 ],
               ),
               6.heightBox,
+
               Text(
-                widget.itemSnap["haveVarient"] ? "Varient: ${widget.itemSnap["selectedVarient"]} (\$ ${widget.itemSnap["selectedVarientPrice"].toDouble().toStringAsFixed(2)})" : "Varient: No Variants Chosen.",
+                widget.itemSnap["isQuantity"] ? "Choice: ${widget.itemSnap["selectedQuantity"]} (\$ ${widget.itemSnap["selectedQuantityPrice"].toDouble().toStringAsFixed(2)})" : "Choice: No Choices Chosen.",
                 style: const TextStyle(
                   color: darkGreyColor,
                   fontStyle: FontStyle.italic,
                 ),
+              ),
+              4.heightBox,
+              widget.itemSnap['selectedVarient'].length == 0
+                  ? Container()
+                  : Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Variants: ",
+                    style: TextStyle(
+                      color: darkGreyColor,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                   Text(
+                    "${widget.itemSnap['selectedVarient']}",
+                    style: const TextStyle(
+                      color: darkGreyColor,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
