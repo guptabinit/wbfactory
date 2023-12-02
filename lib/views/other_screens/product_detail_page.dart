@@ -513,6 +513,26 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                     },
                                   )
                                 : Container(),
+                            widget.snap['haveDesc'] ? 8.heightBox : Container(),
+                            widget.snap['haveDesc']
+                                ? const Divider(
+                              color: darkGreyColor,
+                              thickness: 1,
+                            )
+                                : Container(),
+                            8.heightBox,
+                            widget.snap['haveDesc']
+                                ? Text(
+                              "Description: ${widget.snap['description']}",
+                              textAlign: TextAlign.left,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: darkGreyColor,
+                              ),
+                            )
+                                : Container(),
+                            widget.snap['haveDesc'] ? 12.heightBox : Container(),
                             86.heightBox,
                           ],
                         ),
