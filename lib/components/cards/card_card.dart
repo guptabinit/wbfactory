@@ -64,6 +64,7 @@ class _CartCardState extends State<CartCard> {
                               Text(
                                 widget.itemSnap["item_name"],
                                 overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,

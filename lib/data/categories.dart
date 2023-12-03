@@ -11,5 +11,5 @@ List categories = [
   {"name": 'Salads on Sandwiches', "image_path": 'https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/categories%2Fsandwiches.jpg?alt=media&token=3354a79b-0d71-4b9c-8713-0fdf2be8d43b'},
   {"name": 'Bagel Sandwiches', "image_path": 'https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/product_images%2FbagelSandwich%2F20.%20Strawberry%20CC.jpg?alt=media&token=4240f148-03d3-4884-a4c1-48e18658dd09'},
   {"name": 'Deli Salads By The Pound', "image_path": 'https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/product_images%2FdeliSaladByPound%2F96.%20baked%20salmon.jpg?alt=media&token=2080d5df-fc5b-4c9a-84a7-d93e61b4f13c'},
-  {"name": 'Lunch Sandwiches', "image_path": 'https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/product_images%2Fnewproduct%2Fegg-salad.jpg?alt=media&token=4ef8c47d-ee22-4f0d-b16b-17398cf1e25d'},
+  {"name": 'Lunch Sandwiches', "image_path": 'https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/product_images%2FlunchSandwiches%2Fegg_lettuce_tomato.jpg?alt=media&token=2823a063-653a-447e-82b9-dca134b63f36'},
 ];
