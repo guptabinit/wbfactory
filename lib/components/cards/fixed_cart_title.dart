@@ -7,6 +7,7 @@ import '../../constants/colors.dart';
 
 class FixedCartTile extends StatefulWidget {
   final dynamic itemSnap;
+
   const FixedCartTile({super.key, required this.itemSnap});
 
   @override
@@ -57,9 +58,9 @@ class _FixedCartTileState extends State<FixedCartTile> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                               Text(
+                              Text(
                                 widget.itemSnap["item_name"],
-                                 overflow: TextOverflow.ellipsis,
+                                overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: const TextStyle(
                                   fontSize: 16,
@@ -68,9 +69,9 @@ class _FixedCartTileState extends State<FixedCartTile> {
                                 ),
                               ),
                               4.heightBox,
-                               Text(
-                                 widget.itemSnap["category"],
-                                 overflow: TextOverflow.ellipsis,
+                              Text(
+                                widget.itemSnap["category"],
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400,
@@ -79,7 +80,7 @@ class _FixedCartTileState extends State<FixedCartTile> {
                               ),
                             ],
                           ),
-                           Row(
+                          Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
@@ -107,36 +108,44 @@ class _FixedCartTileState extends State<FixedCartTile> {
                 ],
               ),
               6.heightBox,
-
-              Text(
-                widget.itemSnap["isQuantity"] ? "Choice: ${widget.itemSnap["selectedQuantity"]} (\$ ${widget.itemSnap["selectedQuantityPrice"].toDouble().toStringAsFixed(2)})" : "Choice: No Choices Chosen.",
-                style: const TextStyle(
-                  color: darkGreyColor,
-                  fontStyle: FontStyle.italic,
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.itemSnap["isQuantity"] ? "Choice: ${widget.itemSnap["selectedQuantity"]} (\$ ${widget.itemSnap["selectedQuantityPrice"].toDouble().toStringAsFixed(2)})" : "Choice: No Choices Chosen.",
+                      style: const TextStyle(
+                        color: darkGreyColor,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                  Container(),
+                ],
               ),
               4.heightBox,
               widget.itemSnap['selectedVarient'].length == 0
                   ? Container()
                   : Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Variants: ",
-                    style: TextStyle(
-                      color: darkGreyColor,
-                      fontStyle: FontStyle.italic,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Variants: ",
+                          style: TextStyle(
+                            color: darkGreyColor,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            "${widget.itemSnap['selectedVarient']}",
+                            style: const TextStyle(
+                              color: darkGreyColor,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                   Text(
-                    "${widget.itemSnap['selectedVarient']}",
-                    style: const TextStyle(
-                      color: darkGreyColor,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ],
-              ),
             ],
           ),
         ),
