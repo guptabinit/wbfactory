@@ -63,16 +63,16 @@ class _DrawerListState extends State<DrawerList> {
               color: secondaryColor,
             ),
           ),
-          ListTile(
-            onTap: (){
-              Get.to(() => const YourReviewsPage());
-            },
-            title: const Text("Your reviews"),
-            trailing: const Icon(
-              Icons.keyboard_arrow_right,
-              color: secondaryColor,
-            ),
-          ),
+          // ListTile(
+          //   onTap: (){
+          //     Get.to(() => const YourReviewsPage());
+          //   },
+          //   title: const Text("Your reviews"),
+          //   trailing: const Icon(
+          //     Icons.keyboard_arrow_right,
+          //     color: secondaryColor,
+          //   ),
+          // ),
           ListTile(
             onTap: (){
               Get.to(() => const YourFavouritesPage());

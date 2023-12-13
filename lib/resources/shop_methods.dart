@@ -238,6 +238,7 @@ class ShopMethods {
     required cart,
     required String orderTime,
     required context,
+    required String? trackingUrl,
     TransactionResponse? transactionResponse,
   }) async {
     try {
@@ -261,6 +262,7 @@ class ShopMethods {
           'name': name,
           'email': email,
           'mobile': phone,
+          'tracking_url': trackingUrl,
           'transaction': transactionResponse != null
               ? {
             "responseCode": transactionResponse.responseCode,
@@ -281,21 +283,41 @@ class ShopMethods {
 
       await _firestore.collection('allOrders').doc(oid).set({
         'uid': curUser,
-        'oid': oid,
-        'order_status': orderStatus,
-        'payment_completed': paymentCompleted,
-        'is_cod': isCOD,
-        'is_pickup': isPickup,
-        'pickup_time': pickupTime,
-        'order_total': orderTotal,
-        'discount': discount,
-        'delivery_cost': deliveryCost,
-        'coupon_code': couponCode,
-        'cart': cart,
-        'order_time': orderTime,
-        'name': name,
-        'email': email,
-        'mobile': phone,
+        'orders': FieldValue.arrayUnion([oid]),
+        'unreviewed': FieldValue.arrayUnion([oid]),
+        oid: {
+          'oid': oid,
+          'order_status': orderStatus,
+          'payment_completed': paymentCompleted,
+          'is_cod': isCOD,
+          'is_pickup': isPickup,
+          'pickup_time': pickupTime,
+          'order_total': orderTotal,
+          'discount': discount,
+          'delivery_cost': deliveryCost,
+          'coupon_code': couponCode,
+          'cart': cart,
+          'order_time': orderTime,
+          'name': name,
+          'email': email,
+          'mobile': phone,
+          'tracking_url': trackingUrl,
+          'transaction': transactionResponse != null
+              ? {
+            "responseCode": transactionResponse.responseCode,
+            "authCode": transactionResponse.authCode,
+            "avsResultCode": transactionResponse.avsResultCode,
+            "cvvResultCode": transactionResponse.cvvResultCode,
+            "cavvResultCode": transactionResponse.cavvResultCode,
+            "transId": transactionResponse.transId,
+            "refTransID": transactionResponse.refTransID,
+            "transHash": transactionResponse.transHash,
+            "testRequest": transactionResponse.testRequest,
+            "accountNumber": transactionResponse.accountNumber,
+            "accountType": transactionResponse.accountType,
+          }
+              : null,
+        }
       }, SetOptions(merge: true));
     } catch (e) {
       customToast(e.toString(), darkGreyColor,context);

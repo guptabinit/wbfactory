@@ -76,42 +76,42 @@ class _PaymentScreenState extends State<PaymentScreen> {
     }
   }
 
-  storingInfo([TransactionResponse? paymentIntentData]) async {
-    try {
-      DateTime now = DateTime.now();
-      String formattedDate = DateFormat('dd/MM/yy kk:mm:ss').format(now);
-
-      String oid = "${widget.totalOrder + 1}";
-
-      await ShopMethods().saveOrder(
-        name: userData['full_name'],
-        phone: userData['mobile'],
-        email: userData['email'],
-        oid: oid,
-        orderStatus: 0,
-        paymentCompleted: true,
-        isCOD: false,
-        orderTotal: widget.totalAmount,
-        discount: widget.discount,
-        couponCode: widget.cid,
-        cart: widget.snap.data(),
-        orderTime: formattedDate,
-        context: context,
-        isPickup: widget.isPickup,
-        pickupTime: widget.selectedPickupTime,
-        deliveryCost: widget.deliveryCost,
-        transactionResponse: paymentIntentData,
-      );
-
-      await resetCartFunction();
-
-      await ShopMethods().updateOrder(totalOrder: (widget.totalOrder + 1));
-    } catch (e) {
-      if (mounted) {
-        customToast('Payment Failed', redColor, context);
-      }
-    }
-  }
+  // storingInfo([TransactionResponse? paymentIntentData]) async {
+  //   try {
+  //     DateTime now = DateTime.now();
+  //     String formattedDate = DateFormat('dd/MM/yy kk:mm:ss').format(now);
+  //
+  //     String oid = "${widget.totalOrder + 1}";
+  //
+  //     await ShopMethods().saveOrder(
+  //       name: userData['full_name'],
+  //       phone: userData['mobile'],
+  //       email: userData['email'],
+  //       oid: oid,
+  //       orderStatus: 0,
+  //       paymentCompleted: true,
+  //       isCOD: false,
+  //       orderTotal: widget.totalAmount,
+  //       discount: widget.discount,
+  //       couponCode: widget.cid,
+  //       cart: widget.snap.data(),
+  //       orderTime: formattedDate,
+  //       context: context,
+  //       isPickup: widget.isPickup,
+  //       pickupTime: widget.selectedPickupTime,
+  //       deliveryCost: widget.deliveryCost,
+  //       transactionResponse: paymentIntentData,
+  //     );
+  //
+  //     await resetCartFunction();
+  //
+  //     await ShopMethods().updateOrder(totalOrder: (widget.totalOrder + 1));
+  //   } catch (e) {
+  //     if (mounted) {
+  //       customToast('Payment Failed', redColor, context);
+  //     }
+  //   }
+  // }
 
   calculateAmount() {
     final price = (double.parse(widget.totalAmount.toStringAsFixed(2)) * 100)
@@ -307,6 +307,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           isPickup: widget.isPickup,
                           pickupTime: widget.selectedPickupTime,
                           deliveryCost: widget.deliveryCost,
+                          trackingUrl: null,
                         );
 
                         await resetCartFunction();

@@ -11,8 +11,8 @@ String generateJwt() {
 
   final claims = JsonWebTokenClaims.fromJson({
     "aud": "doordash",
-    "iss": "2e3be3e9-e42e-446d-909c-ab8bdd60c1d3",
-    "kid": "af79a37e-39cf-426b-a153-b5826cc2a305",
+    "iss": "fc160dbc-9283-4e26-b568-9ee0efd384fc",
+    "kid": "84437014-fe30-4a75-b931-62a8c60a07d9",
     "iat": currentTimer,
     "exp": currentTimer + 1800,
   });
@@ -28,7 +28,7 @@ String generateJwt() {
     JsonWebKey.fromJson(
       {
         "kty": "oct",
-        "k": "W6z_poOSWyFNtAgdoPxIeXcJ2hTIxXSeuqTN0TywIbw",
+        "k": "UMITk03e1-EldszRof6ZqI2QeduL7mgSONjcIrDGXUs",
       },
     ),
     algorithm: "HS256",

@@ -78,10 +78,10 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
                 cvvCode: cvvCode,
                 showBackView: isCvvFocused,
                 cardType: cardType,
-                cardBgColor: Theme.of(context).primaryColor,
-                onCreditCardWidgetChange: (
-                  CreditCardBrand brand,
-                ) {},
+                cardBgColor: Theme
+                    .of(context)
+                    .primaryColor,
+                onCreditCardWidgetChange: (CreditCardBrand brand,) {},
               ),
               CreditCardForm(
                 formKey: formKey,
@@ -153,109 +153,109 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
                 child: isPaymentStarted
                     ? const Center(child: CircularProgressIndicator())
                     : MainButton(
-                        title: 'Pay \$${widget.totalAmount.toStringAsFixed(2)}',
-                        onTap: () async {
-                          if (formKey.currentState!.validate()) {
-                            formKey.currentState!.save();
+                  title: 'Pay \$${widget.totalAmount.toStringAsFixed(2)}',
+                  onTap: () async {
+                    if (formKey.currentState!.validate()) {
+                      formKey.currentState!.save();
 
-                            setState(() {
-                              isPaymentStarted = true;
-                            });
+                      setState(() {
+                        isPaymentStarted = true;
+                      });
 
-                            try {
-                              final data = widget.snap?.data() as Map?;
-                              final items = data?['items'] as List?;
+                      try {
+                        final data = widget.snap?.data() as Map?;
+                        final items = data?['items'] as List?;
 
-                              final strItems =
-                                  items?.map((el) => "$el").join(", ");
+                        final strItems =
+                        items?.map((el) => "$el").join(", ");
 
-                              final invoiceRef =
-                                  data?['invoice_ref']?.toString() ?? "";
+                        final invoiceRef =
+                            data?['invoice_ref']?.toString() ?? "";
 
-                              if (invoiceRef.isEmptyOrNull) {
-                                Get.snackbar(
-                                  'Error',
-                                  "We can't find the invoice reference, try to clean your cart.",
-                                  snackPosition: SnackPosition.BOTTOM,
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 16.0,
-                                    vertical: 16.0,
-                                  ),
-                                );
-                                return;
-                              }
+                        if (invoiceRef.isEmptyOrNull) {
+                          Get.snackbar(
+                            'Error',
+                            "We can't find the invoice reference, try to clean your cart.",
+                            snackPosition: SnackPosition.BOTTOM,
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                              vertical: 16.0,
+                            ),
+                          );
+                          return;
+                        }
 
-                              final contracts = ApiContracts(
-                                creditCard: CreditCard(
-                                  cardNumber: cardNumber,
-                                  cardCode: cvvCode,
-                                  expirationDate: expiryDate,
-                                ),
-                                orderDetails: OrderDetails(
-                                  invoiceNumber: invoiceRef,
-                                  description: '$strItems - items',
-                                ),
-                                amount: (widget.totalAmount * 100).round(),
+                        final contracts = ApiContracts(
+                          creditCard: CreditCard(
+                            cardNumber: cardNumber,
+                            cardCode: cvvCode,
+                            expirationDate: expiryDate,
+                          ),
+                          orderDetails: OrderDetails(
+                            invoiceNumber: invoiceRef,
+                            description: '$strItems - items',
+                          ),
+                          amount: (widget.totalAmount * 100).round(),
+                        );
+
+                        await c.makePayment(contracts);
+
+                        String? trackingUrl;
+                        if (widget.deliveryId != null &&
+                            widget.dropOffPhone != null &&
+                            c.creditCardResponse.value?.messages
+                                ?.resultCode
+                                ?.toLowerCase() ==
+                                "ok") {
+                          try {
+                            final res = await DoordashApiClient()
+                                .acceptDeliveryQuote(
+                              deliveryId: widget.deliveryId!,
+                              dropoffPhoneNumber: widget.dropOffPhone,
+                            );
+                            if (!res.containsKey('status') ||
+                                res['status'] != true) {
+                              Get.snackbar(
+                                'Error',
+                                'Delivery Failed',
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: Colors.red,
                               );
-
-                              await c.makePayment(contracts);
-
-                              String? trackingUrl;
-                              if (widget.deliveryId != null &&
-                                  widget.dropOffPhone != null &&
-                                  c.creditCardResponse.value?.messages
-                                          ?.resultCode
-                                          ?.toLowerCase() ==
-                                      "ok") {
-                                try {
-                                  final res = await DoordashApiClient()
-                                      .acceptDeliveryQuote(
-                                    deliveryId: widget.deliveryId!,
-                                    dropoffPhoneNumber: widget.dropOffPhone,
-                                  );
-                                  if (!res.containsKey('status') ||
-                                      res['status'] != true) {
-                                    Get.snackbar(
-                                      'Error',
-                                      'Delivery Failed',
-                                      snackPosition: SnackPosition.BOTTOM,
-                                      backgroundColor: Colors.red,
-                                    );
-                                    return;
-                                  } else {
-                                    trackingUrl = res['tracking_url'];
-                                  }
-                                } catch (e) {
-                                  Get.snackbar(
-                                    'Error',
-                                    e.toString(),
-                                    snackPosition: SnackPosition.BOTTOM,
-                                    backgroundColor: Colors.red,
-                                  );
-                                  return;
-                                }
-                              }
-
-                              if (c.creditCardResponse.value?.messages
-                                      ?.resultCode
-                                      ?.toLowerCase() ==
-                                  "ok") {
-                                final res = c.creditCardResponse.value
-                                    ?.transactionResponse;
-                                await storingInfo(res);
-                                Get.close(3);
-                                Get.to(() => const OrderPlacedScreen());
-                              }
-                            } catch (e) {
-                              e.log();
-                            } finally {
-                              setState(() {
-                                isPaymentStarted = false;
-                              });
+                              return;
+                            } else {
+                              trackingUrl = res['tracking_url'];
                             }
+                          } catch (e) {
+                            Get.snackbar(
+                              'Error',
+                              e.toString(),
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.red,
+                            );
+                            return;
                           }
-                        },
-                      ),
+                        }
+
+                        if (c.creditCardResponse.value?.messages
+                            ?.resultCode
+                            ?.toLowerCase() ==
+                            "ok") {
+                          final res = c.creditCardResponse.value
+                              ?.transactionResponse;
+                          await storingInfo(res, trackingUrl);
+                          Get.close(3);
+                          Get.to(() => const OrderPlacedScreen());
+                        }
+                      } catch (e) {
+                        e.log();
+                      } finally {
+                        setState(() {
+                          isPaymentStarted = false;
+                        });
+                      }
+                    }
+                  },
+                ),
               ),
             ],
           ),
@@ -264,7 +264,7 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
     );
   }
 
-  storingInfo([TransactionResponse? paymentIntentData]) async {
+  storingInfo([TransactionResponse? paymentIntentData, String? trackingUrl,]) async {
     try {
       DateTime now = DateTime.now();
       String formattedDate = DateFormat('dd/MM/yy kk:mm:ss').format(now);
@@ -288,6 +288,7 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
         isPickup: widget.isPickup,
         pickupTime: widget.selectedPickupTime,
         deliveryCost: widget.deliveryCost,
+        trackingUrl: trackingUrl,
         transactionResponse: paymentIntentData,
       );
 
@@ -313,7 +314,9 @@ extension CreditCardType on String? {
     final types = detectCCType(this!);
 
     if (types.isNotEmpty) {
-      final type = types.elementAt(0).type;
+      final type = types
+          .elementAt(0)
+          .type;
 
       switch (type) {
         case 'visa':
