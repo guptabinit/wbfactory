@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -40,12 +39,20 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
   var orderData = {};
   double tax = 0.00;
   int totalOrders = 0;
+  String? deliveryId;
+  String? dropOffPhone;
 
   getData() async {
     try {
-      var commonSnap = await FirebaseFirestore.instance.collection('commons').doc('tax').get();
+      var commonSnap = await FirebaseFirestore.instance
+          .collection('commons')
+          .doc('tax')
+          .get();
 
-      var orderSnap = await FirebaseFirestore.instance.collection('commons').doc('orders').get();
+      var orderSnap = await FirebaseFirestore.instance
+          .collection('commons')
+          .doc('orders')
+          .get();
 
       taxData = commonSnap.data()!;
       orderData = orderSnap.data()!;
@@ -64,7 +71,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
   late DateTime restaurantClosingTime;
   List<DateTime> availableTimes = [];
 
-  List<DateTime> calculateAvailablePickupTimes(DateTime currentTime, DateTime openingTime, DateTime closingTime) {
+  List<DateTime> calculateAvailablePickupTimes(
+      DateTime currentTime, DateTime openingTime, DateTime closingTime) {
     List<DateTime> times = [];
     DateTime time = openingTime;
 
@@ -135,15 +143,18 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
     // for pickup time and date
     // Initialize the current time and restaurant opening/closing times.
     currentTime = DateTime.now();
-    restaurantOpeningTime = DateTime(currentTime.year, currentTime.month, currentTime.day, 17, 0); // 5:00 PM
-    restaurantClosingTime = DateTime(currentTime.year, currentTime.month, currentTime.day, 24, 0, 1); // 10:00 PM
+    restaurantOpeningTime = DateTime(
+        currentTime.year, currentTime.month, currentTime.day, 17, 0); // 5:00 PM
+    restaurantClosingTime = DateTime(currentTime.year, currentTime.month,
+        currentTime.day, 24, 0, 1); // 10:00 PM
 
     // Calculate available pickup times at 30-minute intervals.
-    availableTimes = calculateAvailablePickupTimes(currentTime, restaurantOpeningTime, restaurantClosingTime);
+    availableTimes = calculateAvailablePickupTimes(
+        currentTime, restaurantOpeningTime, restaurantClosingTime);
 
-    try{
+    try {
       getData();
-    } catch (e){
+    } catch (e) {
       customToast("Some error occurred", redColor, context);
     }
   }
@@ -205,7 +216,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(decelerationRate: ScrollDecelerationRate.fast),
+                  physics: const BouncingScrollPhysics(
+                      decelerationRate: ScrollDecelerationRate.fast),
                   child: Column(
                     children: [
                       ListView.builder(
@@ -213,7 +225,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                         itemCount: widget.snap["items"].length,
                         shrinkWrap: true,
                         itemBuilder: (BuildContext context, index) {
-                          var itemSnap = widget.snap[widget.snap['items'][index]];
+                          var itemSnap =
+                              widget.snap[widget.snap['items'][index]];
 
                           return FixedCartTile(
                             itemSnap: itemSnap,
@@ -265,7 +278,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                             ),
                                             Expanded(
                                               child: Text(
-                                                DateFormat('dd-MM-yyyy hh:mm a').format(selectedTime!),
+                                                DateFormat('dd-MM-yyyy hh:mm a')
+                                                    .format(selectedTime!),
                                                 style: const TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w500,
@@ -318,7 +332,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                       8.widthBox,
                                       TextButton(
                                         onPressed: () {
-                                          Get.to(() => const AddNewAddressPage());
+                                          Get.to(
+                                              () => const AddNewAddressPage());
                                         },
                                         child: const Text("Add New"),
                                       ),
@@ -327,9 +342,18 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                   2.heightBox,
                                   // text-field
                                   StreamBuilder(
-                                    stream: FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).snapshots(),
-                                    builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
-                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                    stream: FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(FirebaseAuth
+                                            .instance.currentUser!.uid)
+                                        .snapshots(),
+                                    builder: (context,
+                                        AsyncSnapshot<
+                                                DocumentSnapshot<
+                                                    Map<String, dynamic>>>
+                                            snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
                                         return const Center(
                                           child: SizedBox(
                                             height: 24,
@@ -345,7 +369,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                       final snap = snapshot.data!["address"];
 
                                       return ListView.builder(
-                                        physics: const NeverScrollableScrollPhysics(),
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
                                         itemCount: snap.length,
                                         shrinkWrap: true,
                                         itemBuilder: (
@@ -370,46 +395,85 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                             onChanged: (value) async {
                                               Get.defaultDialog(
                                                 title: "Please Wait",
-                                                middleText: "Checking order rate...",
+                                                middleText:
+                                                    "Checking order rate...",
                                                 barrierDismissible: false,
                                               );
 
-                                              final quoteModel = CreateQuoteModel(
+                                              final quoteModel =
+                                                  CreateQuoteModel(
                                                 // externalDeliveryID:
                                                 //     "TK-${widget.totalOrder}",
-                                                dropoffAddress: "${docSnap['street']}, ${docSnap['city']}, ${docSnap['country']}- ${docSnap['zip']}",
-                                                dropoffBusinessName: "${docSnap['name']}",
-                                                dropoffLocation: {"lat": docSnap['latitude'].toDouble(), "lng": docSnap['longitude'].toDouble()},
-                                                dropoffPhoneNumber: "+12345672345",
-                                                dropoffContactName: "${docSnap['name']}",
+                                                dropoffAddress:
+                                                    "${docSnap['street']}, ${docSnap['city']}, ${docSnap['country']}- ${docSnap['zip']}",
+                                                dropoffBusinessName:
+                                                    "${docSnap['name']}",
+                                                dropoffLocation: {
+                                                  "lat": docSnap['latitude']
+                                                      .toDouble(),
+                                                  "lng": docSnap['longitude']
+                                                      .toDouble()
+                                                },
+                                                dropoffPhoneNumber:
+                                                    "+12345672345",
+                                                dropoffContactName:
+                                                    "${docSnap['name']}",
                                                 orderValue: 10,
                                               );
 
-                                              final client = DoordashApiClient();
+                                              final client =
+                                                  DoordashApiClient();
 
                                               try {
-                                                final result = await client.createQuote(
-                                                  dropoffAddress: quoteModel.dropoffAddress,
-                                                  dropoffBusinessName: quoteModel.dropoffBusinessName,
-                                                  dropoffContactGivenName: quoteModel.dropoffContactName,
-                                                  dropoffPhoneNumber: quoteModel.dropoffPhoneNumber,
-                                                  latitude: quoteModel.dropoffLocation['lat']!.toDouble(),
-                                                  longitude: quoteModel.dropoffLocation['lng']!.toDouble(),
-                                                  orderValue: quoteModel.orderValue,
+                                                final result =
+                                                    await client.createQuote(
+                                                  dropoffAddress:
+                                                      quoteModel.dropoffAddress,
+                                                  dropoffBusinessName:
+                                                      quoteModel
+                                                          .dropoffBusinessName,
+                                                  dropoffContactGivenName:
+                                                      quoteModel
+                                                          .dropoffContactName,
+                                                  dropoffPhoneNumber: quoteModel
+                                                      .dropoffPhoneNumber,
+                                                  latitude: quoteModel
+                                                      .dropoffLocation['lat']!
+                                                      .toDouble(),
+                                                  longitude: quoteModel
+                                                      .dropoffLocation['lng']!
+                                                      .toDouble(),
+                                                  orderValue:
+                                                      quoteModel.orderValue,
                                                   pickupAddress: pickupAddress,
-                                                  pickupBusinessName: pickupBusinessName,
-                                                  pickupPhoneNumber: pickupPhoneNumber,
+                                                  pickupBusinessName:
+                                                      pickupBusinessName,
+                                                  pickupPhoneNumber:
+                                                      pickupPhoneNumber,
                                                 );
 
-                                                final info = await client.getDeliveryInfo(
+                                                final info = await client
+                                                    .getDeliveryInfo(
                                                   result.externalDeliveryId!,
                                                 );
 
+                                                if (info.externalDeliveryId !=
+                                                    null) {
+                                                  deliveryId =
+                                                      info.externalDeliveryId;
+                                                  dropOffPhone =
+                                                      info.dropoffPhoneNumber;
+                                                }
+
                                                 setState(() {
                                                   selectedAddress = value;
-                                                  selectedAddressFullInfo = docSnap;
+                                                  selectedAddressFullInfo =
+                                                      docSnap;
                                                   quoteResponse = info;
-                                                  deliveryCharge = info.fee != null ? (info.fee ?? 0) / 100.0 : 9.00;
+                                                  deliveryCharge = info.fee !=
+                                                          null
+                                                      ? (info.fee ?? 0) / 100.0
+                                                      : 9.00;
                                                 });
 
                                                 if (Get.isDialogOpen == true) {
@@ -422,8 +486,10 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                                   "Success",
                                                   "Order rate calculated",
                                                   backgroundColor: Colors.green,
-                                                  snackPosition: SnackPosition.BOTTOM,
-                                                  margin: const EdgeInsets.all(16),
+                                                  snackPosition:
+                                                      SnackPosition.BOTTOM,
+                                                  margin:
+                                                      const EdgeInsets.all(16),
                                                   colorText: Colors.white,
                                                 );
                                               } on FormatException catch (e) {
@@ -436,9 +502,11 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                                 Get.snackbar(
                                                   "Error",
                                                   e.message,
-                                                  snackPosition: SnackPosition.BOTTOM,
+                                                  snackPosition:
+                                                      SnackPosition.BOTTOM,
                                                   backgroundColor: primaryColor,
-                                                  margin: const EdgeInsets.all(16),
+                                                  margin:
+                                                      const EdgeInsets.all(16),
                                                   colorText: Colors.white,
                                                 );
                                               } on Exception catch (e) {
@@ -505,7 +573,6 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                               ],
                             ),
                             2.heightBox,
-                            // text-field
                             Container(
                               decoration: BoxDecoration(
                                 color: veryLightGreyColor,
@@ -517,7 +584,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                     onPressed: () {},
                                     child: const Text(
                                       "APPLY",
-                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                   contentPadding: const EdgeInsets.symmetric(
@@ -767,7 +835,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
               onTap: () {
                 setState(
                   () {
-                    final amount = widget.snap["cart_amount"].toDouble() + widget.snap["cart_amount"].toDouble() * 0.06;
+                    final amount = widget.snap["cart_amount"].toDouble() +
+                        widget.snap["cart_amount"].toDouble() * 0.06;
 
                     totalAmount = amount + (quoteResponse?.fee ?? 0.0) / 100.0;
                   },
@@ -813,6 +882,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                       cid: "",
                       snap: widget.snap,
                       isPickup: widget.isPickup,
+                      deliveryId: deliveryId,
+                      dropOffPhone: dropOffPhone,
                     ),
                   );
                 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -41,9 +40,10 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen> {
                       "Order Placed Successfully",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                          color: lightColor),
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        color: lightColor,
+                      ),
                     ),
                   ],
                 ),

@@ -1,12 +1,9 @@
-import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:velocity_x/velocity_x.dart';
 import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
+import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/components/buttons/main_button.dart';
 import 'package:wbfactory/constants/colors.dart';
 import 'package:wbfactory/constants/consts.dart';
@@ -26,6 +23,8 @@ class PaymentScreen extends StatefulWidget {
   final String selectedPickupTime;
   final bool isPickup;
   final double deliveryCost;
+  final String? deliveryId;
+  final String? dropOffPhone;
 
   const PaymentScreen({
     super.key,
@@ -37,6 +36,8 @@ class PaymentScreen extends StatefulWidget {
     this.selectedPickupTime = "",
     this.deliveryCost = 0.00,
     required this.isPickup,
+    this.deliveryId,
+    this.dropOffPhone,
   });
 
   @override
@@ -60,7 +61,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   getData() async {
     try {
-      var snap = await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get();
+      var snap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
 
       setState(() {
         userData = snap.data()!;
@@ -110,7 +114,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   calculateAmount() {
-    final price = (double.parse(widget.totalAmount.toStringAsFixed(2)) * 100).toInt().toString();
+    final price = (double.parse(widget.totalAmount.toStringAsFixed(2)) * 100)
+        .toInt()
+        .toString();
 
     return price.toString;
   }
@@ -191,10 +197,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: isCod ? secondaryColor : Colors.grey.shade200,
+                                    color: isCod
+                                        ? secondaryColor
+                                        : Colors.grey.shade200,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
                                   child: Center(
                                     child: Text(
                                       "COD",
@@ -217,10 +226,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: isCod ? Colors.grey.shade200 : secondaryColor,
+                                    color: isCod
+                                        ? Colors.grey.shade200
+                                        : secondaryColor,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
                                   child: Center(
                                     child: Column(
                                       children: [
@@ -228,7 +240,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                           "ONLINE PAY",
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            color: isCod ? darkColor : lightColor,
+                                            color:
+                                                isCod ? darkColor : lightColor,
                                             fontSize: 14,
                                           ),
                                         ),
@@ -251,7 +264,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
               child: Text(
                 "Total Payable Amount: \$${widget.totalAmount.toStringAsFixed(2)}",
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
             12.heightBox,
@@ -297,7 +311,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
                         await resetCartFunction();
 
-                        await ShopMethods().updateOrder(totalOrder: (widget.totalOrder + 1));
+                        await ShopMethods()
+                            .updateOrder(totalOrder: (widget.totalOrder + 1));
 
                         setState(() {
                           isLoading = false;
@@ -313,7 +328,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
                         Get.to(
                           () => CreditCardPaymentScreen(
-                            amount: (double.parse(widget.totalAmount.toStringAsFixed(2)) * 100),
+                            amount: (double.parse(
+                                    widget.totalAmount.toStringAsFixed(2)) *
+                                100),
                             snap: widget.snap,
                             totalAmount: widget.totalAmount,
                             totalOrder: widget.totalOrder,
@@ -323,6 +340,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             isPickup: widget.isPickup,
                             deliveryCost: widget.deliveryCost,
                             userData: userData,
+                            deliveryId: widget.deliveryId,
+                            dropOffPhone: widget.dropOffPhone,
                           ),
                         );
 

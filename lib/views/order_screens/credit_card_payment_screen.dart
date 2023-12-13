@@ -7,6 +7,7 @@ import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/components/buttons/main_button.dart';
 import 'package:wbfactory/constants/colors.dart';
 import 'package:wbfactory/constants/consts.dart';
+import 'package:wbfactory/resources/doordash_api_client.dart';
 import 'package:wbfactory/resources/shop_methods.dart';
 
 import '../../models/authorize/transaction_response.dart';
@@ -25,6 +26,8 @@ class CreditCardPaymentScreen extends StatefulWidget {
   final bool isPickup;
   final double deliveryCost;
   final Map<dynamic, dynamic> userData;
+  final String? deliveryId;
+  final String? dropOffPhone;
 
   const CreditCardPaymentScreen({
     super.key,
@@ -38,10 +41,13 @@ class CreditCardPaymentScreen extends StatefulWidget {
     required this.isPickup,
     required this.deliveryCost,
     required this.userData,
+    this.deliveryId,
+    this.dropOffPhone,
   });
 
   @override
-  State<CreditCardPaymentScreen> createState() => _CreditCardPaymentScreenState();
+  State<CreditCardPaymentScreen> createState() =>
+      _CreditCardPaymentScreenState();
 }
 
 class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
@@ -160,9 +166,11 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
                               final data = widget.snap?.data() as Map?;
                               final items = data?['items'] as List?;
 
-                              final strItems = items?.map((el) => "$el").join(", ");
+                              final strItems =
+                                  items?.map((el) => "$el").join(", ");
 
-                              final invoiceRef = data?['invoice_ref']?.toString() ?? "";
+                              final invoiceRef =
+                                  data?['invoice_ref']?.toString() ?? "";
 
                               if (invoiceRef.isEmptyOrNull) {
                                 Get.snackbar(
@@ -192,8 +200,48 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
 
                               await c.makePayment(contracts);
 
-                              if (c.creditCardResponse.value?.messages?.resultCode?.toLowerCase() == "ok") {
-                                final res = c.creditCardResponse.value?.transactionResponse;
+                              String? trackingUrl;
+                              if (widget.deliveryId != null &&
+                                  widget.dropOffPhone != null &&
+                                  c.creditCardResponse.value?.messages
+                                          ?.resultCode
+                                          ?.toLowerCase() ==
+                                      "ok") {
+                                try {
+                                  final res = await DoordashApiClient()
+                                      .acceptDeliveryQuote(
+                                    deliveryId: widget.deliveryId!,
+                                    dropoffPhoneNumber: widget.dropOffPhone,
+                                  );
+                                  if (!res.containsKey('status') ||
+                                      res['status'] != true) {
+                                    Get.snackbar(
+                                      'Error',
+                                      'Delivery Failed',
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      backgroundColor: Colors.red,
+                                    );
+                                    return;
+                                  } else {
+                                    trackingUrl = res['tracking_url'];
+                                  }
+                                } catch (e) {
+                                  Get.snackbar(
+                                    'Error',
+                                    e.toString(),
+                                    snackPosition: SnackPosition.BOTTOM,
+                                    backgroundColor: Colors.red,
+                                  );
+                                  return;
+                                }
+                              }
+
+                              if (c.creditCardResponse.value?.messages
+                                      ?.resultCode
+                                      ?.toLowerCase() ==
+                                  "ok") {
+                                final res = c.creditCardResponse.value
+                                    ?.transactionResponse;
                                 await storingInfo(res);
                                 Get.close(3);
                                 Get.to(() => const OrderPlacedScreen());
