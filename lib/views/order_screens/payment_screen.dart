@@ -16,26 +16,31 @@ import 'order_placed_screen.dart';
 
 class PaymentScreen extends StatefulWidget {
   final double totalAmount;
-  final int totalOrder;
+
+  // final int totalOrder;
   final double discount;
   final String cid;
+  final String cookingInstruction;
   final snap;
   final String selectedPickupTime;
   final bool isPickup;
   final double deliveryCost;
   final String? deliveryId;
   final String? dropOffPhone;
+  final Map<String, dynamic>? selectedAddressFullInfo;
 
   const PaymentScreen({
     super.key,
     required this.totalAmount,
-    required this.totalOrder,
+    // required this.totalOrder,
     required this.discount,
+    required this.cookingInstruction,
     required this.cid,
     required this.snap,
     this.selectedPickupTime = "",
     this.deliveryCost = 0.00,
     required this.isPickup,
+    required this.selectedAddressFullInfo,
     this.deliveryId,
     this.dropOffPhone,
   });
@@ -45,7 +50,7 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  bool isCod = true;
+  bool isCod = false;
   bool isLoading = false;
   var userData = {};
 
@@ -59,12 +64,29 @@ class _PaymentScreenState extends State<PaymentScreen> {
     });
   }
 
+  var orderData = {};
+
+  int totalOrder = 0;
+
+  getTotalOrder() async {
+    try {
+      var orderSnap = await FirebaseFirestore.instance.collection('commons').doc('orders').get();
+
+      orderData = orderSnap.data()!;
+
+      setState(() {
+        totalOrder = orderData['totalOrder'];
+      });
+    } catch (e) {
+      if (mounted) {
+        customToast(e.toString(), redColor, context);
+      }
+    }
+  }
+
   getData() async {
     try {
-      var snap = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
+      var snap = await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get();
 
       setState(() {
         userData = snap.data()!;
@@ -114,9 +136,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   // }
 
   calculateAmount() {
-    final price = (double.parse(widget.totalAmount.toStringAsFixed(2)) * 100)
-        .toInt()
-        .toString();
+    final price = (double.parse(widget.totalAmount.toStringAsFixed(2)) * 100).toInt().toString();
 
     return price.toString;
   }
@@ -188,35 +208,55 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         12.heightBox,
                         Row(
                           children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    isCod = true;
-                                  });
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: isCod
-                                        ? secondaryColor
-                                        : Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 12),
-                                  child: Center(
-                                    child: Text(
-                                      "COD",
-                                      style: TextStyle(
-                                        color: isCod ? lightColor : darkColor,
-                                        fontSize: 14,
+                            widget.isPickup
+                                ? Expanded(
+                                    child: GestureDetector(
+                                      onTap: widget.isPickup
+                                          ? () {
+                                              setState(() {
+                                                isCod = true;
+                                              });
+                                            }
+                                          : () {},
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: widget.isPickup
+                                              ? isCod
+                                                  ? secondaryColor
+                                                  : Colors.grey.shade200
+                                              : Colors.grey.shade200,
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(vertical: 12),
+                                        child: Center(
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                "COD",
+                                                style: TextStyle(
+                                                  color: isCod ? lightColor : darkColor,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                              widget.isPickup ? Container() : 4.widthBox,
+                                              widget.isPickup
+                                                  ? Container()
+                                                  : const Text(
+                                                      "DISABLED",
+                                                      style: TextStyle(
+                                                        color: darkColor,
+                                                        fontSize: 10,
+                                                      ),
+                                                    ),
+                                            ],
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            8.widthBox,
+                                  )
+                                : Container(),
+                            widget.isPickup ? 8.widthBox : Container(),
                             Expanded(
                               child: GestureDetector(
                                 onTap: () {
@@ -226,13 +266,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: isCod
-                                        ? Colors.grey.shade200
-                                        : secondaryColor,
+                                    color: isCod ? Colors.grey.shade200 : secondaryColor,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 12),
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
                                   child: Center(
                                     child: Column(
                                       children: [
@@ -240,8 +277,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                           "ONLINE PAY",
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            color:
-                                                isCod ? darkColor : lightColor,
+                                            color: isCod ? darkColor : lightColor,
                                             fontSize: 14,
                                           ),
                                         ),
@@ -264,8 +300,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               child: Text(
                 "Total Payable Amount: \$${widget.totalAmount.toStringAsFixed(2)}",
                 textAlign: TextAlign.center,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
             12.heightBox,
@@ -282,13 +317,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         isLoading = true;
                       });
 
-                      if (isCod == true) {
+                      await getTotalOrder();
+
+                      if (isCod == true && context.mounted) {
                         DateTime now = DateTime.now();
                         String formattedDate = DateFormat(
                           'dd/MM/yy kk:mm:ss',
                         ).format(now);
 
-                        String oid = "${widget.totalOrder + 1}";
+                        String oid = "${totalOrder + 1}";
+
+                        if (!mounted) return null;
 
                         await ShopMethods().saveOrder(
                           name: userData['full_name'],
@@ -308,12 +347,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           pickupTime: widget.selectedPickupTime,
                           deliveryCost: widget.deliveryCost,
                           trackingUrl: null,
+                          deliveryInfo: widget.selectedAddressFullInfo,
+                          cookingInstruction: widget.cookingInstruction,
                         );
 
                         await resetCartFunction();
 
-                        await ShopMethods()
-                            .updateOrder(totalOrder: (widget.totalOrder + 1));
+                        await ShopMethods().updateOrder(totalOrder: (totalOrder + 1));
 
                         setState(() {
                           isLoading = false;
@@ -329,12 +369,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
                         Get.to(
                           () => CreditCardPaymentScreen(
-                            amount: (double.parse(
-                                    widget.totalAmount.toStringAsFixed(2)) *
-                                100),
+                            amount: (double.parse(widget.totalAmount.toStringAsFixed(2)) * 100),
                             snap: widget.snap,
                             totalAmount: widget.totalAmount,
-                            totalOrder: widget.totalOrder,
+                            // totalOrder: widget.totalOrder,
                             discount: widget.discount,
                             cid: widget.cid,
                             selectedPickupTime: widget.selectedPickupTime,
@@ -343,6 +381,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             userData: userData,
                             deliveryId: widget.deliveryId,
                             dropOffPhone: widget.dropOffPhone,
+                            cookingInstruction: widget.cookingInstruction,
+                            selectedAddressFullInfo: widget.selectedAddressFullInfo,
                           ),
                         );
 

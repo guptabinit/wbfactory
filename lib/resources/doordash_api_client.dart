@@ -56,6 +56,7 @@ class DoordashApiClient {
     required int orderValue,
     required double latitude,
     required double longitude,
+    required List<Item> items,
   }) async {
     final createQuoteRequest = Uri.https(
       _baseUrlDoorDash,
@@ -90,7 +91,8 @@ class DoordashApiClient {
           "action_if_undeliverable": "return_to_pickup",
           "order_contains": {
             "alcohol": false,
-          }
+          },
+          "items": items,
         },
       ),
       headers: {

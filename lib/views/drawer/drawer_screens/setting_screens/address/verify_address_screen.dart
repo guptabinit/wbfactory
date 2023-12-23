@@ -149,9 +149,6 @@ class _VerifyAddressPageState extends State<VerifyAddressPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: secondaryColor,
-        ),
         backgroundColor: secondaryColor,
         centerTitle: true,
         title: const Text(

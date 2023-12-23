@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:velocity_x/velocity_x.dart';
 import '../../components/buttons/back_button.dart';
 import '../../constants/colors.dart';
@@ -76,6 +77,19 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 ],
               ),
               4.heightBox,
+
+              const Divider(),
+
+              if (widget.snap['usingDoorDash'] != null && widget.snap['usingDoorDash'] == true) ...[
+                TextButton(
+                  onPressed: () async {
+                    if (widget.snap['tracking_url'] != null) {
+                      await launchUrlString(widget.snap['tracking_url']);
+                    }
+                  },
+                  child: const Text('Click here to track order'),
+                ),
+              ],
               const Divider(),
 
               // Personal Info Section
@@ -224,7 +238,6 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 itemCount: widget.snap["cart"]["items"].length,
                 shrinkWrap: true,
                 itemBuilder: (BuildContext context, index) {
-
                   var itemSnap = widget.snap["cart"][widget.snap["cart"]['items'][index]];
 
                   return Container(
@@ -247,51 +260,51 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                               ),
                             ),
                           ),
-
                         ),
                         16.widthBox,
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                             Text(
-                              itemSnap['item_name'],
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: darkColor,
-                              ),
-                            ),
-                             4.heightBox,
-                             Row(
-                               children: [
-                                 Text(
-                                  "\$ ${itemSnap['package_price'].toDouble().toStringAsFixed(2)}",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: darkColor,
-                                  ),
-                            ),
-                                Text(
-                                  " • Qty: ${itemSnap['quantity']}",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: darkColor,
-                                  ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                itemSnap['item_name'],
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: darkColor,
                                 ),
-                              ],
-                             ),
-
-                          ],
+                              ),
+                              4.heightBox,
+                              Row(
+                                children: [
+                                  Text(
+                                    "\$ ${itemSnap['package_price'].toDouble().toStringAsFixed(2)}",
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: darkColor,
+                                    ),
+                                  ),
+                                  Text(
+                                    " • Qty: ${itemSnap['quantity']}",
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: darkColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         )
                       ],
                     ),
                   );
-
                 },
               ),
 

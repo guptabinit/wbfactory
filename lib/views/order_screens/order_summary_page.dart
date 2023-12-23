@@ -18,6 +18,7 @@ import '../../data/store_address.dart';
 import '../../models/create_quote_model.dart';
 import '../../models/doordash/quote_response.dart';
 import '../../resources/doordash_api_client.dart';
+import '../other_screens/coupon_code_page.dart';
 
 class CartSummaryPage extends StatefulWidget {
   final bool isPickup;
@@ -36,33 +37,104 @@ class CartSummaryPage extends StatefulWidget {
 class _CartSummaryPageState extends State<CartSummaryPage> {
   double deliveryCharge = 0.00;
   var taxData = {};
-  var orderData = {};
+  var couponData = {};
   double tax = 0.00;
-  int totalOrders = 0;
+
+  // int totalOrders = 0;
   String? deliveryId;
   String? dropOffPhone;
+  var cList = [];
+
+  String? dropoffAddress;
+  String? dropoffPhoneNumber;
+  List<Item>? items;
 
   getData() async {
     try {
-      var commonSnap = await FirebaseFirestore.instance
-          .collection('commons')
-          .doc('tax')
-          .get();
+      var taxSnap = await FirebaseFirestore.instance.collection('commons').doc('tax').get();
 
-      var orderSnap = await FirebaseFirestore.instance
-          .collection('commons')
-          .doc('orders')
-          .get();
+      var couponSnap = await FirebaseFirestore.instance.collection('commons').doc('coupons').get();
 
-      taxData = commonSnap.data()!;
-      orderData = orderSnap.data()!;
+      taxData = taxSnap.data()!;
+      couponData = couponSnap.data()!;
 
       setState(() {
-        tax = commonSnap['tax'].toDouble();
-        totalOrders = orderData['totalOrder'];
+        tax = taxSnap['tax'].toDouble();
+        cList = couponData['cList'];
       });
-    } catch (e) {}
+    } catch (e) {
+      showCustomToast("Some error occurred", redColor);
+    }
   }
+
+  void showCustomToast(String message, Color color) {
+    return customToast(message, color, context);
+  }
+
+  TextEditingController couponController = TextEditingController();
+  TextEditingController cookingInstructionController = TextEditingController();
+
+  // // bool isLoading = false;
+  // dynamic appliedCoupon;
+  bool isCouponValid = false;
+
+  //
+  // // check if coupon valid
+  // void checkCoupon(String code) {
+  //   // setState(() {
+  //   //   isLoading = true;
+  //   // });
+  //
+  //   // if coupon exist
+  //   for (int i = 0; i < cList.length; i++) {
+  //     if (code == cList[i]['code']) {
+  //       // code exists
+  //       if (cList[i]['oneTime']) {
+  //         // one time only
+  //         if (cList[i]['userAvail'].contains(FirebaseAuth.instance.currentUser!.uid.toString())) {
+  //           // user availed before
+  //           isCouponValid
+  //               ? setState(() {
+  //                   isCouponValid = false;
+  //                   // isLoading = false;
+  //                 })
+  //               : null;
+  //
+  //           showCustomToast("Can't use this coupon. You have used it before.", redColor);
+  //           // break;
+  //         }
+  //         // haven't availed before
+  //         !isCouponValid
+  //             ? setState(() {
+  //                 isCouponValid = true;
+  //                 // isLoading = false;
+  //                 appliedCoupon = cList[i];
+  //               })
+  //             : null;
+  //
+  //         showCustomToast("Coupon applied successfully", greenColor);
+  //         // break;
+  //       }
+  //
+  //       // can use it multiple times
+  //       !isCouponValid
+  //           ? setState(() {
+  //               isCouponValid = true;
+  //               // isLoading = false;
+  //               appliedCoupon = cList[i];
+  //             })
+  //           : null;
+  //
+  //       showCustomToast("Coupon applied successfully", greenColor);
+  //       // break;
+  //     }
+  //   }
+  //
+  //   // setState(() {
+  //   //   isLoading = false;
+  //   // });
+  //   // return null;
+  // }
 
   // for pickup time and date selection
   DateTime? selectedTime;
@@ -71,8 +143,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
   late DateTime restaurantClosingTime;
   List<DateTime> availableTimes = [];
 
-  List<DateTime> calculateAvailablePickupTimes(
-      DateTime currentTime, DateTime openingTime, DateTime closingTime) {
+  List<DateTime> calculateAvailablePickupTimes(DateTime currentTime, DateTime openingTime, DateTime closingTime) {
     List<DateTime> times = [];
     DateTime time = openingTime;
 
@@ -143,14 +214,11 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
     // for pickup time and date
     // Initialize the current time and restaurant opening/closing times.
     currentTime = DateTime.now();
-    restaurantOpeningTime = DateTime(
-        currentTime.year, currentTime.month, currentTime.day, 17, 0); // 5:00 PM
-    restaurantClosingTime = DateTime(currentTime.year, currentTime.month,
-        currentTime.day, 24, 0, 1); // 10:00 PM
+    restaurantOpeningTime = DateTime(currentTime.year, currentTime.month, currentTime.day, 17, 0); // 5:00 PM
+    restaurantClosingTime = DateTime(currentTime.year, currentTime.month, currentTime.day, 24, 0, 1); // 10:00 PM
 
     // Calculate available pickup times at 30-minute intervals.
-    availableTimes = calculateAvailablePickupTimes(
-        currentTime, restaurantOpeningTime, restaurantClosingTime);
+    availableTimes = calculateAvailablePickupTimes(currentTime, restaurantOpeningTime, restaurantClosingTime);
 
     try {
       getData();
@@ -216,8 +284,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(
-                      decelerationRate: ScrollDecelerationRate.fast),
+                  physics: const BouncingScrollPhysics(decelerationRate: ScrollDecelerationRate.fast),
                   child: Column(
                     children: [
                       ListView.builder(
@@ -225,13 +292,74 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                         itemCount: widget.snap["items"].length,
                         shrinkWrap: true,
                         itemBuilder: (BuildContext context, index) {
-                          var itemSnap =
-                              widget.snap[widget.snap['items'][index]];
+                          var itemSnap = widget.snap[widget.snap['items'][index]];
 
                           return FixedCartTile(
                             itemSnap: itemSnap,
                           );
                         },
+                      ),
+                      // Divider
+                      Container(
+                        height: 8,
+                        color: veryLightGreyColor,
+                      ),
+                      Container(
+                        padding: const EdgeInsets.only(
+                          left: 12,
+                          right: 12,
+                          bottom: 16,
+                          top: 4,
+                        ),
+                        decoration: const BoxDecoration(
+                          color: whiteColor,
+                        ),
+                        child: Column(
+                          children: [
+                            8.heightBox,
+                            Row(
+                              children: [
+                                const Expanded(
+                                  child: Text(
+                                    "Cooking Instruction (if any)",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                      color: darkColor,
+                                    ),
+                                  ),
+                                ),
+                                0.widthBox,
+                              ],
+                            ),
+                            8.heightBox,
+                            Container(
+                              decoration: BoxDecoration(
+                                color: veryLightGreyColor,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: TextField(
+                                controller: cookingInstructionController,
+                                maxLines: 3,
+                                decoration: const InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: 16,
+                                    horizontal: 12,
+                                  ),
+                                  isDense: true,
+                                  fillColor: veryLightGreyColor,
+                                  hintText: "Enter your cooking instruction here",
+                                  hintStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: darkGreyColor,
+                                  ),
+                                  border: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       // Divider
                       Container(
@@ -278,8 +406,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                             ),
                                             Expanded(
                                               child: Text(
-                                                DateFormat('dd-MM-yyyy hh:mm a')
-                                                    .format(selectedTime!),
+                                                DateFormat('dd-MM-yyyy hh:mm a').format(selectedTime!),
                                                 style: const TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w500,
@@ -332,8 +459,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                       8.widthBox,
                                       TextButton(
                                         onPressed: () {
-                                          Get.to(
-                                              () => const AddNewAddressPage());
+                                          Get.to(() => const AddNewAddressPage());
                                         },
                                         child: const Text("Add New"),
                                       ),
@@ -342,18 +468,9 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                   2.heightBox,
                                   // text-field
                                   StreamBuilder(
-                                    stream: FirebaseFirestore.instance
-                                        .collection('users')
-                                        .doc(FirebaseAuth
-                                            .instance.currentUser!.uid)
-                                        .snapshots(),
-                                    builder: (context,
-                                        AsyncSnapshot<
-                                                DocumentSnapshot<
-                                                    Map<String, dynamic>>>
-                                            snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
+                                    stream: FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).snapshots(),
+                                    builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
                                         return const Center(
                                           child: SizedBox(
                                             height: 24,
@@ -369,8 +486,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                       final snap = snapshot.data!["address"];
 
                                       return ListView.builder(
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
+                                        physics: const NeverScrollableScrollPhysics(),
                                         itemCount: snap.length,
                                         shrinkWrap: true,
                                         itemBuilder: (
@@ -395,85 +511,58 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                             onChanged: (value) async {
                                               Get.defaultDialog(
                                                 title: "Please Wait",
-                                                middleText:
-                                                    "Checking order rate...",
+                                                middleText: "Checking order rate...",
                                                 barrierDismissible: false,
                                               );
 
-                                              final quoteModel =
-                                                  CreateQuoteModel(
+                                              final kItems = (widget.snap['items'] as List).mapIndexed((e, i) => (Item(name: widget.snap[widget.snap['items'][i]]['item_name'], quantity: widget.snap[widget.snap['items'][i]]['quantity']))).toList();
+
+                                              final quoteModel = CreateQuoteModel(
                                                 // externalDeliveryID:
                                                 //     "TK-${widget.totalOrder}",
-                                                dropoffAddress:
-                                                    "${docSnap['street']}, ${docSnap['city']}, ${docSnap['country']}- ${docSnap['zip']}",
-                                                dropoffBusinessName:
-                                                    "${docSnap['name']}",
-                                                dropoffLocation: {
-                                                  "lat": docSnap['latitude']
-                                                      .toDouble(),
-                                                  "lng": docSnap['longitude']
-                                                      .toDouble()
-                                                },
-                                                dropoffPhoneNumber:
-                                                    "+12345672345",
-                                                dropoffContactName:
-                                                    "${docSnap['name']}",
+                                                dropoffAddress: "${docSnap['street']}, ${docSnap['city']}, ${docSnap['country']}- ${docSnap['zip']}",
+                                                dropoffBusinessName: "${docSnap['name']}",
+                                                dropoffLocation: {"lat": docSnap['latitude'].toDouble(), "lng": docSnap['longitude'].toDouble()},
+                                                dropoffPhoneNumber: "${docSnap['phone']}",
+                                                dropoffContactName: "${docSnap['name']}",
                                                 orderValue: 10,
                                               );
 
-                                              final client =
-                                                  DoordashApiClient();
+                                              final client = DoordashApiClient();
 
                                               try {
-                                                final result =
-                                                    await client.createQuote(
-                                                  dropoffAddress:
-                                                      quoteModel.dropoffAddress,
-                                                  dropoffBusinessName:
-                                                      quoteModel
-                                                          .dropoffBusinessName,
-                                                  dropoffContactGivenName:
-                                                      quoteModel
-                                                          .dropoffContactName,
-                                                  dropoffPhoneNumber: quoteModel
-                                                      .dropoffPhoneNumber,
-                                                  latitude: quoteModel
-                                                      .dropoffLocation['lat']!
-                                                      .toDouble(),
-                                                  longitude: quoteModel
-                                                      .dropoffLocation['lng']!
-                                                      .toDouble(),
-                                                  orderValue:
-                                                      quoteModel.orderValue,
+                                                final result = await client.createQuote(
+                                                  dropoffAddress: quoteModel.dropoffAddress,
+                                                  dropoffBusinessName: quoteModel.dropoffBusinessName,
+                                                  dropoffContactGivenName: quoteModel.dropoffContactName,
+                                                  dropoffPhoneNumber: quoteModel.dropoffPhoneNumber,
+                                                  latitude: quoteModel.dropoffLocation['lat']!.toDouble(),
+                                                  longitude: quoteModel.dropoffLocation['lng']!.toDouble(),
+                                                  orderValue: quoteModel.orderValue,
                                                   pickupAddress: pickupAddress,
-                                                  pickupBusinessName:
-                                                      pickupBusinessName,
-                                                  pickupPhoneNumber:
-                                                      pickupPhoneNumber,
+                                                  pickupBusinessName: pickupBusinessName,
+                                                  pickupPhoneNumber: pickupPhoneNumber,
+                                                  items: kItems,
                                                 );
 
-                                                final info = await client
-                                                    .getDeliveryInfo(
+                                                final info = await client.getDeliveryInfo(
                                                   result.externalDeliveryId!,
                                                 );
 
-                                                if (info.externalDeliveryId !=
-                                                    null) {
-                                                  deliveryId =
-                                                      info.externalDeliveryId;
-                                                  dropOffPhone =
-                                                      info.dropoffPhoneNumber;
+                                                if (info.externalDeliveryId != null) {
+                                                  deliveryId = info.externalDeliveryId;
+                                                  dropOffPhone = info.dropoffPhoneNumber;
                                                 }
 
                                                 setState(() {
                                                   selectedAddress = value;
-                                                  selectedAddressFullInfo =
-                                                      docSnap;
+                                                  selectedAddressFullInfo = docSnap;
                                                   quoteResponse = info;
-                                                  deliveryCharge = info.fee !=
-                                                          null
-                                                      ? (info.fee ?? 0) / 100.0
-                                                      : 9.00;
+                                                  deliveryCharge = info.fee != null ? (info.fee ?? 0) / 100.0 : 9.00;
+                                                  deliveryId = info.externalDeliveryId!;
+                                                  dropoffAddress = info.dropoffAddress!;
+                                                  dropoffPhoneNumber = info.dropoffPhoneNumber!;
+                                                  items = info.items;
                                                 });
 
                                                 if (Get.isDialogOpen == true) {
@@ -486,10 +575,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                                   "Success",
                                                   "Order rate calculated",
                                                   backgroundColor: Colors.green,
-                                                  snackPosition:
-                                                      SnackPosition.BOTTOM,
-                                                  margin:
-                                                      const EdgeInsets.all(16),
+                                                  snackPosition: SnackPosition.BOTTOM,
+                                                  margin: const EdgeInsets.all(16),
                                                   colorText: Colors.white,
                                                 );
                                               } on FormatException catch (e) {
@@ -502,11 +589,9 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                                 Get.snackbar(
                                                   "Error",
                                                   e.message,
-                                                  snackPosition:
-                                                      SnackPosition.BOTTOM,
+                                                  snackPosition: SnackPosition.BOTTOM,
                                                   backgroundColor: primaryColor,
-                                                  margin:
-                                                      const EdgeInsets.all(16),
+                                                  margin: const EdgeInsets.all(16),
                                                   colorText: Colors.white,
                                                 );
                                               } on Exception catch (e) {
@@ -567,7 +652,9 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                 ),
                                 8.widthBox,
                                 TextButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Get.to(() => const CouponCodePage());
+                                  },
                                   child: const Text("See All"),
                                 ),
                               ],
@@ -579,15 +666,36 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: TextField(
+                                controller: couponController,
                                 decoration: InputDecoration(
                                   suffixIcon: TextButton(
-                                    onPressed: () {},
+                                    onPressed: () {}, //checkCoupon(couponController.text),
                                     child: const Text(
                                       "APPLY",
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                        fontWeight: FontWeight.bold,
+                                        color: secondaryColor,
+                                      ),
                                     ),
                                   ),
+                                  // isLoading
+                                  //     ? TextButton(
+                                  //         onPressed: checkCoupon(couponController.text),
+                                  //         child: const Text(
+                                  //           "APPLY",
+                                  //           style: TextStyle(
+                                  //             fontWeight: FontWeight.bold,
+                                  //             color: secondaryColor,
+                                  //           ),
+                                  //         ),
+                                  //       )
+                                  //     : const SizedBox(
+                                  //         width: 12,
+                                  //         height: 12,
+                                  //         child: CircularProgressIndicator(
+                                  //           color: secondaryColor,
+                                  //         ),
+                                  //       ),
                                   contentPadding: const EdgeInsets.symmetric(
                                     vertical: 16,
                                     horizontal: 12,
@@ -605,19 +713,21 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                               ),
                             ),
                             8.heightBox,
-                            const Row(
-                              children: [
-                                Text(
-                                  "Coupon Code applied",
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    color: greenColor,
-                                  ),
-                                ),
-                              ],
-                            ),
+                            isCouponValid
+                                ? const Row(
+                                    children: [
+                                      Text(
+                                        "Coupon Code applied",
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: greenColor,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Container(),
                           ],
                         ),
                       ),
@@ -835,8 +945,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
               onTap: () {
                 setState(
                   () {
-                    final amount = widget.snap["cart_amount"].toDouble() +
-                        widget.snap["cart_amount"].toDouble() * 0.06;
+                    final amount = widget.snap["cart_amount"].toDouble() + widget.snap["cart_amount"].toDouble() * 0.06;
 
                     totalAmount = amount + (quoteResponse?.fee ?? 0.0) / 100.0;
                   },
@@ -847,7 +956,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                     Get.to(
                       () => PaymentScreen(
                         totalAmount: totalAmount,
-                        totalOrder: totalOrders,
+                        // totalOrder: totalOrders,
                         discount: 0.00,
                         cid: "",
                         snap: widget.snap,
@@ -855,6 +964,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                           'dd-MM-yyyy hh:mm a',
                         ).format(selectedTime!),
                         isPickup: widget.isPickup,
+                        cookingInstruction: cookingInstructionController.text,
+                        selectedAddressFullInfo: selectedAddressFullInfo,
                       ),
                     );
                   } else {
@@ -877,13 +988,15 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                   Get.to(
                     () => PaymentScreen(
                       totalAmount: totalAmount,
-                      totalOrder: totalOrders,
+                      // totalOrder: totalOrders,
                       discount: 0.00,
                       cid: "",
                       snap: widget.snap,
                       isPickup: widget.isPickup,
                       deliveryId: deliveryId,
                       dropOffPhone: dropOffPhone,
+                      cookingInstruction: cookingInstructionController.text,
+                      selectedAddressFullInfo: selectedAddressFullInfo,
                     ),
                   );
                 }

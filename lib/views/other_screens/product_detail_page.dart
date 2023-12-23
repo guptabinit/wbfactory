@@ -516,21 +516,33 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                             widget.snap['haveDesc'] ? 8.heightBox : Container(),
                             widget.snap['haveDesc']
                                 ? const Divider(
-                              color: darkGreyColor,
-                              thickness: 1,
-                            )
+                                    color: darkGreyColor,
+                                    thickness: 1,
+                                  )
+                                : Container(),
+                            8.heightBox,
+                            widget.snap['haveDesc']
+                                ? const Text(
+                                    "Description & Ingredient:",
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: darkColor,
+                                    ),
+                                  )
                                 : Container(),
                             8.heightBox,
                             widget.snap['haveDesc']
                                 ? Text(
-                              "Description: ${widget.snap['description']}",
-                              textAlign: TextAlign.left,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: darkGreyColor,
-                              ),
-                            )
+                                    "${widget.snap['description']}",
+                                    textAlign: TextAlign.left,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: darkGreyColor,
+                                    ),
+                                  )
                                 : Container(),
                             widget.snap['haveDesc'] ? 12.heightBox : Container(),
                             86.heightBox,

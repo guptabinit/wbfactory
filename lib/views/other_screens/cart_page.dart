@@ -22,6 +22,7 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> {
   bool isPickup = true;
+  bool disableDelivery = true;
 
   @override
   Widget build(BuildContext context) {
@@ -97,12 +98,12 @@ class _CartPageState extends State<CartPage> {
                             Expanded(
                               child: GestureDetector(
                                 onTap: () {
-                                  setState(() {
+                                  !isPickup ? setState(() {
                                     isPickup = true;
-                                  });
+                                  }) : null;
                                 },
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                                  padding: EdgeInsets.symmetric(vertical: disableDelivery ? 12 : 8),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
                                     color: isPickup ? secondaryColor : lightColor,
@@ -124,9 +125,9 @@ class _CartPageState extends State<CartPage> {
                             Expanded(
                               child: GestureDetector(
                                 onTap: () {
-                                  setState(() {
+                                  !disableDelivery ? setState(() {
                                     isPickup = false;
-                                  });
+                                  }) :  null;
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(vertical: 8),
@@ -135,13 +136,25 @@ class _CartPageState extends State<CartPage> {
                                     color: isPickup ? lightColor : secondaryColor,
                                   ),
                                   child: Center(
-                                    child: Text(
-                                      "Delivery",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                        color: isPickup ? darkColor : lightColor,
-                                      ),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          "Delivery",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                            color: isPickup ? darkColor : lightColor,
+                                          ),
+                                        ),
+                                        disableDelivery ? const Text(
+                                          "Coming Soon",
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w500,
+                                            color: secondaryColor,
+                                          ),
+                                        ) : Container(),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -160,7 +173,7 @@ class _CartPageState extends State<CartPage> {
                     Expanded(
                       child: cartLength != 0
                           ? SingleChildScrollView(
-                              physics: const BouncingScrollPhysics(),
+                              physics: const BouncingScrollPhysics(decelerationRate: ScrollDecelerationRate.fast),
                               child: Column(
                                 children: [
                                   ListView.builder(

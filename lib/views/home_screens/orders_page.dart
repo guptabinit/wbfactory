@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -44,8 +43,11 @@ class _OrdersPageState extends State<OrdersPage> {
                 ),
               ),
               StreamBuilder(
-                stream: FirebaseFirestore.instance.collection('orders').doc(FirebaseAuth.instance.currentUser!.uid).snapshots(),
-                builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+                stream: FirebaseFirestore.instance.collection('allOrders').where("uid", isEqualTo: FirebaseAuth.instance.currentUser!.uid).orderBy('oid', descending: true).snapshots(),
+                builder: (
+                  context,
+                  AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot,
+                ) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                       child: CircularProgressIndicator(
@@ -54,33 +56,43 @@ class _OrdersPageState extends State<OrdersPage> {
                     );
                   }
 
-                  var snap = snapshot.data!;
-                  var orderLength = snap['orders'].length;
+                  if (snapshot.hasData) {
+                    final orderLength = snapshot.data!.docs.length;
 
-                  return orderLength == 0
-                      ? Expanded(
-                          child: Center(
-                            child: Lottie.network(
-                              'https://lottie.host/1c93e52f-afdd-4f2e-9697-d66e27256df4/5jlcTbp7Ss.json',
-                              repeat: true,
-                              width: MediaQuery.of(context).size.width * 0.7,
-                              height: MediaQuery.of(context).size.width * 0.7,
+                    return orderLength == 0
+                        ? Expanded(
+                            child: Center(
+                              child: Lottie.network(
+                                'https://lottie.host/1c93e52f-afdd-4f2e-9697-d66e27256df4/5jlcTbp7Ss.json',
+                                repeat: true,
+                                width: MediaQuery.of(context).size.width * 0.7,
+                                height: MediaQuery.of(context).size.width * 0.7,
+                              ),
                             ),
-                          ),
-                        )
-                      : ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.only(top: 12),
-                          itemCount: orderLength,
-                          shrinkWrap: true,
-                          itemBuilder: (BuildContext context, index) {
-                            var mainSnap = snap[snap['orders'][index]];
+                          )
+                        : ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            padding: const EdgeInsets.only(top: 12),
+                            itemCount: orderLength,
+                            shrinkWrap: true,
+                            itemBuilder: (BuildContext context, index) {
+                              final snap = snapshot.data!.docs[index];
 
-                            return OrderCard(
-                              snap: mainSnap,
-                            );
-                          },
-                        );
+                              return OrderCard(
+                                snap: snap,
+                              );
+                            },
+                          );
+                  } else {
+                    return Center(
+                      child: Lottie.network(
+                        'https://lottie.host/1c93e52f-afdd-4f2e-9697-d66e27256df4/5jlcTbp7Ss.json',
+                        repeat: true,
+                        width: MediaQuery.of(context).size.width * 0.7,
+                        height: MediaQuery.of(context).size.width * 0.7,
+                      ),
+                    );
+                  }
                 },
               ),
             ],
