@@ -12,6 +12,7 @@ import '../../components/buttons/back_button.dart';
 import '../../components/buttons/main_button.dart';
 import '../../constants/colors.dart';
 import '../../constants/consts.dart';
+import '../../resources/shop_methods.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -23,6 +24,32 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   bool isPickup = true;
   bool disableDelivery = true;
+
+  bool isLoading = false;
+
+  void resetCartFun() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    String message = await ShopMethods().stringResetCard(context: context);
+
+    if (message == 'success') {
+      setState(() {
+        isLoading = false;
+      });
+      showingSnackbar("Cart deleted successfully", greenColor);
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      showingSnackbar("Error: $message", redColor);
+    }
+  }
+
+  showingSnackbar(String msg, Color color) {
+    customToast(msg, color, context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +66,18 @@ class _CartPageState extends State<CartPage> {
         leadingWidth: 90,
         actions: [
           IconButton(
+            onPressed: resetCartFun,
+            tooltip: "Delete Cart",
+            icon: const Icon(
+              Icons.delete_forever_sharp,
+              color: secondaryColor,
+            ),
+          ),
+          IconButton(
             onPressed: () {
               Get.offAll(() => const NavScreen());
             },
+            tooltip: "Home",
             icon: const Icon(
               Icons.home_filled,
               color: secondaryColor,

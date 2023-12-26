@@ -191,4 +191,47 @@ class AuthMethods {
     }
     return res;
   }
+
+  // Changing Password
+  Future<String> changeAuthPassword(
+      {email, password, newPassword, context}) async {
+    String res = "Some error occurred";
+    User currentUser = _auth.currentUser!;
+    final cred = EmailAuthProvider.credential(email: email, password: password);
+
+    try {
+      await currentUser.reauthenticateWithCredential(cred).then((value) {
+        currentUser.updatePassword(newPassword);
+      }).then((value) async {
+        await AuthMethods().updatePassword(newPassword: newPassword, context: context);
+
+        res = "success";
+      });
+    } catch (e) {
+      res = e.toString();
+    }
+
+    return res;
+  }
+
+  Future<String> updatePassword({
+    required String newPassword,
+    required context,
+  }) async {
+    String res = "Some error occurred";
+
+    try {
+      await _firestore
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set({'password': newPassword}, SetOptions(merge: true));
+
+      res = "success";
+    } catch (e) {
+      res = e.toString();
+    }
+
+    return res;
+  }
+
 }

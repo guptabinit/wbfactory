@@ -30,6 +30,8 @@ class _HomePageState extends State<HomePage> {
     {"id": 4, "image_path": 'https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/banners%2F23.png?alt=media&token=38097785-dc88-4b4c-bd78-bbe273932e25'},
   ];
 
+  bool showDeals = false;
+
   final CarouselController carouselController = CarouselController();
   int currentIndex = 0;
 
@@ -272,7 +274,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             16.heightBox,
-            Padding(
+            showDeals ? Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -337,7 +339,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
-            ),
+            ) : Container(),
             16.heightBox,
           ],
         ),

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:lottie/lottie.dart';
+import 'package:wbfactory/views/drawer/drawer_screens/setting_screens/edit_profile_screen.dart';
 import 'package:wbfactory/views/drawer/drawer_screens/setting_screens/saved_address.dart';
 import '../../../components/buttons/back_button.dart';
 import '../../../constants/colors.dart';
@@ -19,8 +20,8 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
-
-    final Uri url = Uri.parse("https://doc-hosting.flycricket.io/teriyaki-bowl-privacy-policy/8e5e969b-ac05-4afe-843b-1d74615ad4a6/privacy");
+    final Uri url = Uri.parse(
+        "https://doc-hosting.flycricket.io/teriyaki-bowl-privacy-policy/8e5e969b-ac05-4afe-843b-1d74615ad4a6/privacy");
 
     return Scaffold(
       appBar: AppBar(
@@ -59,6 +60,7 @@ class _SettingsPageState extends State<SettingsPage> {
             12.heightBox,
             GestureDetector(
               onTap: () {
+                Get.to(() => const EditProfileScreen());
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -86,7 +88,9 @@ class _SettingsPageState extends State<SettingsPage> {
                         child: Text(
                           "Edit Profile",
                           style: TextStyle(
-                              fontWeight: FontWeight.w500, fontSize: 16),
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                       const Icon(
@@ -143,8 +147,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             12.heightBox,
             GestureDetector(
-              onTap: () {
-              },
+              onTap: () {},
               child: Container(
                 decoration: BoxDecoration(
                   color: lightColor,

@@ -307,6 +307,24 @@ class ShopMethods {
     }
   }
 
+  Future<String> stringResetCard({required context}) async {
+    String res = "Some error occurred";
+    try {
+      await _firestore.collection('cart').doc(curUser).set({
+        'uid': curUser,
+        'cart_amount': 0.00,
+        'items': [],
+        'invoice_ref': generateInvoiceRef(),
+      }, SetOptions(merge: false));
+
+      res = "success";
+    } catch (e) {
+      res = e.toString();
+    }
+
+    return res;
+  }
+
   Future<void> updateOrder({required int totalOrder}) async {
     try {
       await _firestore.collection('commons').doc('orders').update({'totalOrder': totalOrder});

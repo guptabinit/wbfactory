@@ -55,6 +55,16 @@ class _DrawerListState extends State<DrawerList> {
         children: [
           ListTile(
             onTap: (){
+              Get.offAll(() => const NavScreen(currentIndex: 0,));
+            },
+            title: const Text("Home"),
+            trailing: const Icon(
+              Icons.keyboard_arrow_right,
+              color: secondaryColor,
+            ),
+          ),
+          ListTile(
+            onTap: (){
               Get.offAll(() => const NavScreen(currentIndex: 2,));
             },
             title: const Text("Your orders"),

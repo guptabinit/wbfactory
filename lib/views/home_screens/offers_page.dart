@@ -1,14 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/constants/consts.dart';
 
+import '../../components/cards/promotional_card.dart';
 import '../../constants/colors.dart';
 import '../../models/user_model.dart' as user_model;
 import '../../resources/auth_methods.dart';
 
 class OffersPage extends StatefulWidget {
-
   const OffersPage({super.key});
 
   @override
@@ -16,8 +18,9 @@ class OffersPage extends StatefulWidget {
 }
 
 class _OffersPageState extends State<OffersPage> {
-
   user_model.User? user;
+
+  bool showCoins = false;
 
   @override
   void initState() {
@@ -39,10 +42,10 @@ class _OffersPageState extends State<OffersPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(decelerationRate: ScrollDecelerationRate.fast),
+        physics: const BouncingScrollPhysics(
+            decelerationRate: ScrollDecelerationRate.fast),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Column(
@@ -69,7 +72,8 @@ class _OffersPageState extends State<OffersPage> {
               12.heightBox,
               // Coins Section
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                 decoration: BoxDecoration(
                   color: secondaryColor,
                   borderRadius: BorderRadius.circular(16),
@@ -83,90 +87,138 @@ class _OffersPageState extends State<OffersPage> {
                       fit: BoxFit.fitHeight,
                     ),
                     16.widthBox,
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "You have",
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: lightColor,
+                    showCoins
+                        ? Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "You have",
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                    color: lightColor,
+                                  ),
+                                ),
+                                2.heightBox,
+                                user == null
+                                    ? const Text(
+                                        "-- WB Coins",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                          color: lightColor,
+                                        ),
+                                      )
+                                    : Text(
+                                        "${user!.coins} WB Coins",
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                          color: lightColor,
+                                        ),
+                                      ),
+                                6.heightBox,
+                                const Text(
+                                  "1 WB Coin = \$1.00",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: lightColor,
+                                  ),
+                                ),
+                                2.heightBox,
+                                const Text(
+                                  "You can use them in your next purchase on WB App.",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                    color: lightColor,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          2.heightBox,
-                          user == null
-                              ? const Text(
-                                  "-- WB Coins",
+                          )
+                        : Expanded(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Stay Tuned!",
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                    color: lightColor,
+                                  ),
+                                ),
+                                4.heightBox,
+                                const Text(
+                                  "WB Coins are coming soon!",
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w600,
                                     color: lightColor,
                                   ),
-                                )
-                              : Text(
-                                  "${user!.coins} WB Coins",
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600,
-                                    color: lightColor,
-                                  ),
                                 ),
-                          6.heightBox,
-                          const Text(
-                            "1 WB Coin = \$1.00",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: lightColor,
+                              ],
                             ),
                           ),
-                          2.heightBox,
-                          const Text(
-                            "You can use them in your next purchase on WB App.",
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: lightColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                     Container(),
                   ],
                 ),
               ),
-              12.heightBox,
-              SingleChildScrollView(
-                physics: const BouncingScrollPhysics(decelerationRate: ScrollDecelerationRate.fast),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    4.heightBox,
-                    const Text(
-                      "Promotional Offers",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: darkColor,
-                      ),
-                    ),
-                    12.heightBox,
-                    promotionCard(context),
-                    12.heightBox,
-                    promotionCard(context),
-                    12.heightBox,
-                    promotionCard(context),
-                    12.heightBox,
-                    promotionCard(context),
-                    12.heightBox,
-                    promotionCard(context),
-                    12.heightBox,
-                    promotionCard(context),
-                  ],
+              16.heightBox,
+              const Text(
+                "Promo-codes for you",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                  color: darkColor,
                 ),
+              ),
+              StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection('commons')
+                    .doc("coupons")
+                    .snapshots(),
+                builder: (context,
+                    AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
+                        snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: primaryColor,
+                      ),
+                    );
+                  }
+
+                  var snap = snapshot.data!;
+                  var orderLength = snap['cList'].length;
+
+                  return orderLength == 0
+                      ? Expanded(
+                          child: Center(
+                            child: Lottie.network(
+                              'https://lottie.host/1c93e52f-afdd-4f2e-9697-d66e27256df4/5jlcTbp7Ss.json',
+                              repeat: true,
+                              width: MediaQuery.of(context).size.width * 0.7,
+                              height: MediaQuery.of(context).size.width * 0.7,
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.only(top: 12),
+                          itemCount: orderLength,
+                          shrinkWrap: true,
+                          itemBuilder: (BuildContext context, index) {
+                            var mainSnap = snap['cList'][index];
+
+                            return PromotionalCard(snap: mainSnap, couponPage: false,);
+                          },
+                        );
+                },
               )
             ],
           ),
@@ -193,17 +245,22 @@ class _OffersPageState extends State<OffersPage> {
                   bottomLeft: Radius.circular(12),
                 ),
                 child: CachedNetworkImage(
-                  imageUrl: "https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/categories%2Ffrom_our_grill.jpg?alt=media&token=a535b8f0-79bd-450f-8d09-5e6d42218a58",
+                  imageUrl:
+                      "https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/categories%2Ffrom_our_grill.jpg?alt=media&token=a535b8f0-79bd-450f-8d09-5e6d42218a58",
                   fit: BoxFit.cover,
-                  progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
-                  errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      Center(
+                          child: CircularProgressIndicator(
+                              value: downloadProgress.progress)),
+                  errorWidget: (context, url, error) =>
+                      const Center(child: Icon(Icons.error)),
                   width: double.infinity,
                 ),
               ),
             ),
           ),
           Container(
-            width: screenWidth(context) * 0.6,
+            width: screenWidth(context) * 0.7,
             padding: const EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 16,
@@ -255,11 +312,13 @@ class _OffersPageState extends State<OffersPage> {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: () {
-                      customToast("Code copied successfully", secondaryColor, context);
+                      customToast(
+                          "Code copied successfully", secondaryColor, context);
                     },
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 8),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: secondaryColor),

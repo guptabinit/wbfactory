@@ -98,8 +98,8 @@ class PaymentController extends GetxController {
   }
 
   final merchantAuthentication = const MerchantAuthentication(
-    apiLoginKey: '5KP3u95bQpv',
-    transactionKey: '346HZ32z3fP4hTG2',
-    merchantId: '123456',
+    apiLoginKey: '699xCpTny', // Live: 699xCpTny // Test: 5KP3u95bQpv
+    transactionKey: '7VNj6ynF95986H3D', // Live: 7VNj6ynF95986H3D // Test: 346HZ32z3fP4hTG2
+    merchantId: '9011480', // Live: 9011480 // Test: 123456
   );
 }

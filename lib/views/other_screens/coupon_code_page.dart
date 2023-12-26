@@ -89,7 +89,7 @@ class _CouponCodePageState extends State<CouponCodePage> {
                           itemBuilder: (BuildContext context, index) {
                             var mainSnap = snap['cList'][index];
 
-                            return PromotionalCard(snap: mainSnap);
+                            return PromotionalCard(snap: mainSnap, couponPage: true,);
                           },
                         );
                 },

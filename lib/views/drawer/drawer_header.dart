@@ -69,14 +69,15 @@ class HeaderDrawer extends StatelessWidget {
                       ),
                     ),
                     const Divider(color: darkGreyColor,),
-                    user == null ? const Text("You haven't order anything") : Text("${user!.totalOrders}+ orders so far")
+                    // user == null ? const Text("You haven't order anything") : Text("${user!.totalOrders}+ orders so far")
+                    const Text("Thanks for coming back 😄"),
                   ],
                 ),
               )
             ],
           ),
         ),
-        const Divider(color: darkColor,)
+        const Divider(color: darkGreyColor,)
       ],
     );
   }

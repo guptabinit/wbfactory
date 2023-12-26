@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -9,9 +9,10 @@ import '../../constants/colors.dart';
 import '../../resources/shop_methods.dart';
 
 class PromotionalCard extends StatefulWidget {
-  final snap;
+  final dynamic snap;
+  final bool couponPage;
 
-  const PromotionalCard({super.key, this.snap});
+  const PromotionalCard({super.key, this.snap, required this.couponPage});
 
   @override
   State<PromotionalCard> createState() => _PromotionalCardState();
@@ -47,7 +48,7 @@ class _PromotionalCardState extends State<PromotionalCard> {
             ),
           ),
           Container(
-            width: screenWidth(context) * 0.6,
+            width: screenWidth(context) * 0.7,
             padding: const EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 16,
@@ -61,6 +62,7 @@ class _PromotionalCardState extends State<PromotionalCard> {
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Text(
                   widget.snap['cName'],
@@ -114,9 +116,9 @@ class _PromotionalCardState extends State<PromotionalCard> {
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: secondaryColor),
                       ),
-                      child: const Text(
-                        "COPY",
-                        style: TextStyle(
+                      child: Text(
+                        widget.couponPage ? "APPLY" : "COPY",
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: secondaryColor,
