@@ -1,13 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:wbfactory/components/buttons/main_button.dart';
 import 'package:wbfactory/components/cards/order_card.dart';
 import '../../constants/colors.dart';
+import '../onboarding_screens/login_page.dart';
 
 class OrdersPage extends StatefulWidget {
-  const OrdersPage({super.key});
+  final bool userAvailable;
+  const OrdersPage({super.key, required this.userAvailable});
 
   @override
   State<OrdersPage> createState() => _OrdersPageState();
@@ -42,7 +46,7 @@ class _OrdersPageState extends State<OrdersPage> {
                   color: darkGreyColor,
                 ),
               ),
-              StreamBuilder(
+              widget.userAvailable ? StreamBuilder(
                 stream: FirebaseFirestore.instance.collection('allOrders').where("uid", isEqualTo: FirebaseAuth.instance.currentUser!.uid).orderBy('oid', descending: true).snapshots(),
                 builder: (
                   context,
@@ -94,6 +98,9 @@ class _OrdersPageState extends State<OrdersPage> {
                     );
                   }
                 },
+              ) : Padding(
+                padding: const EdgeInsets.only(top: 24),
+                child: MainButton(title: "Login/Signup to view more", onTap: (){ Get.offAll(() => const LoginPage()); }),
               ),
             ],
           ),

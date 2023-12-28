@@ -84,7 +84,7 @@ class _YourFavouritesPageState extends State<YourFavouritesPage> {
 
                         return GestureDetector(
                           onTap: () {
-                            Get.to(() => ProductDetailPage(snap: snap));
+                            Get.to(() => ProductDetailPage(snap: snap, userAvailable: true,));
                           },
                           child: ItemCard(
                             snap: snap,

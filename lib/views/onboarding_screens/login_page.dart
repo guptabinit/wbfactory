@@ -173,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 TextButton(
                   onPressed: () {
-                    customToast("Under Development", Colors.grey, context);
+                    Get.to(() => const NavScreen());
                   },
                   child: const Text(
                     "Continue without login",

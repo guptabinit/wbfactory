@@ -1,9 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:wbfactory/components/buttons/main_button.dart';
 import 'package:wbfactory/constants/consts.dart';
+import 'package:wbfactory/views/onboarding_screens/login_page.dart';
 
 import '../../components/cards/promotional_card.dart';
 import '../../constants/colors.dart';
@@ -11,7 +14,9 @@ import '../../models/user_model.dart' as user_model;
 import '../../resources/auth_methods.dart';
 
 class OffersPage extends StatefulWidget {
-  const OffersPage({super.key});
+
+  final bool userAvailable;
+  const OffersPage({super.key, required this.userAvailable});
 
   @override
   State<OffersPage> createState() => _OffersPageState();
@@ -24,12 +29,13 @@ class _OffersPageState extends State<OffersPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    try {
-      getUserData();
-    } catch (e) {
-      print("Error while fetching user");
+    if(widget.userAvailable){
+      try {
+        getUserData();
+      } catch (e) {
+        print("Error while fetching user");
+      }
     }
   }
 
@@ -71,7 +77,7 @@ class _OffersPageState extends State<OffersPage> {
               ),
               12.heightBox,
               // Coins Section
-              Container(
+              widget.userAvailable ? Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                 decoration: BoxDecoration(
@@ -167,7 +173,7 @@ class _OffersPageState extends State<OffersPage> {
                     Container(),
                   ],
                 ),
-              ),
+              ) : MainButton(title: "Login/Signup to view more", onTap: (){ Get.offAll(() => const LoginPage()); }),
               16.heightBox,
               const Text(
                 "Promo-codes for you",

@@ -130,7 +130,7 @@ class _ProductPageState extends State<ProductPage> {
 
                       return GestureDetector(
                         onTap: () {
-                          Get.to(() => ProductDetailPage(snap: snap));
+                          Get.to(() => ProductDetailPage(snap: snap, userAvailable: widget.userAvailable,));
                         },
                         child: ItemCard(
                           snap: snap,

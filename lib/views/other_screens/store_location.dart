@@ -43,7 +43,8 @@ class _StoreLocationState extends State<StoreLocation> {
         backgroundColor: lightColor,
         automaticallyImplyLeading: false,
         elevation: 0.0,
-        title: const Text("Location", style: TextStyle(fontWeight: FontWeight.w600),),
+        title: const Text("Location", style: TextStyle(fontWeight: FontWeight.w500),),
+        centerTitle: true,
         leading: backButton(
           onTap: () {
             Get.back();

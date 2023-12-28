@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -38,12 +39,25 @@ class _NavScreenState extends State<NavScreen> {
   void initState() {
     super.initState();
     currentIndex = widget.currentIndex;
+
+    getSharedPrefDetails();
+
     try {
       getUser();
     } catch (e) {
       print("Error while fetching user");
     }
-    getSharedPrefDetails();
+
+    // if(userAvailable){
+    //   try {
+    //     getUser();
+    //   } catch (e) {
+    //     if (kDebugMode) {
+    //       print("Error while fetching user");
+    //     }
+    //   }
+    // }
+
   }
 
   getSharedPrefDetails() async {
@@ -61,6 +75,13 @@ class _NavScreenState extends State<NavScreen> {
     });
   }
 
+  getUserData() async {
+    var tempUser = await AuthMethods().getUserDetails();
+    setState(() {
+      user = tempUser;
+    });
+  }
+
   void onTap(int index) {
     setState(() {
       currentIndex = index;
@@ -70,10 +91,10 @@ class _NavScreenState extends State<NavScreen> {
   @override
   Widget build(BuildContext context) {
     List pages = [
-      HomePage(userAvailable: userAvailable,),
-      CategoriesPage(userAvailable: userAvailable,),
-      const OrdersPage(),
-      const OffersPage(),
+      HomePage(userAvailable: userAvailable),
+      CategoriesPage(userAvailable: userAvailable),
+      OrdersPage(userAvailable: userAvailable),
+      OffersPage(userAvailable: userAvailable),
     ];
 
     return Scaffold(
@@ -85,9 +106,12 @@ class _NavScreenState extends State<NavScreen> {
               SafeArea(
                 child: HeaderDrawer(
                   user: user,
+                  userAvailable: userAvailable,
                 ),
               ),
-              const DrawerList(),
+              DrawerList(
+                userAvailable: userAvailable,
+              ),
             ],
           ),
         ),
@@ -119,7 +143,9 @@ class _NavScreenState extends State<NavScreen> {
             padding: const EdgeInsets.only(right: 8),
             child: IconButton(
               onPressed: () {
-                userAvailable ? Get.to(() => const CartPage()) : showLoginDialog(context);
+                userAvailable
+                    ? Get.to(() => const CartPage())
+                    : showLoginDialog(context);
               },
               icon: const Icon(
                 CupertinoIcons.shopping_cart,
@@ -143,9 +169,12 @@ class _NavScreenState extends State<NavScreen> {
         elevation: 10,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.category_outlined), label: "Category"),
-          BottomNavigationBarItem(icon: Icon(Icons.book_outlined), label: "Orders"),
-          BottomNavigationBarItem(icon: Icon(Icons.discount_outlined), label: "Offers"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.category_outlined), label: "Category"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.book_outlined), label: "Orders"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.discount_outlined), label: "Offers"),
         ],
       ),
     );

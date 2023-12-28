@@ -15,7 +15,8 @@ import '../other_screens/store_info.dart';
 import 'drawer_screens/settings_page.dart';
 
 class DrawerList extends StatefulWidget {
-  const DrawerList({super.key});
+  final bool userAvailable;
+  const DrawerList({super.key, required this.userAvailable});
 
   @override
   State<DrawerList> createState() => _DrawerListState();
@@ -69,7 +70,7 @@ class _DrawerListState extends State<DrawerList> {
           ),
           ListTile(
             onTap: (){
-              Get.offAll(() => const NavScreen(currentIndex: 2,));
+              !widget.userAvailable ? showLoginDialog(context) : Get.offAll(() => const NavScreen(currentIndex: 2,));
             },
             title: const Text("Your orders"),
             trailing: const Icon(
@@ -99,7 +100,7 @@ class _DrawerListState extends State<DrawerList> {
           // ),
           ListTile(
             onTap: (){
-              Get.to(() => const YourFavouritesPage());
+              !widget.userAvailable ? showLoginDialog(context) : Get.to(() => const YourFavouritesPage());
             },
             title: const Text("Your favourites"),
             trailing: const Icon(
@@ -109,7 +110,7 @@ class _DrawerListState extends State<DrawerList> {
           ),
           ListTile(
             onTap: (){
-              Get.to(() => const SettingsPage());
+              !widget.userAvailable ? showLoginDialog(context) : Get.to(() => const SettingsPage());
             },
             title: const Text("Settings"),
             trailing: const Icon(
@@ -129,9 +130,9 @@ class _DrawerListState extends State<DrawerList> {
           ),
           ListTile(
             onTap: () async {
-              logoutUser();
+              !widget.userAvailable ?  Get.offAll(() => const LoginPage()) : logoutUser();
             },
-            title: const Text("Log out"),
+            title: Text(widget.userAvailable ? "Log out" : "Login/Signup"),
             trailing: const Icon(
               Icons.keyboard_arrow_right,
               color: secondaryColor,

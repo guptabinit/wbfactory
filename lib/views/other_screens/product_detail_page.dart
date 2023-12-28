@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -13,9 +14,10 @@ import '../../components/buttons/back_button.dart';
 import '../../resources/auth_methods.dart';
 
 class ProductDetailPage extends StatefulWidget {
-  final snap;
+  final dynamic snap;
+  final bool userAvailable;
 
-  const ProductDetailPage({super.key, required this.snap});
+  const ProductDetailPage({super.key, required this.snap, required this.userAvailable});
 
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();
@@ -57,16 +59,25 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   @override
   void initState() {
     super.initState();
-    try {
-      getUserCartData();
-    } catch (e) {
-      print("Some error occurred while retrieving user's data");
+
+    if(widget.userAvailable){
+      try {
+        getUserCartData();
+      } catch (e) {
+        if (kDebugMode) {
+          print("Some error occurred while retrieving user's data: ${e.toString()}");
+        }
+      }
+
+      try {
+        getUserFavoriteData();
+      } catch (e) {
+        if (kDebugMode) {
+          print("Some error occurred while retrieving user's data: ${e.toString()}");
+        }
+      }
     }
-    try {
-      getUserFavoriteData();
-    } catch (e) {
-      print("Some error occurred while retrieving user's data");
-    }
+
     if (widget.snap["haveVarient"]) {
       for (int i = 0; i < widget.snap["variantInfo"].length; i++) {
         selectedVarientList.add(false);
@@ -301,7 +312,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ),
         leadingWidth: 90,
         actions: [
-          IconButton(
+          !widget.userAvailable ? Container() : IconButton(
             onPressed: () async {
               setState(() {
                 isLoading = true;
@@ -609,7 +620,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   )
                 : MainButton(
                     title: "Add to cart",
-                    onTap: addToCart,
+                    onTap: !widget.userAvailable ? (){showLoginDialog(context);} : addToCart,
                   ),
           ),
         ],

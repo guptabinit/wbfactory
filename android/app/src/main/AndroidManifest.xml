@@ -5,9 +5,9 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
-        android:label="wbfactory"
+        android:label="Whitestone Bagel Factory"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAMXhl3fHbT33cvkKox78W15sSkksejdnY"/>
         <activity

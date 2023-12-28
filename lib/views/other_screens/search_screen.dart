@@ -12,7 +12,8 @@ import 'package:wbfactory/views/other_screens/product_detail_page.dart';
 import '../../components/buttons/back_button.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+  final bool userAvailable;
+  const SearchScreen({super.key, required this.userAvailable});
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -146,7 +147,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
                                   return GestureDetector(
                                     onTap: () {
-                                      Get.to(() => ProductDetailPage(snap: snap));
+                                      Get.to(() => ProductDetailPage(snap: snap, userAvailable: widget.userAvailable,));
                                     },
                                     child: ItemCard(
                                       snap: snap,

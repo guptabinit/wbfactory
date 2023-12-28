@@ -2,13 +2,16 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:wbfactory/components/buttons/main_button.dart';
 import 'package:wbfactory/models/user_model.dart' as user_model;
 
 import '../../constants/colors.dart';
+import '../onboarding_screens/login_page.dart';
 
 class HeaderDrawer extends StatelessWidget {
   final user_model.User? user;
-  const HeaderDrawer({super.key, this.user});
+  final bool userAvailable;
+  const HeaderDrawer({super.key, this.user, required this.userAvailable});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +39,7 @@ class HeaderDrawer extends StatelessWidget {
                 ),
               ),
               16.heightBox,
-              Container(
+              !userAvailable ? MainButton(title: "Login/Signup", onTap: (){ Get.offAll(() => const LoginPage()); }) : Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: lightBlue,

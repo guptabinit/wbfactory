@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
             8.heightBox,
             GestureDetector(
               onTap: () {
-                Get.to(() => const SearchScreen());
+                Get.to(() => SearchScreen(userAvailable: widget.userAvailable,));
               },
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 12),

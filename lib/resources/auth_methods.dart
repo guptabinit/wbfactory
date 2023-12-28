@@ -22,65 +22,58 @@ class AuthMethods {
 
   // register a new user
   Future<String> signUpUser({
-    required String email,
-    required String fullName,
-    required String mobile,
-    required String password,
-    required bool isVerified,
+    required Map<String, String> data,
   }) async {
     String res = "Some error occurred";
 
     try {
-      if (email.isNotEmpty || fullName.isNotEmpty || mobile.isNotEmpty || password.isNotEmpty || password.length >= 6) {
+      if (data['email']!.isNotEmpty || data['phone']!.isNotEmpty || data['full_name']!.isNotEmpty || data['password']!.isNotEmpty || data['password']!.length >= 6) {
         // verify Mobile Number
-        if (isVerified) {
-          // register user
-          UserCredential cred = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+        // register user
+        UserCredential cred = await _auth.createUserWithEmailAndPassword(email: data['email']!, password: data['password']!);
 
-          // add user to the database
-          user_model.User user = user_model.User(
-            uid: cred.user!.uid,
-            email: email,
-            mobile: mobile,
-            fullName: fullName,
-            cart: [],
-            favourite: [],
-            favouriteList: [],
-            cartAmount: 0.00,
-            totalOrders: 0,
-            coins: 0,
-            address: [],
-            usedCoupons: [],
-          );
+        // add user to the database
+        user_model.User user = user_model.User(
+          uid: cred.user!.uid,
+          email: data['email']!,
+          mobile: data['phone']!,
+          fullName: data['full_name']!,
+          cart: [],
+          favourite: [],
+          favouriteList: [],
+          cartAmount: 0.00,
+          totalOrders: 0,
+          coins: 0,
+          address: [],
+          usedCoupons: [],
+        );
 
-          order_model.Order order = order_model.Order(
-            uid: cred.user!.uid,
-            email: email,
-            fullName: fullName,
-            mobile: mobile,
-            orders: [],
-            unreviewed: [],
-            reviews: [],
-          );
+        order_model.Order order = order_model.Order(
+          uid: cred.user!.uid,
+          email: data['email']!,
+          fullName: data['full_name']!,
+          mobile: data['phone']!,
+          orders: [],
+          unreviewed: [],
+          reviews: [],
+        );
 
-          // adding user info in database
-          await _firestore.collection('users').doc(cred.user!.uid).set(user.toJson());
-          await _firestore.collection('orders').doc(cred.user!.uid).set(order.toJson());
-          await _firestore.collection('cart').doc(cred.user!.uid).set({
-            'uid': cred.user!.uid,
-            'cart_amount': 0.00,
-            'items': [],
-          });
-          await _firestore.collection('coins').doc(cred.user!.uid).set({
-            "uid": cred.user!.uid,
-            "coins": [],
-            "cash": 0.00,
-          });
+        // adding user info in database
+        await _firestore.collection('users').doc(cred.user!.uid).set(user.toJson());
+        await _firestore.collection('orders').doc(cred.user!.uid).set(order.toJson());
+        await _firestore.collection('cart').doc(cred.user!.uid).set({
+          'uid': cred.user!.uid,
+          'cart_amount': 0.00,
+          'items': [],
+        });
+        await _firestore.collection('coins').doc(cred.user!.uid).set({
+          "uid": cred.user!.uid,
+          "coins": [],
+          "cash": 0.00,
+        });
 
-          res = "success";
-        } else {
-          res = 'Phone number is not verified';
-        }
+        res = "success";
+
       } else {
         res = 'Please enter all the details';
       }
@@ -126,77 +119,70 @@ class AuthMethods {
     return res;
   }
 
-  // verify a phone number *****
-  Future<String> sendVerificationCode({
-    required String phoneNumber,
-    required Map<String, String> signUpData,
-    required context,
-  }) async {
-    String res = "Some error occurred";
+  // // verify a phone number *****
+  // Future<void> sendVerificationCode({
+  //   required String phoneNumber,
+  //   required Map<String, String> signUpData,
+  //   required context,
+  // }) async {
+  //
+  //   try {
+  //     // Start the phone number verification process
+  //     await FirebaseAuth.instance.verifyPhoneNumber(
+  //       phoneNumber: "+1$phoneNumber",
+  //       verificationCompleted: (PhoneAuthCredential credential) async {
+  //         // Automatically handle verification if the user's phone number is instantly verified
+  //       },
+  //       verificationFailed: (FirebaseAuthException e) {
+  //         customToast('verification failed: $e', redColor, context);
+  //       },
+  //       codeSent: (String verificationId, int? resendToken) {
+  //         customToast("Code sent successfully", greenColor, context);
+  //         Get.to(
+  //           () => VerificationPage(
+  //             verificationId: verificationId,
+  //             mobileNumber: "+1$phoneNumber",
+  //             signUpData: signUpData,
+  //           ),
+  //         );
+  //       },
+  //       codeAutoRetrievalTimeout: (String verificationId) {
+  //         // Handle code auto-retrieval timeout
+  //         // This callback is triggered if the automatic code retrieval process times out
+  //         customToast("Retrieval Timeout: $verificationId", redColor, context);
+  //       },
+  //       timeout: const Duration(seconds: 60), // Timeout duration for the verification process
+  //     );
+  //   } catch (e) {
+  //     customToast('error: $e', redColor, context);
+  //   }
+  //
+  // }
 
-    try {
-      // Start the phone number verification process
-      await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: "+1$phoneNumber",
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          // Automatically handle verification if the user's phone number is instantly verified
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          res = 'verification failed: $e';
-        },
-        codeSent: (String verificationId, int? resendToken) async {
-          // Handle code sent to the user's phone
-          // You can store the verification ID and resend token if needed
-          // For example, you might display a UI to enter the verification code
-          // and call `signInWithCredential` using the verification code
-          customToast("Code sent successfully", greenColor, context);
-          Get.to(
-            () => VerificationPage(
-              verificationId: verificationId,
-              mobileNumber: "+1$phoneNumber",
-              signUpData: signUpData,
-            ),
-          );
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {
-          // Handle code auto-retrieval timeout
-          // This callback is triggered if the automatic code retrieval process times out
-          res = "Retrieval Timeout: $verificationId";
-        },
-        timeout: const Duration(seconds: 60), // Timeout duration for the verification process
-      );
-      res = 'success';
-    } catch (e) {
-      res = 'error: $e';
-    }
-
-    return res;
-  }
-
-  Future<String> verifyCode({
-    required String verificationId,
-    required String smsCode,
-    required context,
-  }) async {
-    String res = 'Some error occurred';
-    var credential = PhoneAuthProvider.credential(
-      verificationId: verificationId,
-      smsCode: smsCode,
-    );
-    try {
-      await _auth.signInWithCredential(credential);
-
-      await _auth.signOut();
-
-      // customToast("Successfully Login", greenColor, context);
-
-      res = 'success';
-    } catch (e) {
-      customToast("error: $e", redColor, context);
-      res = 'error: $e';
-    }
-    return res;
-  }
+  // Future<String> verifyCode({
+  //   required String verificationId,
+  //   required String smsCode,
+  //   required context,
+  // }) async {
+  //   String res = 'Some error occurred';
+  //   var credential = PhoneAuthProvider.credential(
+  //     verificationId: verificationId,
+  //     smsCode: smsCode,
+  //   );
+  //   try {
+  //     await _auth.signInWithCredential(credential);
+  //
+  //     await _auth.signOut();
+  //
+  //     // customToast("Successfully Login", greenColor, context);
+  //
+  //     res = 'success';
+  //   } catch (e) {
+  //     customToast("error: $e", redColor, context);
+  //     res = 'error: $e';
+  //   }
+  //   return res;
+  // }
 
   // Changing Password
 
