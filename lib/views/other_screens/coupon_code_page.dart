@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -10,13 +11,36 @@ import '../../components/cards/promotional_card.dart';
 import '../../constants/colors.dart';
 
 class CouponCodePage extends StatefulWidget {
-  const CouponCodePage({super.key});
+  final Map<dynamic, dynamic> data;
+  final List<dynamic> usedCoupons;
+
+  const CouponCodePage(
+      {super.key, required this.data, required this.usedCoupons});
 
   @override
   State<CouponCodePage> createState() => _CouponCodePageState();
 }
 
 class _CouponCodePageState extends State<CouponCodePage> {
+  List realCouponList = [];
+
+  @override
+  void initState() {
+    try {
+      setState(() {
+        realCouponList = widget.data['code_list']
+            .where((element) => !widget.usedCoupons.contains(element))
+            .toList();
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print("No Coupons");
+      }
+    }
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,44 +80,42 @@ class _CouponCodePageState extends State<CouponCodePage> {
                 ),
               ),
               8.heightBox,
-              StreamBuilder(
-                stream: FirebaseFirestore.instance.collection('commons').doc("coupons").snapshots(),
-                builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        color: primaryColor,
-                      ),
-                    );
-                  }
-
-                  var snap = snapshot.data!;
-                  var orderLength = snap['cList'].length;
-
-                  return orderLength == 0
-                      ? Expanded(
-                          child: Center(
-                            child: Lottie.network(
-                              'https://lottie.host/1c93e52f-afdd-4f2e-9697-d66e27256df4/5jlcTbp7Ss.json',
-                              repeat: true,
-                              width: MediaQuery.of(context).size.width * 0.7,
-                              height: MediaQuery.of(context).size.width * 0.7,
-                            ),
+              realCouponList.isEmpty
+                  ? Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Lottie.network(
+                          'https://lottie.host/1c93e52f-afdd-4f2e-9697-d66e27256df4/5jlcTbp7Ss.json',
+                          repeat: true,
+                          width: MediaQuery.of(context).size.width * 0.7,
+                          height: MediaQuery.of(context).size.width * 0.7,
+                        ),
+                        const Text(
+                          "Sorry! No Offers Present",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: secondaryColor,
                           ),
-                        )
-                      : ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.only(top: 12),
-                          itemCount: orderLength,
-                          shrinkWrap: true,
-                          itemBuilder: (BuildContext context, index) {
-                            var mainSnap = snap['cList'][index];
+                        ),
+                      ],
+                    ),
+                  )
+                  : ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.only(top: 12),
+                      itemCount: realCouponList.length,
+                      shrinkWrap: true,
+                      itemBuilder: (BuildContext context, index) {
+                        var couponSnap = widget.data[realCouponList[index]];
 
-                            return PromotionalCard(snap: mainSnap, couponPage: true,);
-                          },
+                        return PromotionalCard(
+                          snap: couponSnap,
+                          couponPage: true,
                         );
-                },
-              ),
+                      },
+                    ),
             ],
           ),
         ),

@@ -194,7 +194,7 @@ class _OffersPageState extends State<OffersPage> {
                   }
 
                   var snap = snapshot.data!;
-                  var orderLength = snap['cList'].length;
+                  var orderLength = snap['code_list'].length;
 
                   return orderLength == 0
                       ? Expanded(
@@ -213,7 +213,7 @@ class _OffersPageState extends State<OffersPage> {
                           itemCount: orderLength,
                           shrinkWrap: true,
                           itemBuilder: (BuildContext context, index) {
-                            var mainSnap = snap['cList'][index];
+                            var mainSnap = snap[snap['code_list'][index]];
 
                             return PromotionalCard(snap: mainSnap, couponPage: false,);
                           },
@@ -227,118 +227,4 @@ class _OffersPageState extends State<OffersPage> {
     );
   }
 
-  Widget promotionCard(context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: veryLightGreyColor,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: AspectRatio(
-              aspectRatio: 3 / 4,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  bottomLeft: Radius.circular(12),
-                ),
-                child: CachedNetworkImage(
-                  imageUrl:
-                      "https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/categories%2Ffrom_our_grill.jpg?alt=media&token=a535b8f0-79bd-450f-8d09-5e6d42218a58",
-                  fit: BoxFit.cover,
-                  progressIndicatorBuilder: (context, url, downloadProgress) =>
-                      Center(
-                          child: CircularProgressIndicator(
-                              value: downloadProgress.progress)),
-                  errorWidget: (context, url, error) =>
-                      const Center(child: Icon(Icons.error)),
-                  width: double.infinity,
-                ),
-              ),
-            ),
-          ),
-          Container(
-            width: screenWidth(context) * 0.7,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 16,
-            ),
-            decoration: const BoxDecoration(
-              color: veryLightGreyColor,
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(12),
-                bottomRight: Radius.circular(12),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "15% off on your first order",
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: darkColor,
-                  ),
-                ),
-                4.heightBox,
-                const Row(
-                  children: [
-                    Text(
-                      "Apply code: ",
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400,
-                        color: darkGreyColor,
-                      ),
-                    ),
-                    Text(
-                      "FIRST15",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: secondaryColor,
-                      ),
-                    ),
-                  ],
-                ),
-                8.heightBox,
-                Material(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () {
-                      customToast(
-                          "Code copied successfully", secondaryColor, context);
-                    },
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 8),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: secondaryColor),
-                      ),
-                      child: const Text(
-                        "COPY",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: secondaryColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

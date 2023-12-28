@@ -50,6 +50,7 @@ class AuthMethods {
             totalOrders: 0,
             coins: 0,
             address: [],
+            usedCoupons: [],
           );
 
           order_model.Order order = order_model.Order(
@@ -69,6 +70,11 @@ class AuthMethods {
             'uid': cred.user!.uid,
             'cart_amount': 0.00,
             'items': [],
+          });
+          await _firestore.collection('coins').doc(cred.user!.uid).set({
+            "uid": cred.user!.uid,
+            "coins": [],
+            "cash": 0.00,
           });
 
           res = "success";
@@ -193,40 +199,59 @@ class AuthMethods {
   }
 
   // Changing Password
-  Future<String> changeAuthPassword(
-      {email, password, newPassword, context}) async {
+
+  Future<String> changePassword({
+    required String oldPassword,
+    required String newPassword,
+  }) async {
     String res = "Some error occurred";
-    User currentUser = _auth.currentUser!;
-    final cred = EmailAuthProvider.credential(email: email, password: password);
+
+    var curUser = _auth.currentUser;
 
     try {
-      await currentUser.reauthenticateWithCredential(cred).then((value) {
-        currentUser.updatePassword(newPassword);
-      }).then((value) async {
-        await AuthMethods().updatePassword(newPassword: newPassword, context: context);
+      user_model.User userDetail = await AuthMethods().getUserDetails();
+
+      String email = userDetail.email;
+
+      var cred = EmailAuthProvider.credential(email: email, password: oldPassword);
+
+      await curUser!.reauthenticateWithCredential(cred).then((value) async {
+        curUser.updatePassword(newPassword);
 
         res = "success";
+
+      }).catchError((error) {
+        res = error.toString();
       });
     } catch (e) {
       res = e.toString();
     }
 
     return res;
+
   }
 
-  Future<String> updatePassword({
-    required String newPassword,
-    required context,
-  }) async {
+  // delete account
+  Future<String> deleteUser({required String email, required String password, context}) async {
+
     String res = "Some error occurred";
 
     try {
-      await _firestore
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .set({'password': newPassword}, SetOptions(merge: true));
+      User currentUser = _auth.currentUser!;
 
-      res = "success";
+      final cred = EmailAuthProvider.credential(email: email, password: password);
+
+      var result = await currentUser.reauthenticateWithCredential(cred);
+
+      // called from database class
+      await result.user!.delete().then((value) async {
+
+        await _firestore.collection('users').doc(currentUser.uid).delete();
+        await _firestore.collection('cart').doc(currentUser.uid).delete();
+
+        res = "success";
+      });
+
     } catch (e) {
       res = e.toString();
     }

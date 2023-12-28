@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/constants/consts.dart';
@@ -8,8 +7,8 @@ import '../../constants/colors.dart';
 import '../../resources/shop_methods.dart';
 
 class CartCard extends StatefulWidget {
-  final itemSnap;
-  final snap;
+  final dynamic itemSnap;
+  final dynamic snap;
 
   const CartCard({super.key, this.itemSnap, this.snap});
 
@@ -150,7 +149,9 @@ class _CartCardState extends State<CartCard> {
                   fontStyle: FontStyle.italic,
                 ),
               ),
-              4.heightBox,
+              widget.itemSnap['selectedVarient'].length == 0
+                  ? Container()
+                  : 4.heightBox,
               widget.itemSnap['selectedVarient'].length == 0
                   ? Container()
                   : Row(
@@ -177,6 +178,32 @@ class _CartCardState extends State<CartCard> {
                                 ),
                               );
                             },
+                          ),
+                        ),
+                      ],
+                    ),
+              widget.itemSnap['specialInstruction'] == ""
+                  ? Container()
+                  : 4.heightBox,
+              widget.itemSnap['specialInstruction'] == ""
+                  ? Container()
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Sp. Instruction: ",
+                          style: TextStyle(
+                            color: darkGreyColor,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            "${widget.itemSnap['specialInstruction']}",
+                            style: const TextStyle(
+                              color: darkGreyColor,
+                              fontStyle: FontStyle.italic,
+                            ),
                           ),
                         ),
                       ],
@@ -215,6 +242,7 @@ class _CartCardState extends State<CartCard> {
         isQuantity: widget.itemSnap['isQuantity'],
         selectedQuantity: widget.itemSnap['selectedQuantity'],
         selectedQuantityPrice: widget.itemSnap['selectedQuantityPrice'],
+        specialInstruction: widget.itemSnap['specialInstruction'],
       );
 
       if (message == 'success') {
@@ -263,6 +291,7 @@ class _CartCardState extends State<CartCard> {
       isQuantity: widget.itemSnap['isQuantity'],
       selectedQuantity: widget.itemSnap['selectedQuantity'],
       selectedQuantityPrice: widget.itemSnap['selectedQuantityPrice'],
+      specialInstruction: widget.itemSnap['specialInstruction'],
     );
 
     if (message == 'success') {

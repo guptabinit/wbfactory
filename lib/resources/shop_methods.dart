@@ -118,6 +118,7 @@ class ShopMethods {
     required double? selectedQuantityPrice,
     required context,
     required double cartAmount,
+    required String? specialInstruction,
   }) async {
     String res = "Some error occurred";
 
@@ -140,6 +141,7 @@ class ShopMethods {
           'isQuantity': isQuantity,
           'selectedQuantity': selectedQuantity,
           'selectedQuantityPrice': selectedQuantityPrice,
+          'specialInstruction': specialInstruction,
         }
       }, SetOptions(merge: true));
 
@@ -168,6 +170,7 @@ class ShopMethods {
     required double? selectedQuantityPrice,
     required context,
     required double cartAmount,
+    required String? specialInstruction,
   }) async {
     String res = "Some error occurred";
 
@@ -189,6 +192,7 @@ class ShopMethods {
           'isQuantity': isQuantity,
           'selectedQuantity': selectedQuantity,
           'selectedQuantityPrice': selectedQuantityPrice,
+          'specialInstruction': specialInstruction,
         }
       });
 
@@ -233,6 +237,8 @@ class ShopMethods {
     required String pickupTime,
     required double orderTotal,
     required double discount,
+    required double discountAmount,
+    required double taxAmount,
     required double deliveryCost,
     required String? couponCode,
     required cart,
@@ -241,7 +247,6 @@ class ShopMethods {
     required Map<String, dynamic>? deliveryInfo,
     required String? trackingUrl,
     String? deliveryId,
-    required String cookingInstruction,
     TransactionResponse? transactionResponse,
   }) async {
     try {
@@ -261,6 +266,8 @@ class ShopMethods {
         'pickup_time': pickupTime,
         'order_total': orderTotal,
         'discount': discount,
+        'discount_amount': discountAmount,
+        'tax_amount': taxAmount,
         'delivery_cost': deliveryCost,
         'coupon_code': couponCode,
         'cart': cart,
@@ -270,7 +277,6 @@ class ShopMethods {
         'mobile': phone,
         'tracking_url': trackingUrl,
         'usingDoorDash': trackingUrl != null,
-        'cooking_instruction': cookingInstruction,
         'delivery_info': deliveryInfo,
         'read': false,
         'transaction': transactionResponse != null
@@ -289,6 +295,13 @@ class ShopMethods {
               }
             : null,
       }, SetOptions(merge: true));
+
+      if(couponCode != "") {
+        await _firestore.collection('users').doc(curUser).set({
+          'usedCoupons': FieldValue.arrayUnion([couponCode]),
+        }, SetOptions(merge: true));
+      }
+
     } catch (e) {
       customToast(e.toString(), darkGreyColor, context);
     }

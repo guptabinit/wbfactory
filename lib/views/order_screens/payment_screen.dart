@@ -19,8 +19,9 @@ class PaymentScreen extends StatefulWidget {
 
   // final int totalOrder;
   final double discount;
+  final double discountAmount;
+  final double taxAmount;
   final String cid;
-  final String cookingInstruction;
   final snap;
   final String selectedPickupTime;
   final bool isPickup;
@@ -34,7 +35,8 @@ class PaymentScreen extends StatefulWidget {
     required this.totalAmount,
     // required this.totalOrder,
     required this.discount,
-    required this.cookingInstruction,
+    required this.discountAmount,
+    required this.taxAmount,
     required this.cid,
     required this.snap,
     this.selectedPickupTime = "",
@@ -348,7 +350,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           deliveryCost: widget.deliveryCost,
                           trackingUrl: null,
                           deliveryInfo: widget.selectedAddressFullInfo,
-                          cookingInstruction: widget.cookingInstruction,
+                          discountAmount: widget.discountAmount,
+                          taxAmount: widget.taxAmount,
                         );
 
                         await resetCartFunction();
@@ -381,8 +384,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             userData: userData,
                             deliveryId: widget.deliveryId,
                             dropOffPhone: widget.dropOffPhone,
-                            cookingInstruction: widget.cookingInstruction,
                             selectedAddressFullInfo: widget.selectedAddressFullInfo,
+                            discountAmount: widget.discountAmount,
+                            taxAmount: widget.taxAmount,
                           ),
                         );
 
@@ -396,7 +400,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       // showSnackBar("Under Development", context);
                     },
                   ),
-            12.heightBox,
+            24.heightBox,
           ],
         ),
       ),

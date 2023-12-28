@@ -23,6 +23,8 @@ class CreditCardPaymentScreen extends StatefulWidget {
 
   // final int totalOrder;
   final double discount;
+  final double discountAmount;
+  final double taxAmount;
   final String cid;
   final String selectedPickupTime;
   final bool isPickup;
@@ -30,7 +32,6 @@ class CreditCardPaymentScreen extends StatefulWidget {
   final Map<dynamic, dynamic> userData;
   final String? deliveryId;
   final String? dropOffPhone;
-  final String cookingInstruction;
   final Map<String, dynamic>? selectedAddressFullInfo;
 
   const CreditCardPaymentScreen({
@@ -40,12 +41,13 @@ class CreditCardPaymentScreen extends StatefulWidget {
     required this.totalAmount,
     // required this.totalOrder,
     required this.discount,
+    required this.discountAmount,
+    required this.taxAmount,
     required this.cid,
     required this.selectedPickupTime,
     required this.isPickup,
     required this.deliveryCost,
     required this.userData,
-    required this.cookingInstruction,
     required this.selectedAddressFullInfo,
     this.deliveryId,
     this.dropOffPhone,
@@ -310,7 +312,8 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
         trackingUrl: trackingUrl,
         transactionResponse: paymentIntentData,
         deliveryInfo: widget.selectedAddressFullInfo,
-        cookingInstruction: widget.cookingInstruction,
+        discountAmount: widget.discountAmount,
+        taxAmount: widget.taxAmount,
       );
 
       await resetCartFunction();

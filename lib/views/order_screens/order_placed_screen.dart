@@ -58,6 +58,7 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen> {
                 Get.offAll(() => const NavScreen());
               },
             ),
+            24.heightBox,
           ],
         ),
       ),

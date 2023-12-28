@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:lottie/lottie.dart';
+import 'package:wbfactory/views/drawer/drawer_screens/setting_screens/change_password_screen.dart';
+import 'package:wbfactory/views/drawer/drawer_screens/setting_screens/delete_account_screen.dart';
 import 'package:wbfactory/views/drawer/drawer_screens/setting_screens/edit_profile_screen.dart';
 import 'package:wbfactory/views/drawer/drawer_screens/setting_screens/saved_address.dart';
 import '../../../components/buttons/back_button.dart';
@@ -21,7 +23,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final Uri url = Uri.parse(
-        "https://doc-hosting.flycricket.io/teriyaki-bowl-privacy-policy/8e5e969b-ac05-4afe-843b-1d74615ad4a6/privacy");
+        "https://whitestonebagelfactory.com/terms-conditions/#toc");
 
     return Scaffold(
       appBar: AppBar(
@@ -147,7 +149,9 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             12.heightBox,
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Get.to(() => const ChangePasswordScreen());
+              },
               child: Container(
                 decoration: BoxDecoration(
                   color: lightColor,
@@ -230,168 +234,7 @@ class _SettingsPageState extends State<SettingsPage> {
             12.heightBox,
             GestureDetector(
               onTap: () {
-                // showDialog(
-                //   context: context,
-                //   builder: (ctx) => Dialog(
-                //     shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.circular(8),
-                //     ),
-                //     child: Container(
-                //       decoration: BoxDecoration(
-                //         borderRadius: BorderRadius.circular(8),
-                //         color: lightColor,
-                //       ),
-                //       padding: const EdgeInsets.all(16),
-                //       child: Column(
-                //         mainAxisSize: MainAxisSize.min,
-                //         children: [
-                //           const Text(
-                //             "Teriyaki Bowl",
-                //             style: TextStyle(
-                //               fontSize: 28,
-                //               fontWeight: FontWeight.bold,
-                //             ),
-                //           ),
-                //           12.heightBox,
-                //           const Text(
-                //             "Are you sure you want to delete your account?",
-                //             textAlign: TextAlign.center,
-                //             style: TextStyle(
-                //               fontSize: 14,
-                //             ),
-                //           ),
-                //           16.heightBox,
-                //           Row(
-                //             mainAxisAlignment: MainAxisAlignment.center,
-                //             children: [
-                //               CustomButton(
-                //                 btnText: "Yes",
-                //                 onTap: () {
-                //                   showDialog(
-                //                     context: context,
-                //                     builder: (ctx) => Dialog(
-                //                       shape: RoundedRectangleBorder(
-                //                         borderRadius:
-                //                         BorderRadius.circular(8),
-                //                       ),
-                //                       child: Container(
-                //                         decoration: BoxDecoration(
-                //                           borderRadius:
-                //                           BorderRadius.circular(8),
-                //                           color: lightColor,
-                //                         ),
-                //                         padding: const EdgeInsets.all(16),
-                //                         child: Column(
-                //                           crossAxisAlignment:
-                //                           CrossAxisAlignment.stretch,
-                //                           mainAxisSize: MainAxisSize.min,
-                //                           children: [
-                //                             const Text(
-                //                               "Teriyaki Bowl",
-                //                               textAlign: TextAlign.center,
-                //                               style: TextStyle(
-                //                                 fontSize: 28,
-                //                                 fontWeight: FontWeight.bold,
-                //                               ),
-                //                             ),
-                //                             12.heightBox,
-                //                             const Text(
-                //                               "Enter your credential",
-                //                               textAlign: TextAlign.center,
-                //                               style: TextStyle(
-                //                                 fontSize: 14,
-                //                               ),
-                //                             ),
-                //                             16.heightBox,
-                //                             CustomTextField(
-                //                                 controller: emailController,
-                //                                 fontWeight: FontWeight.normal,
-                //                                 labelText:
-                //                                 "Enter your email"),
-                //                             8.heightBox,
-                //                             CustomTextField(
-                //                                 controller:
-                //                                 passwordController,
-                //                                 fontWeight: FontWeight.normal,
-                //                                 isPass: true,
-                //                                 labelText:
-                //                                 "Enter your password"),
-                //                             16.heightBox,
-                //                             isLoading
-                //                                 ? const Center(
-                //                               child:
-                //                               CircularProgressIndicator(
-                //                                 color: primaryColor,
-                //                               ),
-                //                             )
-                //                                 : Row(
-                //                               children: [
-                //                                 Expanded(
-                //                                   child: CustomButton(
-                //                                     btnText:
-                //                                     "Delete Account",
-                //                                     onTap: () async {
-                //                                       setState(() {
-                //                                         isLoading =
-                //                                         true;
-                //                                       });
-                //
-                //                                       await AuthMethods()
-                //                                           .deleteUser(
-                //                                         emailController
-                //                                             .text,
-                //                                         passwordController
-                //                                             .text,
-                //                                         ctx,
-                //                                       );
-                //
-                //                                       setState(() {
-                //                                         emailController
-                //                                             .text = "";
-                //                                         passwordController
-                //                                             .text = "";
-                //                                         isLoading =
-                //                                         false;
-                //                                       });
-                //                                     },
-                //                                   ),
-                //                                 ),
-                //                                 8.widthBox,
-                //                                 CustomButton(
-                //                                   btnText: "Back",
-                //                                   onTap: () {
-                //                                     setState(() {
-                //                                       emailController
-                //                                           .text = "";
-                //                                       passwordController
-                //                                           .text = "";
-                //                                     });
-                //                                     Get.close(2);
-                //                                   },
-                //                                 ),
-                //                               ],
-                //                             )
-                //                           ],
-                //                         ),
-                //                       ),
-                //                     ),
-                //                   );
-                //                 },
-                //               ),
-                //               16.widthBox,
-                //               CustomButton(
-                //                 btnText: "No",
-                //                 onTap: () {
-                //                   Navigator.of(context).pop();
-                //                 },
-                //               ),
-                //             ],
-                //           )
-                //         ],
-                //       ),
-                //     ),
-                //   ),
-                // );
+                Get.to(() => const DeleteAccountScreen());
               },
               child: Container(
                 decoration: BoxDecoration(

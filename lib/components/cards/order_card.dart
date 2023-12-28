@@ -8,13 +8,37 @@ import 'package:wbfactory/views/other_screens/order_detail_screen.dart';
 
 import '../../constants/colors.dart';
 
-class OrderCard extends StatelessWidget {
+class OrderCard extends StatefulWidget {
   final dynamic snap;
 
   const OrderCard({
     super.key,
     required this.snap,
   });
+
+  @override
+  State<OrderCard> createState() => _OrderCardState();
+}
+
+class _OrderCardState extends State<OrderCard> {
+
+  String orderStatus() {
+    if (widget.snap['order_status'] == 0) {
+      return "In Process";
+    } else if (widget.snap['order_status'] == 1) {
+      return "Completed";
+    }
+    return "Cancelled";
+  }
+
+  Color colorStatus() {
+    if (widget.snap['order_status'] == 0) {
+      return secondaryColor;
+    } else if (widget.snap['order_status'] == 1) {
+      return greenColor;
+    }
+    return redColor;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +71,7 @@ class OrderCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                    Text(
-                    "Order #${snap["oid"]}",
+                    "Order #${widget.snap["oid"]}",
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -56,7 +80,7 @@ class OrderCard extends StatelessWidget {
                   ),
                   2.heightBox,
                    Text(
-                    snap["is_pickup"] ? "Pickup": "Delivery",
+                    widget.snap["is_pickup"] ? "Pickup": "Delivery",
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -73,16 +97,16 @@ class OrderCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    snap["order_status"] == 0 ? "ACTIVE" : "FINISHED",
+                    orderStatus(),
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: snap["order_status"] == 0  ? greenColor : darkGreyColor,
+                      color: colorStatus(),
                     ),
                   ),
                   2.heightBox,
                    Text(
-                    "${snap["order_time"]}",
+                    "${widget.snap["order_time"]}",
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -95,13 +119,13 @@ class OrderCard extends StatelessWidget {
           ),
           8.heightBox,
           const Divider(
-            color: darkGreyColor,
+            color: lightGreyColor,
           ),
           6.heightBox,
           Row(
             children: [
                Text(
-                "Payment Mode: ${snap["is_cod"] ? "COD" : "Online" }",
+                "Payment Mode: ${widget.snap["is_cod"] ? "COD" : "Online" }",
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -113,7 +137,7 @@ class OrderCard extends StatelessWidget {
               ),
               8.widthBox,
                Text(
-                "\$ ${snap["order_total"].toDouble().toStringAsFixed(2)}",
+                "\$ ${widget.snap["order_total"].toDouble().toStringAsFixed(2)}",
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -134,11 +158,11 @@ class OrderCard extends StatelessWidget {
                 ),
               ),
               Text(
-                snap["payment_completed"] ? "PAID" : "UNPAID",
+                widget.snap["payment_completed"] ? "PAID" : "UNPAID",
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: snap["payment_completed"]  ? greenColor : redColor,
+                  color: widget.snap["payment_completed"]  ? greenColor : redColor,
                 ),
               ),
               Expanded(
@@ -147,7 +171,7 @@ class OrderCard extends StatelessWidget {
               8.widthBox,
               GestureDetector(
                 onTap: () {
-                  Get.to(() => OrderDetailPage(snap: snap,));
+                  Get.to(() => OrderDetailPage(snap: widget.snap,));
                 },
                 child: const Padding(
                   padding: EdgeInsets.symmetric(vertical: 2.0),

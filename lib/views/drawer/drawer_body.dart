@@ -11,6 +11,7 @@ import '../../constants/consts.dart';
 import '../../resources/auth_methods.dart';
 import '../home_screens/main_nav_page.dart';
 import '../onboarding_screens/login_page.dart';
+import '../other_screens/store_info.dart';
 import 'drawer_screens/settings_page.dart';
 
 class DrawerList extends StatefulWidget {
@@ -48,6 +49,9 @@ class _DrawerListState extends State<DrawerList> {
   }
 
 
+  final Uri url = Uri.parse(
+      "https://whitestonebagelfactory.com/terms-conditions/#toc");
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -68,6 +72,16 @@ class _DrawerListState extends State<DrawerList> {
               Get.offAll(() => const NavScreen(currentIndex: 2,));
             },
             title: const Text("Your orders"),
+            trailing: const Icon(
+              Icons.keyboard_arrow_right,
+              color: secondaryColor,
+            ),
+          ),
+          ListTile(
+            onTap: (){
+              Get.to(() => const LocationPage());
+            },
+            title: const Text("Store Location"),
             trailing: const Icon(
               Icons.keyboard_arrow_right,
               color: secondaryColor,
@@ -105,6 +119,7 @@ class _DrawerListState extends State<DrawerList> {
           ),
           ListTile(
             onTap: (){
+              launchUrl(url);
             },
             title: const Text("Privacy Policy"),
             trailing: const Icon(

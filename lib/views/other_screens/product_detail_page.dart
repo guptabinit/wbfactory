@@ -23,6 +23,7 @@ class ProductDetailPage extends StatefulWidget {
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
   TextEditingController searchController = TextEditingController();
+  TextEditingController specialInstructionController = TextEditingController();
   bool isFavourite = false;
   bool isLoading = false;
   var cartData = {};
@@ -34,7 +35,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   String? selectedQuantity;
   double selectedQuantityPrice = 0.00;
 
-  getUserFavouriteData() async {
+  getUserCartData() async {
     try {
       var cartSnap = await FirebaseFirestore.instance.collection('cart').doc(FirebaseAuth.instance.currentUser!.uid).get();
 
@@ -43,7 +44,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     } catch (e) {}
   }
 
-  getCartData() async {
+  getUserFavoriteData() async {
     var tempUser = await AuthMethods().getUserDetails();
 
     if (tempUser.favouriteList.contains(widget.snap['pid'])) {
@@ -57,7 +58,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   void initState() {
     super.initState();
     try {
-      getUserFavouriteData();
+      getUserCartData();
+    } catch (e) {
+      print("Some error occurred while retrieving user's data");
+    }
+    try {
+      getUserFavoriteData();
     } catch (e) {
       print("Some error occurred while retrieving user's data");
     }
@@ -115,6 +121,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         isQuantity: widget.snap["isQuantity"],
         selectedQuantity: selectedQuantity,
         selectedQuantityPrice: selectedQuantityPrice,
+        specialInstruction: specialInstructionController.text,
       );
 
       if (message == 'success') {
@@ -158,6 +165,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           isQuantity: widget.snap["isQuantity"],
           selectedQuantity: selectedQuantity,
           selectedQuantityPrice: selectedQuantityPrice,
+          specialInstruction: specialInstructionController.text,
         );
 
         if (message == 'success') {
@@ -219,6 +227,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           isQuantity: widget.snap["isQuantity"],
           selectedQuantity: selectedQuantity,
           selectedQuantityPrice: selectedQuantityPrice,
+          specialInstruction: specialInstructionController.text,
         );
 
         if (message == 'success') {
@@ -260,6 +269,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         isQuantity: widget.snap["isQuantity"],
         selectedQuantity: selectedQuantity,
         selectedQuantityPrice: selectedQuantityPrice,
+        specialInstruction: specialInstructionController.text,
       );
 
       if (message == 'success') {
@@ -426,29 +436,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                   )
                                 : Container(),
                             widget.snap['haveVarient'] ? 12.heightBox : Container(),
-                            // widget.snap['haveVarient']
-                            //     ? ListView.builder(
-                            //         physics: const NeverScrollableScrollPhysics(),
-                            //         itemCount: widget.snap["variantInfo"].length,
-                            //         shrinkWrap: true,
-                            //         itemBuilder: (BuildContext context, index) {
-                            //           var docSnap = widget.snap["variantInfo"][index];
-                            //
-                            //           return RadioListTile<String>(
-                            //             title: Text(docSnap['variantName']),
-                            //             subtitle: Text("Price: +\$ ${docSnap['variantPrice'].toDouble().toStringAsFixed(2)}"),
-                            //             value: docSnap['variantName'],
-                            //             groupValue: selectedVarient,
-                            //             onChanged: (value) {
-                            //               setState(() {
-                            //                 selectedVarient = value;
-                            //                 selectedVarientPrice = docSnap['variantPrice'].toDouble();
-                            //               });
-                            //             },
-                            //           );
-                            //         },
-                            //       )
-                            //     : Container(),
                             widget.snap['haveVarient']
                                 ? ListView.builder(
                                     physics: const NeverScrollableScrollPhysics(),
@@ -545,6 +532,62 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                   )
                                 : Container(),
                             widget.snap['haveDesc'] ? 12.heightBox : Container(),
+                            // Divider
+                            const Divider(
+                              color: darkGreyColor,
+                              thickness: 1,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(
+                                bottom: 16,
+                              ),
+                              child: Column(
+                                children: [
+                                  8.heightBox,
+                                  Row(
+                                    children: [
+                                      const Expanded(
+                                        child: Text(
+                                          "Special Instruction (if any)",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w500,
+                                            color: darkColor,
+                                          ),
+                                        ),
+                                      ),
+                                      0.widthBox,
+                                    ],
+                                  ),
+                                  8.heightBox,
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: veryLightGreyColor,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: TextField(
+                                      controller: specialInstructionController,
+                                      maxLines: 3,
+                                      decoration: const InputDecoration(
+                                        contentPadding: EdgeInsets.symmetric(
+                                          vertical: 16,
+                                          horizontal: 12,
+                                        ),
+                                        isDense: true,
+                                        fillColor: veryLightGreyColor,
+                                        hintText: "Enter your special instruction here",
+                                        hintStyle: TextStyle(
+                                          fontSize: 14,
+                                          color: darkGreyColor,
+                                        ),
+                                        border: InputBorder.none,
+                                        focusedBorder: InputBorder.none,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                             86.heightBox,
                           ],
                         ),

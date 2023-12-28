@@ -112,7 +112,9 @@ class _FixedCartTileState extends State<FixedCartTile> {
                 children: [
                   Expanded(
                     child: Text(
-                      widget.itemSnap["isQuantity"] ? "Choice: ${widget.itemSnap["selectedQuantity"]} (\$ ${widget.itemSnap["selectedQuantityPrice"].toDouble().toStringAsFixed(2)})" : "Choice: No Choices Chosen.",
+                      widget.itemSnap["isQuantity"]
+                          ? "Choice: ${widget.itemSnap["selectedQuantity"]} (\$ ${widget.itemSnap["selectedQuantityPrice"].toDouble().toStringAsFixed(2)})"
+                          : "Choice: No Choices Chosen.",
                       style: const TextStyle(
                         color: darkGreyColor,
                         fontStyle: FontStyle.italic,
@@ -122,7 +124,9 @@ class _FixedCartTileState extends State<FixedCartTile> {
                   Container(),
                 ],
               ),
-              4.heightBox,
+              widget.itemSnap['selectedVarient'].length == 0
+                  ? Container()
+                  : 4.heightBox,
               widget.itemSnap['selectedVarient'].length == 0
                   ? Container()
                   : Row(
@@ -138,6 +142,32 @@ class _FixedCartTileState extends State<FixedCartTile> {
                         Expanded(
                           child: Text(
                             "${widget.itemSnap['selectedVarient']}",
+                            style: const TextStyle(
+                              color: darkGreyColor,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+              widget.itemSnap['specialInstruction'] == ""
+                  ? Container()
+                  : 4.heightBox,
+              widget.itemSnap['specialInstruction'] == ""
+                  ? Container()
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Sp. Instruction: ",
+                          style: TextStyle(
+                            color: darkGreyColor,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            "${widget.itemSnap['specialInstruction']}",
                             style: const TextStyle(
                               color: darkGreyColor,
                               fontStyle: FontStyle.italic,

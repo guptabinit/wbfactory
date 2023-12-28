@@ -117,14 +117,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           MainButton(
                             title: "Save Changes",
                             onTap: () {
-                              if (emailController.text != "" &&
-                                  nameController.text != "" &&
-                                  phoneController.text != "") {
-                                // do-something
-                              } else {
-                                customToast("Enter all the fields first.",
-                                    redColor, context);
-                              }
+                              // if (emailController.text != "" &&
+                              //     nameController.text != "" &&
+                              //     phoneController.text != "") {
+                              //   // do-something
+                              // } else {
+                              //   customToast("Enter all the fields first.",
+                              //       redColor, context);
+                              // }
+
+                              customToast("Under-Development", darkGreyColor, context);
                             },
                           ),
                         ],

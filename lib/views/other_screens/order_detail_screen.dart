@@ -16,6 +16,24 @@ class OrderDetailPage extends StatefulWidget {
 }
 
 class _OrderDetailPageState extends State<OrderDetailPage> {
+  String orderStatus() {
+    if (widget.snap['order_status'] == 0) {
+      return "In Process";
+    } else if (widget.snap['order_status'] == 1) {
+      return "Completed";
+    }
+    return "Cancelled";
+  }
+
+  Color colorStatus() {
+    if (widget.snap['order_status'] == 0) {
+      return secondaryColor;
+    } else if (widget.snap['order_status'] == 1) {
+      return greenColor;
+    }
+    return redColor;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,20 +85,24 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   ),
                   const Spacer(),
                   Text(
-                    widget.snap["order_status"] == 0 ? "In Process" : "Completed",
+                    orderStatus(),
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: widget.snap["order_status"] == 0 ? greenColor : darkGreyColor,
+                      color: colorStatus(),
                     ),
                   ),
                 ],
               ),
               4.heightBox,
 
-              const Divider(),
+              if (widget.snap['usingDoorDash'] != null &&
+                  widget.snap['usingDoorDash'] == true) ...[
+                const Divider(),
+              ],
 
-              if (widget.snap['usingDoorDash'] != null && widget.snap['usingDoorDash'] == true) ...[
+              if (widget.snap['usingDoorDash'] != null &&
+                  widget.snap['usingDoorDash'] == true) ...[
                 TextButton(
                   onPressed: () async {
                     if (widget.snap['tracking_url'] != null) {
@@ -90,6 +112,409 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   child: const Text('Click here to track order'),
                 ),
               ],
+              const Divider(),
+
+              // Important Info Section
+
+              8.heightBox,
+              const Text(
+                "Important Info",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: textDarkGreyColor,
+                ),
+              ),
+              12.heightBox,
+              Row(
+                children: [
+                  const Text(
+                    "Mode:",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: darkColor,
+                    ),
+                  ),
+                  Text(
+                    widget.snap["is_pickup"] ? " Pickup" : "Delivery",
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: secondaryColor,
+                    ),
+                  ),
+                ],
+              ),
+              8.heightBox,
+              Row(
+                children: [
+                  const Text(
+                    "Total Amount:",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: darkColor,
+                    ),
+                  ),
+                  Text(
+                    " \$ ${widget.snap['order_total'].toStringAsFixed(2)}",
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: darkColor,
+                    ),
+                  ),
+                ],
+              ),
+              8.heightBox,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Pickup Time:",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: darkColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      " ${widget.snap["pickup_time"]}",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: darkColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              8.heightBox,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Payment Mode: ",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: darkColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      widget.snap['is_cod'] ? "COD" : "Online",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: darkColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              8.heightBox,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Payment Status: ",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: darkColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      widget.snap['payment_completed'] ? "PAID" : "UNPAID",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: widget.snap["payment_completed"]
+                            ? greenColor
+                            : redColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              8.heightBox,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Order Status: ",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: darkColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      orderStatus(),
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: colorStatus(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              8.heightBox,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Order Time: ",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: darkColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      "${widget.snap['order_time']}",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: darkColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              8.heightBox,
+
+              const Divider(),
+
+              // Order Info Section
+
+              8.heightBox,
+              const Text(
+                "Order Info",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: textDarkGreyColor,
+                ),
+              ),
+              12.heightBox,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Pickup / Delivery:",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: darkColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      " ${widget.snap["is_pickup"] ? "Pickup" : "Delivery"}",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: secondaryColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              8.heightBox,
+              Row(
+                children: [
+                  const Text(
+                    "Total Amount:",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: darkColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      " \$ ${widget.snap["order_total"].toDouble().toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: darkColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              12.heightBox,
+              ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: widget.snap["cart"]["items"].length,
+                padding: const EdgeInsets.only(bottom: 0),
+                shrinkWrap: true,
+                itemBuilder: (BuildContext context, index) {
+                  var itemSnap =
+                      widget.snap["cart"][widget.snap["cart"]['items'][index]];
+
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: SizedBox(
+                                height: 72,
+                                child: AspectRatio(
+                                  aspectRatio: 1 / 1,
+                                  child: CachedNetworkImage(
+                                    key: UniqueKey(),
+                                    imageUrl: itemSnap['item_image'],
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            16.widthBox,
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    itemSnap['category'],
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: secondaryColor,
+                                    ),
+                                  ),
+                                  2.heightBox,
+                                  Text(
+                                    itemSnap['item_name'],
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: darkColor,
+                                    ),
+                                  ),
+                                  4.heightBox,
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "\$ ${itemSnap['package_price'].toDouble().toStringAsFixed(2)}",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: darkColor,
+                                        ),
+                                      ),
+                                      Text(
+                                        " • Qty: ${itemSnap['quantity']}",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: darkColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        6.heightBox,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                itemSnap["isQuantity"]
+                                    ? "Choice: ${itemSnap["selectedQuantity"]} (\$ ${itemSnap["selectedQuantityPrice"].toDouble().toStringAsFixed(2)})"
+                                    : "Choice: No Choices Chosen.",
+                                style: const TextStyle(
+                                  color: darkGreyColor,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                            Container(),
+                          ],
+                        ),
+                        itemSnap['selectedVarient'].length == 0
+                            ? Container()
+                            : 4.heightBox,
+                        itemSnap['selectedVarient'].length == 0
+                            ? Container()
+                            : Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Variants: ",
+                                    style: TextStyle(
+                                      color: darkGreyColor,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      "${itemSnap['selectedVarient']}",
+                                      style: const TextStyle(
+                                        color: darkGreyColor,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                        itemSnap['specialInstruction'] == ""
+                            ? Container()
+                            : 4.heightBox,
+                        itemSnap['specialInstruction'] == ""
+                            ? Container()
+                            : Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Sp. Instruction: ",
+                                    style: TextStyle(
+                                      color: darkGreyColor,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      "${itemSnap['specialInstruction']}",
+                                      style: const TextStyle(
+                                        color: darkGreyColor,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+
               const Divider(),
 
               // Personal Info Section
@@ -171,142 +596,6 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 ],
               ),
               8.heightBox,
-              const Divider(),
-
-              // Order Info Section
-
-              8.heightBox,
-              const Text(
-                "Order Info",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: textDarkGreyColor,
-                ),
-              ),
-              12.heightBox,
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Pickup / Delivery:",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: darkColor,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      " ${widget.snap["is_pickup"] ? "Pickup" : "Delivery"}",
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: secondaryColor,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              8.heightBox,
-              Row(
-                children: [
-                  const Text(
-                    "Total Amount:",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: darkColor,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      " \$ ${widget.snap["order_total"].toDouble().toStringAsFixed(2)}",
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: darkColor,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              8.heightBox,
-              ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: widget.snap["cart"]["items"].length,
-                shrinkWrap: true,
-                itemBuilder: (BuildContext context, index) {
-                  var itemSnap = widget.snap["cart"][widget.snap["cart"]['items'][index]];
-
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: SizedBox(
-                            height: 72,
-                            child: AspectRatio(
-                              aspectRatio: 1 / 1,
-                              child: CachedNetworkImage(
-                                key: UniqueKey(),
-                                imageUrl: itemSnap['item_image'],
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => const Center(
-                                  child: CircularProgressIndicator(),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        16.widthBox,
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                itemSnap['item_name'],
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: darkColor,
-                                ),
-                              ),
-                              4.heightBox,
-                              Row(
-                                children: [
-                                  Text(
-                                    "\$ ${itemSnap['package_price'].toDouble().toStringAsFixed(2)}",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: darkColor,
-                                    ),
-                                  ),
-                                  Text(
-                                    " • Qty: ${itemSnap['quantity']}",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: darkColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  );
-                },
-              ),
 
               const Divider(),
 
@@ -323,6 +612,127 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 ),
               ),
               12.heightBox,
+
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Sub Total: ",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: darkColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      "\$ ${widget.snap["cart"]["cart_amount"].toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: darkColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              8.heightBox,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Tax: ",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: darkColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      "\$ ${widget.snap["tax_amount"].toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: darkColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              8.heightBox,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Discount [${widget.snap["coupon_code"]}]: ",
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: darkColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      "\$ ${widget.snap["discount_amount"].toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: darkColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              8.heightBox,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Delivery: ",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: darkColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      "\$ ${widget.snap["delivery_cost"].toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: darkColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              8.heightBox,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Total Amount: ",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: darkColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      "\$ ${widget.snap["order_total"].toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: secondaryColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              8.heightBox,
               Row(
                 children: [
                   const Text(
@@ -337,8 +747,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                     widget.snap["payment_completed"] ? " PAID" : " UNPAID",
                     style: TextStyle(
                       fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: widget.snap["payment_completed"] ? greenColor : redColor,
+                      fontWeight: FontWeight.w500,
+                      color: widget.snap["payment_completed"]
+                          ? greenColor
+                          : redColor,
                     ),
                   ),
                 ],
