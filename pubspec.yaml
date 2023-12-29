@@ -52,6 +52,7 @@ dependencies:
   sliding_up_panel: ^2.0.0+1
   shared_preferences: ^2.2.0
   email_validator: ^2.1.17
+  rename: ^3.0.1
 
   #  authorize_net_plugin: ^0.1.2
   google_maps_flutter: ^2.5.0
