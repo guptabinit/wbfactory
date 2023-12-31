@@ -937,7 +937,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                   child: Container(),
                                 ),
                                 Text(
-                                  "\$ ${(widget.snap["cart_amount"].toDouble() + widget.snap["cart_amount"].toDouble() * 0.06 + deliveryCharge).toStringAsFixed(2)}",
+                                  "\$ ${(double.parse( (double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) + double.parse((double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2)) - double.parse( ((double.parse((double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2) ) + double.parse(widget.snap["cart_amount"].toStringAsFixed(2))) * discount / 100).toStringAsFixed(2)) ).toStringAsFixed(2)) + (quoteResponse?.fee != null ? (quoteResponse?.fee ?? 0.0 / 100.0) : 0.0)).toStringAsFixed(2)}",
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
@@ -950,7 +950,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                             Row(
                               children: [
                                 Text(
-                                  "You save \$ ${(widget.snap["cart_amount"].toDouble() * discount / 100).toStringAsFixed(2)} on this order",
+                                  "You save \$ ${ ( ( double.parse( (double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2) ) + double.parse(widget.snap["cart_amount"].toStringAsFixed(2) ) ) * discount / 100).toStringAsFixed(2)} on this order",
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
