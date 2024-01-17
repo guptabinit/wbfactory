@@ -97,7 +97,7 @@ class ShipTo extends Address {}
 @immutable
 class ApiContracts extends Equatable {
   final CreditCard creditCard;
-  final int amount;
+  final String amount;
   final OrderDetails orderDetails;
   final BillTo? billTo;
   final ShipTo? shipTo;
@@ -165,7 +165,7 @@ class AuthorizeGateWayService extends Equatable {
   Future<CreditCardResponse> makePayment() async {
     apiContracts.orderDetails.invoiceNumber?.log();
     final response = await http.post(
-      Uri.parse("https://api.authorize.net/xml/v1/request.api"),
+      Uri.parse("https://api.authorize.net/xml/v1/request.api"), // test: https://apitest.authorize.net/xml/v1/request.api  // live: https://api.authorize.net/xml/v1/request.api
       body: jsonEncode(
         {
           "createTransactionRequest": {

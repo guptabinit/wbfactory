@@ -109,8 +109,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
   late DateTime restaurantClosingTime;
   List<DateTime> availableTimes = [];
 
-  List<DateTime> calculateAvailablePickupTimes(
-      DateTime currentTime, DateTime openingTime, DateTime closingTime) {
+  List<DateTime> calculateAvailablePickupTimes(DateTime currentTime,
+      DateTime openingTime, DateTime closingTime) {
     List<DateTime> times = [];
     DateTime time = openingTime;
 
@@ -143,8 +143,12 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
           title: const Text('Select Pickup Time'),
           content: SizedBox(
             width: double.maxFinite,
-            height: availableTimes.isEmpty ? screenHeight(context) * 0.1 : screenHeight(context) * 0.4,
-            child: availableTimes.isEmpty ? const Center(child: Text("Sorry!\nStore is closed now.\nCome back tomorrow.", textAlign: TextAlign.center,)) : ListView.builder(
+            height: availableTimes.isEmpty
+                ? screenHeight(context) * 0.1
+                : screenHeight(context) * 0.4,
+            child: availableTimes.isEmpty ? const Center(child: Text(
+              "Sorry!\nStore is closed now.\nCome back tomorrow.",
+              textAlign: TextAlign.center,)) : ListView.builder(
               shrinkWrap: true,
               physics: const BouncingScrollPhysics(),
               itemCount: availableTimes.length,
@@ -153,7 +157,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                 final time = availableTimes[index];
                 return ListTile(
                   title: Text(
-                    '${time.hour}:${time.minute.toString().padLeft(2, '0')} ${time.hour >= 12 ? 'PM' : 'AM'}',
+                    '${time.hour}:${time.minute.toString().padLeft(
+                        2, '0')} ${time.hour >= 12 ? 'PM' : 'AM'}',
                     style: const TextStyle(fontSize: 16),
                   ),
                   onTap: () {
@@ -185,7 +190,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
     restaurantOpeningTime = DateTime(
         currentTime.year, currentTime.month, currentTime.day, 6, 0); // 6:00 AM
     restaurantClosingTime = DateTime(currentTime.year, currentTime.month,
-        currentTime.day, 12, 30, 1); // 1:00 PM
+        currentTime.day, 13, 00, 1); // 1:00 PM
 
     // Calculate available pickup times at 30-minute intervals.
     availableTimes = calculateAvailablePickupTimes(
@@ -260,12 +265,13 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                   child: Column(
                     children: [
                       ListView.builder(
+                        padding: EdgeInsets.all(0),
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: widget.snap["items"].length,
                         shrinkWrap: true,
                         itemBuilder: (BuildContext context, index) {
                           var itemSnap =
-                              widget.snap[widget.snap['items'][index]];
+                          widget.snap[widget.snap['items'][index]];
 
                           return FixedCartTile(
                             itemSnap: itemSnap,
@@ -344,321 +350,319 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                       ),
                       widget.isPickup
                           ? Container(
-                              padding: const EdgeInsets.only(
-                                left: 12,
-                                right: 12,
-                                bottom: 16,
-                                top: 16,
-                              ),
-                              decoration: const BoxDecoration(
-                                color: whiteColor,
-                              ),
-                              child: Column(
-                                children: [
-                                  const Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          "Pickup Time",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w500,
-                                            color: darkColor,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                        padding: const EdgeInsets.only(
+                          left: 12,
+                          right: 12,
+                          bottom: 16,
+                          top: 16,
+                        ),
+                        decoration: const BoxDecoration(
+                          color: whiteColor,
+                        ),
+                        child: Column(
+                          children: [
+                            const Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Pickup Time",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                      color: darkColor,
+                                    ),
                                   ),
-                                  16.heightBox,
-                                  selectedTime != null
-                                      ? Row(
-                                          children: [
-                                            const Text(
-                                              'Selected Pickup Time: ',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                DateFormat('dd-MM-yyyy hh:mm a')
-                                                    .format(selectedTime!),
-                                                style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: primaryColor,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      : const Text(
-                                          'No Pickup Time Selected',
-                                          style: TextStyle(fontSize: 14),
-                                        ),
-                                  16.heightBox,
-                                  MainButton(
-                                    onTap: () => _showTimePickerDialog(context),
-                                    title: 'Choose your Suitable Pickup Time',
-                                    fontSize: 14,
-                                    vertP: 12,
-                                    color: secondaryColor.withOpacity(0.7),
-                                    textColor: lightColor,
-                                  ),
-                                ],
-                              ),
-                            )
-                          : Container(
-                              padding: const EdgeInsets.only(
-                                left: 12,
-                                right: 12,
-                                bottom: 16,
-                                top: 4,
-                              ),
-                              decoration: const BoxDecoration(
-                                color: whiteColor,
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      const Expanded(
-                                        child: Text(
-                                          "Delivery Address",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w500,
-                                            color: darkColor,
-                                          ),
-                                        ),
-                                      ),
-                                      8.widthBox,
-                                      TextButton(
-                                        onPressed: () {
-                                          Get.to(
-                                              () => const AddNewAddressPage());
-                                        },
-                                        child: const Text("Add New"),
-                                      ),
-                                    ],
-                                  ),
-                                  2.heightBox,
-                                  // text-field
-                                  StreamBuilder(
-                                    stream: FirebaseFirestore.instance
-                                        .collection('users')
-                                        .doc(FirebaseAuth
-                                            .instance.currentUser!.uid)
-                                        .snapshots(),
-                                    builder: (context,
-                                        AsyncSnapshot<
-                                                DocumentSnapshot<
-                                                    Map<String, dynamic>>>
-                                            snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const Center(
-                                          child: SizedBox(
-                                            height: 24,
-                                            width: 24,
-                                            child: CircularProgressIndicator(
-                                              color: primaryColor,
-                                              strokeWidth: 2.0,
-                                            ),
-                                          ),
-                                        );
-                                      }
-
-                                      final snap = snapshot.data!["address"];
-
-                                      return ListView.builder(
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        itemCount: snap.length,
-                                        shrinkWrap: true,
-                                        itemBuilder: (
-                                          BuildContext context,
-                                          index,
-                                        ) {
-                                          final docSnap = snap[index];
-
-                                          return RadioListTile<String>(
-                                            title: Text(docSnap['title']),
-                                            subtitle: Text(
-                                              "${docSnap['street']}, ${docSnap['city']}, ${docSnap['country']}- ${docSnap['zip']}",
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style: const TextStyle(
-                                                color: Colors.grey,
-                                                fontStyle: FontStyle.italic,
-                                              ),
-                                            ),
-                                            value: docSnap['title'],
-                                            groupValue: selectedAddress,
-                                            onChanged: (value) async {
-                                              Get.defaultDialog(
-                                                title: "Please Wait",
-                                                middleText:
-                                                    "Checking order rate...",
-                                                barrierDismissible: false,
-                                              );
-
-                                              final kItems = (widget
-                                                      .snap['items'] as List)
-                                                  .mapIndexed((e, i) => (Item(
-                                                      name: widget.snap[
-                                                          widget.snap['items']
-                                                              [i]]['item_name'],
-                                                      quantity: widget.snap[
-                                                          widget.snap['items']
-                                                              [i]]['quantity'])))
-                                                  .toList();
-
-                                              final quoteModel =
-                                                  CreateQuoteModel(
-                                                // externalDeliveryID:
-                                                //     "TK-${widget.totalOrder}",
-                                                dropoffAddress:
-                                                    "${docSnap['street']}, ${docSnap['city']}, ${docSnap['country']}- ${docSnap['zip']}",
-                                                dropoffBusinessName:
-                                                    "${docSnap['name']}",
-                                                dropoffLocation: {
-                                                  "lat": docSnap['latitude']
-                                                      .toDouble(),
-                                                  "lng": docSnap['longitude']
-                                                      .toDouble()
-                                                },
-                                                dropoffPhoneNumber:
-                                                    "${docSnap['phone']}",
-                                                dropoffContactName:
-                                                    "${docSnap['name']}",
-                                                orderValue: 10,
-                                              );
-
-                                              final client =
-                                                  DoordashApiClient();
-
-                                              try {
-                                                final result =
-                                                    await client.createQuote(
-                                                  dropoffAddress:
-                                                      quoteModel.dropoffAddress,
-                                                  dropoffBusinessName:
-                                                      quoteModel
-                                                          .dropoffBusinessName,
-                                                  dropoffContactGivenName:
-                                                      quoteModel
-                                                          .dropoffContactName,
-                                                  dropoffPhoneNumber: quoteModel
-                                                      .dropoffPhoneNumber,
-                                                  latitude: quoteModel
-                                                      .dropoffLocation['lat']!
-                                                      .toDouble(),
-                                                  longitude: quoteModel
-                                                      .dropoffLocation['lng']!
-                                                      .toDouble(),
-                                                  orderValue:
-                                                      quoteModel.orderValue,
-                                                  pickupAddress: pickupAddress,
-                                                  pickupBusinessName:
-                                                      pickupBusinessName,
-                                                  pickupPhoneNumber:
-                                                      pickupPhoneNumber,
-                                                  items: kItems,
-                                                );
-
-                                                final info = await client
-                                                    .getDeliveryInfo(
-                                                  result.externalDeliveryId!,
-                                                );
-
-                                                if (info.externalDeliveryId !=
-                                                    null) {
-                                                  deliveryId =
-                                                      info.externalDeliveryId;
-                                                  dropOffPhone =
-                                                      info.dropoffPhoneNumber;
-                                                }
-
-                                                setState(() {
-                                                  selectedAddress = value;
-                                                  selectedAddressFullInfo =
-                                                      docSnap;
-                                                  quoteResponse = info;
-                                                  deliveryCharge = info.fee !=
-                                                          null
-                                                      ? (info.fee ?? 0) / 100.0
-                                                      : 9.00;
-                                                  deliveryId =
-                                                      info.externalDeliveryId!;
-                                                  dropoffAddress =
-                                                      info.dropoffAddress!;
-                                                  dropoffPhoneNumber =
-                                                      info.dropoffPhoneNumber!;
-                                                  items = info.items;
-                                                });
-
-                                                if (Get.isDialogOpen == true) {
-                                                  Navigator.of(
-                                                    Get.overlayContext!,
-                                                  ).pop();
-                                                }
-
-                                                Get.snackbar(
-                                                  "Success",
-                                                  "Order rate calculated",
-                                                  backgroundColor: Colors.green,
-                                                  snackPosition:
-                                                      SnackPosition.BOTTOM,
-                                                  margin:
-                                                      const EdgeInsets.all(16),
-                                                  colorText: Colors.white,
-                                                );
-                                              } on FormatException catch (e) {
-                                                e.message.log();
-                                                if (Get.isDialogOpen == true) {
-                                                  Navigator.of(
-                                                    Get.overlayContext!,
-                                                  ).pop();
-                                                }
-                                                Get.snackbar(
-                                                  "Error",
-                                                  e.message,
-                                                  snackPosition:
-                                                      SnackPosition.BOTTOM,
-                                                  backgroundColor: primaryColor,
-                                                  margin:
-                                                      const EdgeInsets.all(16),
-                                                  colorText: Colors.white,
-                                                );
-                                              } on Exception catch (e) {
-                                                e.log();
-                                                if (Get.isDialogOpen == true) {
-                                                  Navigator.of(
-                                                    Get.overlayContext!,
-                                                  ).pop();
-                                                }
-                                                Get.snackbar(
-                                                  "Error",
-                                                  'Something went wrong',
-                                                );
-                                              } finally {
-                                                if (Get.isDialogOpen == true) {
-                                                  Navigator.of(
-                                                    Get.overlayContext!,
-                                                  ).pop();
-                                                }
-                                              }
-                                            },
-                                          );
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
+                            16.heightBox,
+                            selectedTime != null
+                                ? Row(
+                              children: [
+                                const Text(
+                                  'Selected Pickup Time: ',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    DateFormat('dd-MM-yyyy hh:mm a')
+                                        .format(selectedTime!),
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: primaryColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                                : const Text(
+                              'No Pickup Time Selected',
+                              style: TextStyle(fontSize: 14),
+                            ),
+                            16.heightBox,
+                            MainButton(
+                              onTap: () => _showTimePickerDialog(context),
+                              title: 'Choose your Suitable Pickup Time',
+                              fontSize: 14,
+                              vertP: 12,
+                              color: secondaryColor.withOpacity(0.7),
+                              textColor: lightColor,
+                            ),
+                          ],
+                        ),
+                      )
+                          : Container(
+                        padding: const EdgeInsets.only(
+                          left: 12,
+                          right: 12,
+                          bottom: 16,
+                          top: 4,
+                        ),
+                        decoration: const BoxDecoration(
+                          color: whiteColor,
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                const Expanded(
+                                  child: Text(
+                                    "Delivery Address",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                      color: darkColor,
+                                    ),
+                                  ),
+                                ),
+                                8.widthBox,
+                                TextButton(
+                                  onPressed: () {
+                                    Get.to(
+                                            () => const AddNewAddressPage());
+                                  },
+                                  child: const Text("Add New"),
+                                ),
+                              ],
+                            ),
+                            2.heightBox,
+                            // text-field
+                            StreamBuilder(
+                              stream: FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(FirebaseAuth
+                                  .instance.currentUser!.uid)
+                                  .snapshots(),
+                              builder: (context,
+                                  AsyncSnapshot<
+                                      DocumentSnapshot<
+                                          Map<String, dynamic>>>
+                                  snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                    child: SizedBox(
+                                      height: 24,
+                                      width: 24,
+                                      child: CircularProgressIndicator(
+                                        color: primaryColor,
+                                        strokeWidth: 2.0,
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                final snap = snapshot.data!["address"];
+
+                                return ListView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  padding: EdgeInsets.all(0),
+                                  itemCount: snap.length,
+                                  shrinkWrap: true,
+                                  itemBuilder: (BuildContext context,
+                                      index,) {
+                                    final docSnap = snap[index];
+
+                                    return RadioListTile<String>(
+                                      title: Text(docSnap['title']),
+                                      subtitle: Text(
+                                        "${docSnap['street']}, ${docSnap['city']}, ${docSnap['country']}- ${docSnap['zip']}",
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                      ),
+                                      value: docSnap['title'],
+                                      groupValue: selectedAddress,
+                                      onChanged: (value) async {
+                                        Get.defaultDialog(
+                                          title: "Please Wait",
+                                          middleText:
+                                          "Checking order rate...",
+                                          barrierDismissible: false,
+                                        );
+
+                                        final kItems = (widget
+                                            .snap['items'] as List)
+                                            .mapIndexed((e, i) =>
+                                        (Item(
+                                            name: widget.snap[
+                                            widget.snap['items']
+                                            [i]]['item_name'],
+                                            quantity: widget.snap[
+                                            widget.snap['items']
+                                            [i]]['quantity'])))
+                                            .toList();
+
+                                        final quoteModel =
+                                        CreateQuoteModel(
+                                          // externalDeliveryID:
+                                          //     "TK-${widget.totalOrder}",
+                                          dropoffAddress:
+                                          "${docSnap['street']}, ${docSnap['city']}, ${docSnap['country']}- ${docSnap['zip']}",
+                                          dropoffBusinessName:
+                                          "${docSnap['name']}",
+                                          dropoffLocation: {
+                                            "lat": docSnap['latitude']
+                                                .toDouble(),
+                                            "lng": docSnap['longitude']
+                                                .toDouble()
+                                          },
+                                          dropoffPhoneNumber:
+                                          "${docSnap['phone']}",
+                                          dropoffContactName:
+                                          "${docSnap['name']}",
+                                          orderValue: 10,
+                                        );
+
+                                        final client =
+                                        DoordashApiClient();
+
+                                        try {
+                                          final result =
+                                          await client.createQuote(
+                                            dropoffAddress:
+                                            quoteModel.dropoffAddress,
+                                            dropoffBusinessName:
+                                            quoteModel
+                                                .dropoffBusinessName,
+                                            dropoffContactGivenName:
+                                            quoteModel
+                                                .dropoffContactName,
+                                            dropoffPhoneNumber: quoteModel
+                                                .dropoffPhoneNumber,
+                                            latitude: quoteModel
+                                                .dropoffLocation['lat']!
+                                                .toDouble(),
+                                            longitude: quoteModel
+                                                .dropoffLocation['lng']!
+                                                .toDouble(),
+                                            orderValue:
+                                            quoteModel.orderValue,
+                                            pickupAddress: pickupAddress,
+                                            pickupBusinessName:
+                                            pickupBusinessName,
+                                            pickupPhoneNumber:
+                                            pickupPhoneNumber,
+                                            items: kItems,
+                                          );
+
+                                          final info = await client
+                                              .getDeliveryInfo(
+                                            result.externalDeliveryId!,
+                                          );
+
+                                          if (info.externalDeliveryId != null) {
+                                            deliveryId =
+                                                info.externalDeliveryId;
+                                            dropOffPhone =
+                                                info.dropoffPhoneNumber;
+                                          }
+
+                                          setState(() {
+                                            selectedAddress = value;
+                                            selectedAddressFullInfo =
+                                                docSnap;
+                                            quoteResponse = info;
+                                            deliveryCharge = info.fee !=
+                                                null
+                                                ? (info.fee ?? 0) / 100.0
+                                                : 9.00;
+                                            deliveryId =
+                                            info.externalDeliveryId!;
+                                            dropoffAddress =
+                                            info.dropoffAddress!;
+                                            dropoffPhoneNumber =
+                                            info.dropoffPhoneNumber!;
+                                            items = info.items;
+                                          });
+
+                                          if (Get.isDialogOpen == true) {
+                                            Navigator.of(
+                                              Get.overlayContext!,
+                                            ).pop();
+                                          }
+
+                                          Get.snackbar(
+                                            "Success",
+                                            "Order rate calculated",
+                                            backgroundColor: Colors.green,
+                                            snackPosition:
+                                            SnackPosition.BOTTOM,
+                                            margin:
+                                            const EdgeInsets.all(16),
+                                            colorText: Colors.white,
+                                          );
+                                        } on FormatException catch (e) {
+                                          e.message.log();
+                                          if (Get.isDialogOpen == true) {
+                                            Navigator.of(
+                                              Get.overlayContext!,
+                                            ).pop();
+                                          }
+                                          Get.snackbar(
+                                            "Error",
+                                            e.message,
+                                            snackPosition:
+                                            SnackPosition.BOTTOM,
+                                            backgroundColor: primaryColor,
+                                            margin:
+                                            const EdgeInsets.all(16),
+                                            colorText: Colors.white,
+                                          );
+                                        } on Exception catch (e) {
+                                          e.log();
+                                          if (Get.isDialogOpen == true) {
+                                            Navigator.of(
+                                              Get.overlayContext!,
+                                            ).pop();
+                                          }
+                                          Get.snackbar(
+                                            "Error",
+                                            'Something went wrong',
+                                          );
+                                        } finally {
+                                          if (Get.isDialogOpen == true) {
+                                            Navigator.of(
+                                              Get.overlayContext!,
+                                            ).pop();
+                                          }
+                                        }
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
                       // Divider
                       Container(
                         height: 8,
@@ -691,14 +695,16 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                 8.widthBox,
                                 TextButton(
                                   onPressed: () {
-                                    Get.to(() => CouponCodePage(usedCoupons: usedCoupons, data: couponData,))
+                                    Get.to(() => CouponCodePage(
+                                      usedCoupons: usedCoupons,
+                                      data: couponData,))
                                         ?.then((couponSnap) {
                                       if (couponSnap != null) {
                                         setState(() {
                                           discount = couponSnap['discount']
                                               ?.toDouble();
                                           couponController.text =
-                                              couponSnap['cid'];
+                                          couponSnap['cid'];
                                           cid = couponSnap['cid'];
                                           couponApplied = true;
                                         });
@@ -748,18 +754,18 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                             8.heightBox,
                             couponApplied
                                 ? const Row(
-                                    children: [
-                                      Text(
-                                        "Coupon code applied successfully",
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: greenColor,
-                                        ),
-                                      ),
-                                    ],
-                                  )
+                              children: [
+                                Text(
+                                  "Coupon code applied successfully",
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: greenColor,
+                                  ),
+                                ),
+                              ],
+                            )
                                 : Container(),
                           ],
                         ),
@@ -826,7 +832,9 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                 Expanded(child: Container()),
                                 8.widthBox,
                                 Text(
-                                  "\$ ${widget.snap["cart_amount"].toDouble().toStringAsFixed(2)}",
+                                  "\$ ${widget.snap["cart_amount"]
+                                      .toDouble()
+                                      .toStringAsFixed(2)}",
                                   style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -850,7 +858,9 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                 Expanded(child: Container()),
                                 8.widthBox,
                                 Text(
-                                  "\$ ${( double.parse(widget.snap["cart_amount"].toStringAsFixed(2))  * tax / 100).toStringAsFixed(2)}",
+                                  "\$ ${(double.parse(widget.snap["cart_amount"]
+                                      .toStringAsFixed(2)) * tax / 100)
+                                      .toStringAsFixed(2)}",
                                   style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -873,7 +883,13 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                 Expanded(child: Container()),
                                 8.widthBox,
                                 Text(
-                                  "-\$ ${ ( ( double.parse( (double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2) ) + double.parse(widget.snap["cart_amount"].toStringAsFixed(2) ) ) * discount / 100).toStringAsFixed(2)}",
+                                  "-\$ ${ ((double.parse((double.parse(
+                                      widget.snap["cart_amount"]
+                                          .toStringAsFixed(2)) * tax / 100)
+                                      .toStringAsFixed(2)) + double.parse(
+                                      widget.snap["cart_amount"]
+                                          .toStringAsFixed(2))) * discount /
+                                      100).toStringAsFixed(2)}",
                                   style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -937,7 +953,21 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                   child: Container(),
                                 ),
                                 Text(
-                                  "\$ ${(double.parse( (double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) + double.parse((double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2)) - double.parse( ((double.parse((double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2) ) + double.parse(widget.snap["cart_amount"].toStringAsFixed(2))) * discount / 100).toStringAsFixed(2)) ).toStringAsFixed(2)) + (quoteResponse?.fee != null ? (quoteResponse?.fee ?? 0.0 / 100.0) : 0.0)).toStringAsFixed(2)}",
+                                  "\$ ${(double.parse((double.parse(
+                                      widget.snap["cart_amount"]
+                                          .toStringAsFixed(2)) + double.parse(
+                                      (double.parse(widget.snap["cart_amount"]
+                                          .toStringAsFixed(2)) * tax / 100)
+                                          .toStringAsFixed(2)) - double.parse(
+                                      ((double.parse((double.parse(
+                                          widget.snap["cart_amount"]
+                                              .toStringAsFixed(2)) * tax / 100)
+                                          .toStringAsFixed(2)) + double.parse(
+                                          widget.snap["cart_amount"]
+                                              .toStringAsFixed(2))) * discount /
+                                          100).toStringAsFixed(2)))
+                                      .toStringAsFixed(2)) + deliveryCharge)
+                                      .toStringAsFixed(2)}",
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
@@ -950,7 +980,13 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                             Row(
                               children: [
                                 Text(
-                                  "You save \$ ${ ( ( double.parse( (double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2) ) + double.parse(widget.snap["cart_amount"].toStringAsFixed(2) ) ) * discount / 100).toStringAsFixed(2)} on this order",
+                                  "You save \$ ${ ((double.parse((double.parse(
+                                      widget.snap["cart_amount"]
+                                          .toStringAsFixed(2)) * tax / 100)
+                                      .toStringAsFixed(2)) + double.parse(
+                                      widget.snap["cart_amount"]
+                                          .toStringAsFixed(2))) * discount /
+                                      100).toStringAsFixed(2)} on this order",
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
@@ -978,8 +1014,18 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
               title: "Proceed to payment",
               onTap: () {
                 setState(
-                  () {
-                    final amount = double.parse( (double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) + double.parse((double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2)) - double.parse( ((double.parse((double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2) ) + double.parse(widget.snap["cart_amount"].toStringAsFixed(2))) * discount / 100).toStringAsFixed(2)) ).toStringAsFixed(2));
+                      () {
+                    final amount = double.parse((double.parse(widget
+                        .snap["cart_amount"].toStringAsFixed(2)) +
+                        double.parse((double.parse(
+                            widget.snap["cart_amount"].toStringAsFixed(2)) *
+                            tax / 100).toStringAsFixed(2)) -
+                        double.parse(((double.parse((double.parse(
+                            widget.snap["cart_amount"].toStringAsFixed(2)) *
+                            tax / 100).toStringAsFixed(2)) + double.parse(
+                            widget.snap["cart_amount"].toStringAsFixed(2))) *
+                            discount / 100).toStringAsFixed(2)))
+                        .toStringAsFixed(2));
 
                     totalAmount = amount + (quoteResponse?.fee ?? 0.0) / 100.0;
                   },
@@ -988,20 +1034,30 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                 if (widget.isPickup) {
                   if (selectedTime != null) {
                     Get.to(
-                      () => PaymentScreen(
-                        totalAmount: totalAmount,
-                        // totalOrder: totalOrders,
-                        discount: discount,
-                        cid: cid,
-                        snap: widget.snap,
-                        selectedPickupTime: DateFormat(
-                          'dd-MM-yyyy hh:mm a',
-                        ).format(selectedTime!),
-                        isPickup: widget.isPickup,
-                        selectedAddressFullInfo: selectedAddressFullInfo,
-                        discountAmount: double.parse( (( double.parse( (double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2) ) + double.parse(widget.snap["cart_amount"].toStringAsFixed(2) ) ) * discount / 100).toStringAsFixed(2) ),
-                        taxAmount: double.parse( ( double.parse(widget.snap["cart_amount"].toStringAsFixed(2))  * tax / 100).toStringAsFixed(2) ),
-                      ),
+                          () =>
+                          PaymentScreen(
+                            totalAmount: totalAmount,
+                            // totalOrder: totalOrders,
+                            discount: discount,
+                            cid: cid,
+                            snap: widget.snap,
+                            selectedPickupTime: DateFormat(
+                              'dd-MM-yyyy hh:mm a',
+                            ).format(selectedTime!),
+                            isPickup: widget.isPickup,
+                            selectedAddressFullInfo: selectedAddressFullInfo,
+                            discountAmount: double.parse(((double.parse(
+                                (double.parse(
+                                    widget.snap["cart_amount"].toStringAsFixed(
+                                        2)) * tax / 100).toStringAsFixed(2)) +
+                                double.parse(
+                                    widget.snap["cart_amount"].toStringAsFixed(
+                                        2))) * discount / 100).toStringAsFixed(
+                                2)),
+                            taxAmount: double.parse((double.parse(
+                                widget.snap["cart_amount"].toStringAsFixed(2)) *
+                                tax / 100).toStringAsFixed(2)),
+                          ),
                     );
                   } else {
                     customToast(
@@ -1011,30 +1067,68 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                     );
                   }
                 } else {
-                  if (quoteResponse == null) {
-                    customToast(
-                      "Please select delivery address first.",
-                      darkGreyColor,
-                      context,
+
+                  DateTime currentTime = DateTime.now();
+
+                  DateTime startTime = DateTime(
+                    currentTime.year,
+                    currentTime.month,
+                    currentTime.day,
+                    6,
+                    0,
+                  );
+
+                  DateTime endTime = DateTime(
+                    currentTime.year,
+                    currentTime.month,
+                    currentTime.day,
+                    13,
+                    0,
+                  );
+
+                  if(currentTime.isAfter(startTime) &&
+                      currentTime.isBefore(endTime)){
+                    if (quoteResponse == null) {
+                      customToast(
+                        "Please select delivery address first.",
+                        darkGreyColor,
+                        context,
+                      );
+                      return;
+                    }
+
+                    Get.to(
+                          () =>
+                          PaymentScreen(
+                            totalAmount: totalAmount,
+                            // totalOrder: totalOrders,
+                            deliveryCost: deliveryCharge,
+                            discount: discount,
+                            cid: cid,
+                            snap: widget.snap,
+                            isPickup: widget.isPickup,
+                            deliveryId: deliveryId,
+                            dropOffPhone: dropOffPhone,
+                            selectedAddressFullInfo: selectedAddressFullInfo,
+                            discountAmount: double.parse(((double.parse(
+                                (double.parse(
+                                    widget.snap["cart_amount"].toStringAsFixed(
+                                        2)) * tax / 100).toStringAsFixed(2)) +
+                                double.parse(
+                                    widget.snap["cart_amount"].toStringAsFixed(
+                                        2))) * discount / 100).toStringAsFixed(
+                                2)),
+                            taxAmount: double.parse((double.parse(
+                                widget.snap["cart_amount"].toStringAsFixed(2)) *
+                                tax / 100).toStringAsFixed(2)),
+                          ),
                     );
-                    return;
+                  } else {
+                    customToast(
+                      'Store is closed. Order between 06:00 AM and 01:00 PM.',redColor, context
+                    );
                   }
 
-                  Get.to(
-                    () => PaymentScreen(
-                      totalAmount: totalAmount,
-                      // totalOrder: totalOrders,
-                      discount: discount,
-                      cid: cid,
-                      snap: widget.snap,
-                      isPickup: widget.isPickup,
-                      deliveryId: deliveryId,
-                      dropOffPhone: dropOffPhone,
-                      selectedAddressFullInfo: selectedAddressFullInfo,
-                      discountAmount: double.parse( (( double.parse( (double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2) ) + double.parse(widget.snap["cart_amount"].toStringAsFixed(2) ) ) * discount / 100).toStringAsFixed(2) ),
-                      taxAmount: double.parse( (double.parse(widget.snap["cart_amount"].toStringAsFixed(2))  * tax / 100).toStringAsFixed(2) ),
-                    ),
-                  );
                 }
               },
             ),

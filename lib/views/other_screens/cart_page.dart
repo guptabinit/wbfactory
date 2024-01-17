@@ -23,7 +23,7 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> {
   bool isPickup = true;
-  bool disableDelivery = true;
+  bool disableDelivery = false;
 
   bool isLoading = false;
 

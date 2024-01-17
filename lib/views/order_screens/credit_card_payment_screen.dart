@@ -96,6 +96,9 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
     final c = Get.put(PaymentController());
 
     return Scaffold(
+      appBar: AppBar(
+
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -222,7 +225,7 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
                                   invoiceNumber: invoiceRef,
                                   description: '$strItems - items',
                                 ),
-                                amount: (widget.totalAmount * 100).round(),
+                                amount: widget.totalAmount.toStringAsFixed(2),
                               );
 
                               await c.makePayment(contracts);
@@ -312,6 +315,7 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
         trackingUrl: trackingUrl,
         transactionResponse: paymentIntentData,
         deliveryInfo: widget.selectedAddressFullInfo,
+        deliveryId: widget.deliveryId,
         discountAmount: widget.discountAmount,
         taxAmount: widget.taxAmount,
       );

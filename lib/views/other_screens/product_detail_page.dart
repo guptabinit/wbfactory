@@ -17,7 +17,8 @@ class ProductDetailPage extends StatefulWidget {
   final dynamic snap;
   final bool userAvailable;
 
-  const ProductDetailPage({super.key, required this.snap, required this.userAvailable});
+  const ProductDetailPage(
+      {super.key, required this.snap, required this.userAvailable});
 
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();
@@ -39,7 +40,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   getUserCartData() async {
     try {
-      var cartSnap = await FirebaseFirestore.instance.collection('cart').doc(FirebaseAuth.instance.currentUser!.uid).get();
+      var cartSnap = await FirebaseFirestore.instance
+          .collection('cart')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
 
       cartData = cartSnap.data()!;
       setState(() {});
@@ -60,12 +64,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   void initState() {
     super.initState();
 
-    if(widget.userAvailable){
+    if (widget.userAvailable) {
       try {
         getUserCartData();
       } catch (e) {
         if (kDebugMode) {
-          print("Some error occurred while retrieving user's data: ${e.toString()}");
+          print(
+              "Some error occurred while retrieving user's data: ${e.toString()}");
         }
       }
 
@@ -73,7 +78,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         getUserFavoriteData();
       } catch (e) {
         if (kDebugMode) {
-          print("Some error occurred while retrieving user's data: ${e.toString()}");
+          print(
+              "Some error occurred while retrieving user's data: ${e.toString()}");
         }
       }
     }
@@ -90,7 +96,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   void addToCart() async {
-    if (widget.snap["haveVarient"] == true && widget.snap["isQuantity"] == false) {
+    if (widget.snap["haveVarient"] == true &&
+        widget.snap["isQuantity"] == false) {
       setState(() {
         isLoading = true;
       });
@@ -102,10 +109,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       if (widget.snap['haveVarient']) {
         for (int i = 0; i < widget.snap['variantInfo'].length; i++) {
           if (selectedVarientList[i] == true) {
-            selectedVarientNames.add(widget.snap['variantInfo'][i]['variantName']);
-            selectedVarientAlternatePrices.add(widget.snap['variantInfo'][i]['variantPrice'].toDouble());
+            selectedVarientNames
+                .add(widget.snap['variantInfo'][i]['variantName']);
+            selectedVarientAlternatePrices
+                .add(widget.snap['variantInfo'][i]['variantPrice'].toDouble());
             setState(() {
-              totalVarientPrice = totalVarientPrice + widget.snap['variantInfo'][i]['variantPrice'].toDouble();
+              totalVarientPrice = totalVarientPrice +
+                  widget.snap['variantInfo'][i]['variantPrice'].toDouble();
             });
           }
         }
@@ -147,7 +157,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         });
         showCustomToast("Error: $message", darkGreyColor);
       }
-    } else if (widget.snap["haveVarient"] == false && widget.snap["isQuantity"] == true) {
+    } else if (widget.snap["haveVarient"] == false &&
+        widget.snap["isQuantity"] == true) {
       if (selectedQuantity == null) {
         showCustomToast("Select all the choice first", darkGreyColor);
       } else {
@@ -155,7 +166,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           isLoading = true;
         });
 
-        double packagePrice = widget.snap["price"].toDouble() + selectedQuantityPrice;
+        double packagePrice =
+            widget.snap["price"].toDouble() + selectedQuantityPrice;
 
         double cartAmount = cartData["cart_amount"] + packagePrice;
 
@@ -192,7 +204,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           showCustomToast("Error: $message", darkGreyColor);
         }
       }
-    } else if (widget.snap["haveVarient"] == true && widget.snap["isQuantity"] == true) {
+    } else if (widget.snap["haveVarient"] == true &&
+        widget.snap["isQuantity"] == true) {
       // when there exist both
       if (selectedQuantity == null) {
         showCustomToast("Select all the choices first", darkGreyColor);
@@ -208,16 +221,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         if (widget.snap['haveVarient']) {
           for (int i = 0; i < widget.snap['variantInfo'].length; i++) {
             if (selectedVarientList[i] == true) {
-              selectedVarientNames.add(widget.snap['variantInfo'][i]['variantName']);
-              selectedVarientAlternatePrices.add(widget.snap['variantInfo'][i]['variantPrice'].toDouble());
+              selectedVarientNames
+                  .add(widget.snap['variantInfo'][i]['variantName']);
+              selectedVarientAlternatePrices.add(
+                  widget.snap['variantInfo'][i]['variantPrice'].toDouble());
               setState(() {
-                totalVarientPrice = totalVarientPrice + widget.snap['variantInfo'][i]['variantPrice'].toDouble();
+                totalVarientPrice = totalVarientPrice +
+                    widget.snap['variantInfo'][i]['variantPrice'].toDouble();
               });
             }
           }
         }
 
-        double packagePrice = widget.snap["price"].toDouble() + selectedQuantityPrice + totalVarientPrice;
+        double packagePrice = widget.snap["price"].toDouble() +
+            selectedQuantityPrice +
+            totalVarientPrice;
 
         double cartAmount = cartData["cart_amount"] + packagePrice;
 
@@ -312,60 +330,70 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ),
         leadingWidth: 90,
         actions: [
-          !widget.userAvailable ? Container() : IconButton(
-            onPressed: () async {
-              setState(() {
-                isLoading = true;
-              });
+          !widget.userAvailable
+              ? Container()
+              : IconButton(
+                  onPressed: () async {
+                    setState(() {
+                      isLoading = true;
+                    });
 
-              if (isFavourite == false) {
-                // add to favourite
-                String result = await ShopMethods().addFavourite(product: widget.snap, pid: widget.snap["pid"]);
+                    if (isFavourite == false) {
+                      // add to favourite
+                      String result = await ShopMethods().addFavourite(
+                          product: widget.snap, pid: widget.snap["pid"]);
 
-                if (result == 'success') {
-                  setState(() {
-                    isFavourite = true;
-                    isLoading = false;
-                  });
-                  showCustomToast("Added to favourites", greenColor);
-                } else {
-                  setState(() {
-                    isLoading = false;
-                  });
-                  showCustomToast("Some error occurred while adding this product to favourites", redColor);
-                }
-              } else {
-                // remove from favourite
-                String result = await ShopMethods().removeFavourite(product: widget.snap, pid: widget.snap["pid"]);
+                      if (result == 'success') {
+                        setState(() {
+                          isFavourite = true;
+                          isLoading = false;
+                        });
+                        showCustomToast("Added to favourites", greenColor);
+                      } else {
+                        setState(() {
+                          isLoading = false;
+                        });
+                        showCustomToast(
+                            "Some error occurred while adding this product to favourites",
+                            redColor);
+                      }
+                    } else {
+                      // remove from favourite
+                      String result = await ShopMethods().removeFavourite(
+                          product: widget.snap, pid: widget.snap["pid"]);
 
-                if (result == 'success') {
-                  setState(() {
-                    isFavourite = false;
-                    isLoading = false;
-                  });
-                  showCustomToast("Removed from favourites", greenColor);
-                } else {
-                  setState(() {
-                    isLoading = false;
-                  });
-                  showCustomToast("Some error occurred while removing this product from favourites", redColor);
-                }
-              }
-            },
-            icon: isLoading
-                ? const SizedBox(
-                    height: 16,
-                    width: 16,
-                    child: CircularProgressIndicator(
-                      color: secondaryColor,
-                      strokeWidth: 2,
-                    ),
-                  )
-                : Icon(
-                    isFavourite ? Icons.favorite : Icons.favorite_border_outlined,
-                    color: isFavourite ? redColor : secondaryColor,
-                  ),
-          ),
+                      if (result == 'success') {
+                        setState(() {
+                          isFavourite = false;
+                          isLoading = false;
+                        });
+                        showCustomToast("Removed from favourites", greenColor);
+                      } else {
+                        setState(() {
+                          isLoading = false;
+                        });
+                        showCustomToast(
+                            "Some error occurred while removing this product from favourites",
+                            redColor);
+                      }
+                    }
+                  },
+                  icon: isLoading
+                      ? const SizedBox(
+                          height: 16,
+                          width: 16,
+                          child: CircularProgressIndicator(
+                            color: secondaryColor,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Icon(
+                          isFavourite
+                              ? Icons.favorite
+                              : Icons.favorite_border_outlined,
+                          color: isFavourite ? redColor : secondaryColor,
+                        ),
+                ),
           4.widthBox,
         ],
       ),
@@ -375,17 +403,24 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             children: [
               Expanded(
                 child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(decelerationRate: ScrollDecelerationRate.fast),
+                  physics: const BouncingScrollPhysics(
+                      decelerationRate: ScrollDecelerationRate.fast),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       AspectRatio(
                         aspectRatio: 4 / 3,
                         child: CachedNetworkImage(
-                          imageUrl: widget.snap != null ? widget.snap["imageUrl"] : "https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/products%2Fbagel.jpg?alt=media&token=6cc183bb-93ca-45f8-b7ef-b6be9fd3a75e",
+                          imageUrl: widget.snap != null
+                              ? widget.snap["imageUrl"]
+                              : "https://firebasestorage.googleapis.com/v0/b/whitestone-bagel-factory.appspot.com/o/products%2Fbagel.jpg?alt=media&token=6cc183bb-93ca-45f8-b7ef-b6be9fd3a75e",
                           fit: BoxFit.cover,
-                          progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
-                          errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
+                          progressIndicatorBuilder:
+                              (context, url, downloadProgress) => Center(
+                                  child: CircularProgressIndicator(
+                                      value: downloadProgress.progress)),
+                          errorWidget: (context, url, error) =>
+                              const Center(child: Icon(Icons.error)),
                           width: double.infinity,
                         ),
                       ),
@@ -427,90 +462,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                 color: secondaryColor,
                               ),
                             ),
-                            widget.snap['haveVarient'] ? 12.heightBox : Container(),
-                            widget.snap['haveVarient']
-                                ? const Divider(
-                                    color: darkGreyColor,
-                                    thickness: 1,
-                                  )
-                                : Container(),
-                            widget.snap['haveVarient'] ? 8.heightBox : Container(),
-                            widget.snap['haveVarient']
-                                ? const Text(
-                                    "Choose a varient",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: darkColor,
-                                    ),
-                                  )
-                                : Container(),
-                            widget.snap['haveVarient'] ? 12.heightBox : Container(),
-                            widget.snap['haveVarient']
-                                ? ListView.builder(
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    itemCount: widget.snap["variantInfo"].length,
-                                    shrinkWrap: true,
-                                    itemBuilder: (BuildContext context, index) {
-                                      var docSnap = widget.snap["variantInfo"][index];
-
-                                      return CheckboxListTile(
-                                        title: Text(docSnap['variantName']),
-                                        subtitle: Text("Price: +\$ ${docSnap['variantPrice'].toDouble().toStringAsFixed(2)}"),
-                                        value: selectedVarientList[index],
-                                        onChanged: (bool? value) {
-                                          setState(() {
-                                            selectedVarientList[index] = value;
-                                          });
-                                        },
-                                      );
-                                    },
-                                  )
-                                : Container(),
-                            widget.snap['isQuantity'] ? 8.heightBox : Container(),
-                            widget.snap['isQuantity']
-                                ? const Divider(
-                                    color: darkGreyColor,
-                                    thickness: 1,
-                                  )
-                                : Container(),
-                            8.heightBox,
-                            widget.snap['isQuantity']
-                                ? const Text(
-                                    "Choose your choice",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: darkColor,
-                                    ),
-                                  )
-                                : Container(),
-                            widget.snap['isQuantity'] ? 12.heightBox : Container(),
-                            widget.snap['isQuantity']
-                                ? ListView.builder(
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    itemCount: widget.snap["quantityInfo"].length,
-                                    shrinkWrap: true,
-                                    itemBuilder: (BuildContext context, index) {
-                                      var docSnap = widget.snap["quantityInfo"][index];
-
-                                      return RadioListTile<String>(
-                                        title: Text(docSnap['quantityName']),
-                                        subtitle: Text("Price: +\$ ${docSnap['quantityPrice'].toDouble().toStringAsFixed(2)}"),
-                                        value: docSnap['quantityName'],
-                                        groupValue: selectedQuantity,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            selectedQuantity = value;
-                                            selectedQuantityPrice = docSnap['quantityPrice'].toDouble();
-                                          });
-                                        },
-                                      );
-                                    },
-                                  )
-                                : Container(),
                             widget.snap['haveDesc'] ? 8.heightBox : Container(),
                             widget.snap['haveDesc']
                                 ? const Divider(
@@ -542,7 +493,112 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                     ),
                                   )
                                 : Container(),
-                            widget.snap['haveDesc'] ? 12.heightBox : Container(),
+                            widget.snap['haveDesc']
+                                ? 12.heightBox
+                                : Container(),
+                            widget.snap['haveVarient']
+                                ? const Divider(
+                                    color: darkGreyColor,
+                                    thickness: 1,
+                                  )
+                                : Container(),
+                            widget.snap['haveVarient']
+                                ? 8.heightBox
+                                : Container(),
+                            widget.snap['haveVarient']
+                                ? const Text(
+                                    "Choose a varient",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: darkColor,
+                                    ),
+                                  )
+                                : Container(),
+                            widget.snap['haveVarient']
+                                ? 12.heightBox
+                                : Container(),
+                            widget.snap['haveVarient']
+                                ? ListView.builder(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount:
+                                        widget.snap["variantInfo"].length,
+                                    padding: EdgeInsets.all(0),
+                                    shrinkWrap: true,
+                                    itemBuilder: (BuildContext context, index) {
+                                      var docSnap =
+                                          widget.snap["variantInfo"][index];
+
+                                      return CheckboxListTile(
+                                        title: Text(docSnap['variantName']),
+                                        subtitle: Text(
+                                            "Price: +\$ ${docSnap['variantPrice'].toDouble().toStringAsFixed(2)}"),
+                                        value: selectedVarientList[index],
+                                        onChanged: (bool? value) {
+                                          setState(() {
+                                            selectedVarientList[index] = value;
+                                          });
+                                        },
+                                      );
+                                    },
+                                  )
+                                : Container(),
+                            widget.snap['isQuantity']
+                                ? 8.heightBox
+                                : Container(),
+                            widget.snap['isQuantity']
+                                ? const Divider(
+                                    color: darkGreyColor,
+                                    thickness: 1,
+                                  )
+                                : Container(),
+                            8.heightBox,
+                            widget.snap['isQuantity']
+                                ? const Text(
+                                    "Choose your choice",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: darkColor,
+                                    ),
+                                  )
+                                : Container(),
+                            widget.snap['isQuantity']
+                                ? 12.heightBox
+                                : Container(),
+                            widget.snap['isQuantity']
+                                ? ListView.builder(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount:
+                                        widget.snap["quantityInfo"].length,
+                                    shrinkWrap: true,
+                                    padding: EdgeInsets.all(0),
+                                    itemBuilder: (BuildContext context, index) {
+                                      var docSnap =
+                                          widget.snap["quantityInfo"][index];
+
+                                      return RadioListTile<String>(
+                                        title: Text(docSnap['quantityName']),
+                                        subtitle: Text(
+                                            "Price: +\$ ${docSnap['quantityPrice'].toDouble().toStringAsFixed(2)}"),
+                                        value: docSnap['quantityName'],
+                                        groupValue: selectedQuantity,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedQuantity = value;
+                                            selectedQuantityPrice =
+                                                docSnap['quantityPrice']
+                                                    .toDouble();
+                                          });
+                                        },
+                                      );
+                                    },
+                                  )
+                                : Container(),
                             // Divider
                             const Divider(
                               color: darkGreyColor,
@@ -586,7 +642,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                         ),
                                         isDense: true,
                                         fillColor: veryLightGreyColor,
-                                        hintText: "Enter your special instruction here",
+                                        hintText:
+                                            "Enter your special instruction here",
                                         hintStyle: TextStyle(
                                           fontSize: 14,
                                           color: darkGreyColor,
@@ -620,7 +677,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   )
                 : MainButton(
                     title: "Add to cart",
-                    onTap: !widget.userAvailable ? (){showLoginDialog(context);} : addToCart,
+                    onTap: !widget.userAvailable
+                        ? () {
+                            showLoginDialog(context);
+                          }
+                        : addToCart,
                   ),
           ),
         ],

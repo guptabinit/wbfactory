@@ -278,6 +278,7 @@ class ShopMethods {
         'tracking_url': trackingUrl,
         'usingDoorDash': trackingUrl != null,
         'delivery_info': deliveryInfo,
+        'delivery_id': deliveryId,
         'read': false,
         'transaction': transactionResponse != null
             ? {
