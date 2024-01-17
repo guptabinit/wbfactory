@@ -103,7 +103,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
               if (widget.snap['usingDoorDash'] != null &&
                   widget.snap['usingDoorDash'] == true) ...[
-                TextButton(
+                ElevatedButton(
                   onPressed: () async {
                     if (widget.snap['tracking_url'] != null) {
                       await launchUrlString(widget.snap['tracking_url']);
@@ -804,6 +804,111 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                     ),
               8.heightBox,
               const Divider(),
+              8.heightBox,
+              // Delivery Info Card
+              widget.snap['is_pickup']
+                  ? Container()
+                  : Column(
+                      children: [
+                        const Text(
+                          "Delivery Info",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: textDarkGreyColor,
+                          ),
+                        ),
+                        12.heightBox,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Address: ",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                color: darkColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                "${widget.snap['delivery_info']['street']}, ${widget.snap['delivery_info']['city']}, ${widget.snap['delivery_info']['country']} - ${widget.snap['delivery_info']['zip']}",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: darkColor,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        6.heightBox,
+                        Row(
+                          children: [
+                            const Text(
+                              "Phone: ",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                color: darkColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                            Text(
+                              "${widget.snap['delivery_info']['phone']}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: darkColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        6.heightBox,
+                        Row(
+                          children: [
+                            const Text(
+                              "Name: ",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                color: darkColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                            Text(
+                              widget.snap['delivery_info']['name'],
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: darkColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        6.heightBox,
+                        Row(
+                          children: [
+                            const Text(
+                              "Address Type: ",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                color: darkColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                            Text(
+                              widget.snap['delivery_info']['title'],
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: secondaryColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        42.heightBox,
+                      ],
+                    ),
             ],
           ),
         ),

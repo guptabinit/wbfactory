@@ -12,7 +12,7 @@ String generateJwt() {
   final claims = JsonWebTokenClaims.fromJson({
     "aud": "doordash",
     "iss": "fc160dbc-9283-4e26-b568-9ee0efd384fc",
-    "kid": "84437014-fe30-4a75-b931-62a8c60a07d9",
+    "kid": "0b863bc5-41d3-420d-b9c6-58560e6bd961",
     "iat": currentTimer,
     "exp": currentTimer + 1800,
   });
@@ -28,7 +28,7 @@ String generateJwt() {
     JsonWebKey.fromJson(
       {
         "kty": "oct",
-        "k": "UMITk03e1-EldszRof6ZqI2QeduL7mgSONjcIrDGXUs",
+        "k": "wFhHqQ8AvqlMex3FU6x2-CZ13KiB6fdtnCEUTkNoWr8",
       },
     ),
     algorithm: "HS256",
@@ -69,14 +69,13 @@ class DoordashApiClient {
       createQuoteRequest,
       body: jsonEncode(
         {
-          "external_delivery_id": "TK-${nanoid(8)}",
+          "external_delivery_id": "WB-${nanoid(8)}",
           "locale": "en-US",
-          "order_fulfillment_method": "catering",
+          "order_fulfillment_method": "standard",
           "pickup_address": pickupAddress,
           "pickup_business_name": pickupBusinessName,
           "pickup_phone_number": pickupPhoneNumber,
-          "pickup_instructions":
-          "Come inside the store and ask for the order with Delivery ID",
+          "pickup_instructions": "Come inside the store and ask for the order with Delivery ID",
           "dropoff_address": dropoffAddress,
           "dropoff_business_name": dropoffBusinessName,
           "dropoff_location": {
@@ -87,7 +86,7 @@ class DoordashApiClient {
           "dropoff_contact_given_name": dropoffContactGivenName,
           "dropoff_contact_send_notifications": true,
           "contactless_dropoff": false,
-          "order_value": orderValue,
+          "order_value": orderValue*100,
           "action_if_undeliverable": "return_to_pickup",
           "order_contains": {
             "alcohol": false,
