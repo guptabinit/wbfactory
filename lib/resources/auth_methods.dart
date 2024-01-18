@@ -15,7 +15,8 @@ class AuthMethods {
   Future<user_model.User> getUserDetails() async {
     User currentUser = _auth.currentUser!;
 
-    DocumentSnapshot snap = await _firestore.collection('users').doc(currentUser.uid).get();
+    DocumentSnapshot snap =
+        await _firestore.collection('users').doc(currentUser.uid).get();
 
     return user_model.User.fromSnap(snap);
   }
@@ -27,10 +28,15 @@ class AuthMethods {
     String res = "Some error occurred";
 
     try {
-      if (data['email']!.isNotEmpty || data['phone']!.isNotEmpty || data['full_name']!.isNotEmpty || data['password']!.isNotEmpty || data['password']!.length >= 6) {
+      if (data['email']!.isNotEmpty ||
+          data['phone']!.isNotEmpty ||
+          data['full_name']!.isNotEmpty ||
+          data['password']!.isNotEmpty ||
+          data['password']!.length >= 6) {
         // verify Mobile Number
         // register user
-        UserCredential cred = await _auth.createUserWithEmailAndPassword(email: data['email']!, password: data['password']!);
+        UserCredential cred = await _auth.createUserWithEmailAndPassword(
+            email: data['email']!, password: data['password']!);
 
         // add user to the database
         user_model.User user = user_model.User(
@@ -59,21 +65,26 @@ class AuthMethods {
         );
 
         // adding user info in database
-        await _firestore.collection('users').doc(cred.user!.uid).set(user.toJson());
-        await _firestore.collection('orders').doc(cred.user!.uid).set(order.toJson());
+        await _firestore
+            .collection('users')
+            .doc(cred.user!.uid)
+            .set(user.toJson());
+        await _firestore
+            .collection('orders')
+            .doc(cred.user!.uid)
+            .set(order.toJson());
         await _firestore.collection('cart').doc(cred.user!.uid).set({
           'uid': cred.user!.uid,
-          'cart_amount': 0.00,
+          'cart_amount': 0,
           'items': [],
         });
         await _firestore.collection('coins').doc(cred.user!.uid).set({
           "uid": cred.user!.uid,
-          "coins": [],
-          "cash": 0.00,
+          "coins": 0,
+          "cash": 0,
         });
 
         res = "success";
-
       } else {
         res = 'Please enter all the details';
       }
@@ -93,7 +104,9 @@ class AuthMethods {
 
     try {
       if (email.isNotEmpty || password.isNotEmpty) {
-        await _auth.signInWithEmailAndPassword(email: email, password: password).then((value) {
+        await _auth
+            .signInWithEmailAndPassword(email: email, password: password)
+            .then((value) {
           res = 'success';
         });
       } else {
@@ -199,13 +212,13 @@ class AuthMethods {
 
       String email = userDetail.email;
 
-      var cred = EmailAuthProvider.credential(email: email, password: oldPassword);
+      var cred =
+          EmailAuthProvider.credential(email: email, password: oldPassword);
 
       await curUser!.reauthenticateWithCredential(cred).then((value) async {
         curUser.updatePassword(newPassword);
 
         res = "success";
-
       }).catchError((error) {
         res = error.toString();
       });
@@ -214,35 +227,32 @@ class AuthMethods {
     }
 
     return res;
-
   }
 
   // delete account
-  Future<String> deleteUser({required String email, required String password, context}) async {
-
+  Future<String> deleteUser(
+      {required String email, required String password, context}) async {
     String res = "Some error occurred";
 
     try {
       User currentUser = _auth.currentUser!;
 
-      final cred = EmailAuthProvider.credential(email: email, password: password);
+      final cred =
+          EmailAuthProvider.credential(email: email, password: password);
 
       var result = await currentUser.reauthenticateWithCredential(cred);
 
       // called from database class
       await result.user!.delete().then((value) async {
-
         await _firestore.collection('users').doc(currentUser.uid).delete();
         await _firestore.collection('cart').doc(currentUser.uid).delete();
 
         res = "success";
       });
-
     } catch (e) {
       res = e.toString();
     }
 
     return res;
   }
-
 }
