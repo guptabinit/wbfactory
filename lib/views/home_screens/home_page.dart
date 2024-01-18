@@ -1,16 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
-import 'package:wbfactory/components/textfield/custom_textfield.dart';
 import 'package:wbfactory/constants/colors.dart';
 import 'package:wbfactory/views/home_screens/main_nav_page.dart';
 import 'package:wbfactory/views/other_screens/search_screen.dart';
 
-import '../../constants/consts.dart';
 import '../../data/categories.dart';
 import '../other_screens/product_page.dart';
 

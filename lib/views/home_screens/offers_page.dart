@@ -1,11 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/components/buttons/main_button.dart';
-import 'package:wbfactory/constants/consts.dart';
 import 'package:wbfactory/views/onboarding_screens/login_page.dart';
 
 import '../../components/cards/promotional_card.dart';

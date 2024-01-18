@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -54,15 +52,6 @@ class _VerifyAddressPageState extends State<VerifyAddressPage> {
     super.initState();
   }
 
-  void _getMarkerPosition() {
-    // Access the _markerPosition variable to get the marker's coordinates
-    double latitude = _draggedMarkerPosition.latitude;
-    double longitude = _draggedMarkerPosition.longitude;
-
-    // You can use the latitude and longitude as needed, e.g., display in a dialog or print to the console
-    print('Marker Position: Latitude: $latitude, Longitude: $longitude');
-  }
-
   void _updateMarkerPosition(LatLng newPosition) {
     setState(() {
       _draggedMarkerPosition = newPosition;
@@ -109,8 +98,8 @@ class _VerifyAddressPageState extends State<VerifyAddressPage> {
     await Geolocator.requestPermission()
         .then((value) {})
         .onError((error, stackTrace) {
-      customToast(
-          "Error: Please provide location permission. : $error", secondaryColor, context);
+      customToast("Error: Please provide location permission. : $error",
+          secondaryColor, context);
     });
 
     return await Geolocator.getCurrentPosition();
@@ -189,14 +178,14 @@ class _VerifyAddressPageState extends State<VerifyAddressPage> {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: _isLoading
                 ? const Center(
-              child: CircularProgressIndicator(
-                color: primaryColor,
-              ),
-            )
+                    child: CircularProgressIndicator(
+                      color: primaryColor,
+                    ),
+                  )
                 : MainButton(
-              title: "Save Address",
-              onTap: addAddressToDatabase,
-            ),
+                    title: "Save Address",
+                    onTap: addAddressToDatabase,
+                  ),
           ),
           12.heightBox,
         ],

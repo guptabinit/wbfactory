@@ -1,16 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:velocity_x/velocity_x.dart';
-import 'package:lottie/lottie.dart';
 import 'package:wbfactory/views/drawer/drawer_screens/setting_screens/change_password_screen.dart';
 import 'package:wbfactory/views/drawer/drawer_screens/setting_screens/delete_account_screen.dart';
 import 'package:wbfactory/views/drawer/drawer_screens/setting_screens/edit_profile_screen.dart';
 import 'package:wbfactory/views/drawer/drawer_screens/setting_screens/saved_address.dart';
 import '../../../components/buttons/back_button.dart';
 import '../../../constants/colors.dart';
-import '../../../constants/consts.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});

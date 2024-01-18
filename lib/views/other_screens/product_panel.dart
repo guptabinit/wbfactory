@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/constants/colors.dart';

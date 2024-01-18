@@ -1,12 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get/get.dart';
 import 'package:wbfactory/models/user_model.dart' as user_model;
 import 'package:wbfactory/models/order_model.dart' as order_model;
-import 'package:wbfactory/views/onboarding_screens/verification_page.dart';
-
-import '../constants/colors.dart';
-import '../constants/consts.dart';
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;

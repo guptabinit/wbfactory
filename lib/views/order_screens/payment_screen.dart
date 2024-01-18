@@ -10,7 +10,6 @@ import 'package:wbfactory/constants/consts.dart';
 import 'package:wbfactory/resources/shop_methods.dart';
 
 import '../../components/buttons/back_button.dart';
-import '../../models/authorize/transaction_response.dart';
 import 'credit_card_payment_screen.dart';
 import 'order_placed_screen.dart';
 

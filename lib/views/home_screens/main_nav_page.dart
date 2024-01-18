@@ -1,12 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/resources/auth_methods.dart';
 import 'package:wbfactory/views/drawer/drawer_body.dart';
 import 'package:wbfactory/views/drawer/drawer_header.dart';
@@ -16,7 +11,6 @@ import 'package:wbfactory/views/home_screens/offers_page.dart';
 import 'package:wbfactory/views/home_screens/orders_page.dart';
 import 'package:wbfactory/models/user_model.dart' as user_model;
 import 'package:wbfactory/views/other_screens/cart_page.dart';
-import 'package:wbfactory/views/other_screens/test_screen.dart';
 import '../../constants/colors.dart';
 import '../../constants/consts.dart';
 

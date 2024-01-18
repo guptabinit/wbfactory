@@ -6,7 +6,6 @@ import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/components/buttons/back_button.dart';
 import 'package:wbfactory/components/buttons/main_button.dart';
 import 'package:wbfactory/constants/colors.dart';
-import 'package:wbfactory/views/onboarding_screens/enter_phone_page.dart';
 
 import '../../components/textfield/onboarding_textfield.dart';
 import '../../constants/consts.dart';
