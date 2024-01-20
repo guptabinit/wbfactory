@@ -28,6 +28,8 @@ class PaymentScreen extends StatefulWidget {
   final String? deliveryId;
   final String? dropOffPhone;
   final Map<String, dynamic>? selectedAddressFullInfo;
+  final double? wbCoins;
+  final double? wbCash;
 
   const PaymentScreen({
     super.key,
@@ -44,6 +46,8 @@ class PaymentScreen extends StatefulWidget {
     required this.selectedAddressFullInfo,
     this.deliveryId,
     this.dropOffPhone,
+    required this.wbCash,
+    required this.wbCoins,
   });
 
   @override
@@ -71,7 +75,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   getTotalOrder() async {
     try {
-      var orderSnap = await FirebaseFirestore.instance.collection('commons').doc('orders').get();
+      var orderSnap = await FirebaseFirestore.instance
+          .collection('commons')
+          .doc('orders')
+          .get();
 
       orderData = orderSnap.data()!;
 
@@ -87,7 +94,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   getData() async {
     try {
-      var snap = await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get();
+      var snap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
 
       setState(() {
         userData = snap.data()!;
@@ -137,7 +147,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
   // }
 
   calculateAmount() {
-    final price = (double.parse(widget.totalAmount.toStringAsFixed(2)) * 100).toInt().toString();
+    final price = (double.parse(widget.totalAmount.toStringAsFixed(2)) * 100)
+        .toInt()
+        .toString();
 
     return price.toString;
   }
@@ -226,9 +238,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                   ? secondaryColor
                                                   : Colors.grey.shade200
                                               : Colors.grey.shade200,
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
-                                        padding: const EdgeInsets.symmetric(vertical: 12),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12),
                                         child: Center(
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
@@ -236,11 +250,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                               Text(
                                                 "COD",
                                                 style: TextStyle(
-                                                  color: isCod ? lightColor : darkColor,
+                                                  color: isCod
+                                                      ? lightColor
+                                                      : darkColor,
                                                   fontSize: 14,
                                                 ),
                                               ),
-                                              widget.isPickup ? Container() : 4.widthBox,
+                                              widget.isPickup
+                                                  ? Container()
+                                                  : 4.widthBox,
                                               widget.isPickup
                                                   ? Container()
                                                   : const Text(
@@ -267,10 +285,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: isCod ? Colors.grey.shade200 : secondaryColor,
+                                    color: isCod
+                                        ? Colors.grey.shade200
+                                        : secondaryColor,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
                                   child: Center(
                                     child: Column(
                                       children: [
@@ -278,7 +299,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                           "ONLINE PAY",
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            color: isCod ? darkColor : lightColor,
+                                            color:
+                                                isCod ? darkColor : lightColor,
                                             fontSize: 14,
                                           ),
                                         ),
@@ -301,7 +323,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
               child: Text(
                 "Total Payable Amount: \$${widget.totalAmount.toStringAsFixed(2)}",
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
             12.heightBox,
@@ -351,11 +374,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           deliveryInfo: widget.selectedAddressFullInfo,
                           discountAmount: widget.discountAmount,
                           taxAmount: widget.taxAmount,
+                          wbCash: widget.wbCash,
+                          wbCoins: widget.wbCoins,
                         );
 
                         await resetCartFunction();
 
-                        await ShopMethods().updateOrder(totalOrder: (totalOrder + 1));
+                        await ShopMethods()
+                            .updateOrder(totalOrder: (totalOrder + 1));
 
                         setState(() {
                           isLoading = false;
@@ -371,7 +397,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
                         Get.to(
                           () => CreditCardPaymentScreen(
-                            amount: (double.parse(widget.totalAmount.toStringAsFixed(2)) * 100),
+                            amount: (double.parse(
+                                    widget.totalAmount.toStringAsFixed(2)) *
+                                100),
                             snap: widget.snap,
                             totalAmount: widget.totalAmount,
                             // totalOrder: widget.totalOrder,
@@ -383,9 +411,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             userData: userData,
                             deliveryId: widget.deliveryId,
                             dropOffPhone: widget.dropOffPhone,
-                            selectedAddressFullInfo: widget.selectedAddressFullInfo,
+                            selectedAddressFullInfo:
+                                widget.selectedAddressFullInfo,
                             discountAmount: widget.discountAmount,
                             taxAmount: widget.taxAmount,
+                            wbCash: widget.wbCash,
+                            wbCoins: widget.wbCoins,
                           ),
                         );
 

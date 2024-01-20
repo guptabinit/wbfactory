@@ -6,7 +6,9 @@ import 'package:intl/intl.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/components/cards/fixed_cart_title.dart';
 import 'package:wbfactory/constants/consts.dart';
+import 'package:wbfactory/models/coins.dart';
 import 'package:wbfactory/resources/authorize_gateway_service.dart';
+import 'package:wbfactory/resources/reward_methods.dart';
 import 'package:wbfactory/views/drawer/drawer_screens/setting_screens/address/add_address_screen.dart';
 import 'package:wbfactory/views/home_screens/main_nav_page.dart';
 import 'package:wbfactory/views/order_screens/payment_screen.dart';
@@ -55,11 +57,16 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
 
   double discount = 0.00;
 
-  String cid = "";
+  String cid = '';
 
   bool couponApplied = false;
 
   List<dynamic> usedCoupons = [];
+
+  bool _appliedWBCoins = false;
+  bool _appliedWBCash = false;
+  Coins? _wbCoins;
+  double? _wbCash;
 
   getData() async {
     try {
@@ -89,7 +96,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
         // cList = couponData['code_list'];
       });
     } catch (e) {
-      showCustomToast("Some error occurred", redColor);
+      showCustomToast('Some error occurred', redColor);
     }
   }
 
@@ -141,7 +148,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
             child: availableTimes.isEmpty
                 ? const Center(
                     child: Text(
-                    "Sorry!\nStore is closed now.\nCome back tomorrow.",
+                    'Sorry!\nStore is closed now.\nCome back tomorrow.',
                     textAlign: TextAlign.center,
                   ))
                 : ListView.builder(
@@ -194,7 +201,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
     try {
       getData();
     } catch (e) {
-      customToast("Some error occurred", redColor, context);
+      customToast('Some error occurred', redColor, context);
     }
   }
 
@@ -239,7 +246,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12),
                 child: Text(
-                  "Order Summary",
+                  'Order Summary',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w500,
@@ -262,7 +269,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                       ListView.builder(
                         padding: EdgeInsets.all(0),
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: widget.snap["items"].length,
+                        itemCount: widget.snap['items'].length,
                         shrinkWrap: true,
                         itemBuilder: (BuildContext context, index) {
                           var itemSnap =
@@ -298,7 +305,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                       //         children: [
                       //           const Expanded(
                       //             child: Text(
-                      //               "Cooking Instruction (if any)",
+                      //               'Cooking Instruction (if any)',
                       //               style: TextStyle(
                       //                 fontSize: 18,
                       //                 fontWeight: FontWeight.w500,
@@ -325,7 +332,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                       //             ),
                       //             isDense: true,
                       //             fillColor: veryLightGreyColor,
-                      //             hintText: "Enter your cooking instruction here",
+                      //             hintText: 'Enter your cooking instruction here',
                       //             hintStyle: TextStyle(
                       //               fontSize: 14,
                       //               color: darkGreyColor,
@@ -360,7 +367,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          "Pickup Time",
+                                          'Pickup Time',
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.w500,
@@ -426,7 +433,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                     children: [
                                       const Expanded(
                                         child: Text(
-                                          "Delivery Address",
+                                          'Delivery Address',
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.w500,
@@ -440,7 +447,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                           Get.to(
                                               () => const AddNewAddressPage());
                                         },
-                                        child: const Text("Add New"),
+                                        child: const Text('Add New'),
                                       ),
                                     ],
                                   ),
@@ -471,7 +478,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                         );
                                       }
 
-                                      final snap = snapshot.data!["address"];
+                                      final snap = snapshot.data!['address'];
 
                                       return ListView.builder(
                                         physics:
@@ -488,7 +495,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                           return RadioListTile<String>(
                                             title: Text(docSnap['title']),
                                             subtitle: Text(
-                                              "${docSnap['street']}, ${docSnap['city']}, ${docSnap['country']}- ${docSnap['zip']}",
+                                              '${docSnap['street']}, ${docSnap['city']}, ${docSnap['country']}- ${docSnap['zip']}',
                                               overflow: TextOverflow.ellipsis,
                                               maxLines: 1,
                                               style: const TextStyle(
@@ -500,9 +507,9 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                             groupValue: selectedAddress,
                                             onChanged: (value) async {
                                               Get.defaultDialog(
-                                                title: "Please Wait",
+                                                title: 'Please Wait',
                                                 middleText:
-                                                    "Checking order rate...",
+                                                    'Checking order rate...',
                                                 barrierDismissible: false,
                                               );
 
@@ -520,21 +527,21 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                               final quoteModel =
                                                   CreateQuoteModel(
                                                 // externalDeliveryID:
-                                                //     "TK-${widget.totalOrder}",
+                                                //     'TK-${widget.totalOrder}',
                                                 dropoffAddress:
-                                                    "${docSnap['street']}, ${docSnap['city']}, ${docSnap['country']}- ${docSnap['zip']}",
+                                                    '${docSnap['street']}, ${docSnap['city']}, ${docSnap['country']}- ${docSnap['zip']}',
                                                 dropoffBusinessName:
-                                                    "${docSnap['name']}",
+                                                    '${docSnap['name']}',
                                                 dropoffLocation: {
-                                                  "lat": docSnap['latitude']
+                                                  'lat': docSnap['latitude']
                                                       .toDouble(),
-                                                  "lng": docSnap['longitude']
+                                                  'lng': docSnap['longitude']
                                                       .toDouble()
                                                 },
                                                 dropoffPhoneNumber:
-                                                    "${docSnap['phone']}",
+                                                    '${docSnap['phone']}',
                                                 dropoffContactName:
-                                                    "${docSnap['name']}",
+                                                    '${docSnap['name']}',
                                                 orderValue: 10,
                                               );
 
@@ -608,8 +615,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                                 }
 
                                                 Get.snackbar(
-                                                  "Success",
-                                                  "Order rate calculated",
+                                                  'Success',
+                                                  'Order rate calculated',
                                                   backgroundColor: Colors.green,
                                                   snackPosition:
                                                       SnackPosition.BOTTOM,
@@ -625,7 +632,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                                   ).pop();
                                                 }
                                                 Get.snackbar(
-                                                  "Error",
+                                                  'Error',
                                                   e.message,
                                                   snackPosition:
                                                       SnackPosition.BOTTOM,
@@ -642,7 +649,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                                   ).pop();
                                                 }
                                                 Get.snackbar(
-                                                  "Error",
+                                                  'Error',
                                                   'Something went wrong',
                                                 );
                                               } finally {
@@ -666,6 +673,27 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                         height: 8,
                         color: veryLightGreyColor,
                       ),
+                      _RewardCoins(
+                        totalCartAmount: subCartAmount,
+                        appliedWBCoins: _appliedWBCoins,
+                        onAppliedWBCoins: (value, coins) {
+                          setState(() {
+                            _appliedWBCoins = value;
+                            _wbCoins = coins;
+                          });
+                        },
+                        appliedWBCash: _appliedWBCash,
+                        onAppliedWBCash: (value, cash) {
+                          setState(() {
+                            _appliedWBCash = value;
+                            _wbCash = cash;
+                          });
+                        },
+                      ),
+                      Container(
+                        height: 8,
+                        color: veryLightGreyColor,
+                      ),
                       Container(
                         padding: const EdgeInsets.only(
                           left: 12,
@@ -682,7 +710,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                               children: [
                                 const Expanded(
                                   child: Text(
-                                    "Coupon Code",
+                                    'Coupon Code',
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w500,
@@ -709,7 +737,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                       }
                                     });
                                   },
-                                  child: const Text("Select Coupon"),
+                                  child: const Text('Select Coupon'),
                                 ),
                               ],
                             ),
@@ -726,7 +754,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                   // suffixIcon: TextButton(
                                   //   onPressed: () {}, //checkCoupon(couponController.text),
                                   //   child: const Text(
-                                  //     "APPLY",
+                                  //     'APPLY',
                                   //     style: TextStyle(
                                   //       fontWeight: FontWeight.bold,
                                   //       color: secondaryColor,
@@ -739,7 +767,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                   ),
                                   isDense: true,
                                   fillColor: veryLightGreyColor,
-                                  hintText: "Select a coupon code",
+                                  hintText: 'Select a coupon code',
                                   hintStyle: TextStyle(
                                     fontSize: 14,
                                     color: darkGreyColor,
@@ -754,7 +782,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                 ? const Row(
                                     children: [
                                       Text(
-                                        "Coupon code applied successfully",
+                                        'Coupon code applied successfully',
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
                                           fontSize: 14,
@@ -786,7 +814,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                             const Row(
                               children: [
                                 Text(
-                                  "Payment Info",
+                                  'Payment Info',
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w500,
@@ -799,7 +827,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                             Row(
                               children: [
                                 const Text(
-                                  "Order Mode : ",
+                                  'Order Mode : ',
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -807,7 +835,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                   ),
                                 ),
                                 Text(
-                                  widget.isPickup ? " Pick up" : " Delivery",
+                                  widget.isPickup ? ' Pick up' : ' Delivery',
                                   style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -820,7 +848,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                             Row(
                               children: [
                                 const Text(
-                                  "Sub Total : ",
+                                  'Sub Total : ',
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -830,7 +858,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                 Expanded(child: Container()),
                                 8.widthBox,
                                 Text(
-                                  "\$ ${widget.snap["cart_amount"].toDouble().toStringAsFixed(2)}",
+                                  '\$ ${widget.snap['cart_amount'].toDouble().toStringAsFixed(2)}',
                                   style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -843,7 +871,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                             Row(
                               children: [
                                 Text(
-                                  "Tax ($tax%) : ",
+                                  'Tax ($tax%) : ',
                                   style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -853,7 +881,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                 Expanded(child: Container()),
                                 8.widthBox,
                                 Text(
-                                  "\$ ${(double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2)}",
+                                  '\$ ${(double.parse(widget.snap['cart_amount'].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2)}',
                                   style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -866,7 +894,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                             Row(
                               children: [
                                 Text(
-                                  "Discount ($cid) : ",
+                                  'Discount ($cid) : ',
                                   style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -876,7 +904,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                 Expanded(child: Container()),
                                 8.widthBox,
                                 Text(
-                                  "-\$ ${((double.parse((double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2)) + double.parse(widget.snap["cart_amount"].toStringAsFixed(2))) * discount / 100).toStringAsFixed(2)}",
+                                  '-\$ ${((double.parse((double.parse(widget.snap['cart_amount'].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2)) + double.parse(widget.snap['cart_amount'].toStringAsFixed(2))) * discount / 100).toStringAsFixed(2)}',
                                   style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -889,7 +917,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                             Row(
                               children: [
                                 const Text(
-                                  "Delivery Charges : ",
+                                  'Delivery Charges : ',
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -899,7 +927,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                 Expanded(child: Container()),
                                 8.widthBox,
                                 Text(
-                                  "\$ ${deliveryCharge.toStringAsFixed(2)}",
+                                  '\$ ${deliveryCharge.toStringAsFixed(2)}',
                                   style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -908,6 +936,52 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                 ),
                               ],
                             ),
+                            if (_appliedWBCoins && _wbCoins != null) ...[
+                              8.heightBox,
+                              Row(
+                                children: [
+                                  const Expanded(
+                                    child: Text(
+                                      'Used WB Coins',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: darkGreyColor,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    '- \$${_wbCoinsAmount.toStringAsFixed(2)}',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                            if (_appliedWBCash && _wbCash != 0) ...[
+                              8.heightBox,
+                              Row(
+                                children: [
+                                  const Expanded(
+                                    child: Text(
+                                      'Used WB Cash',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: darkGreyColor,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    '- \$${_wbCashAmount.toStringAsFixed(2)}',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -929,7 +1003,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                             Row(
                               children: [
                                 const Text(
-                                  "Total Amount",
+                                  'Total Amount',
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w500,
@@ -940,7 +1014,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                   child: Container(),
                                 ),
                                 Text(
-                                  "\$ ${(double.parse((double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) + double.parse((double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2)) - double.parse(((double.parse((double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2)) + double.parse(widget.snap["cart_amount"].toStringAsFixed(2))) * discount / 100).toStringAsFixed(2))).toStringAsFixed(2)) + deliveryCharge).toStringAsFixed(2)}",
+                                  '\$${_totalCartAmount.toStringAsFixed(2)}',
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
@@ -953,7 +1027,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                             Row(
                               children: [
                                 Text(
-                                  "You save \$ ${((double.parse((double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2)) + double.parse(widget.snap["cart_amount"].toStringAsFixed(2))) * discount / 100).toStringAsFixed(2)} on this order",
+                                  'You save \$ ${((double.parse((double.parse(widget.snap['cart_amount'].toStringAsFixed(2)) * tax / 100).toStringAsFixed(2)) + double.parse(widget.snap['cart_amount'].toStringAsFixed(2))) * discount / 100).toStringAsFixed(2)} on this order',
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
@@ -978,25 +1052,11 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
             left: 12,
             right: 12,
             child: MainButton(
-              title: "Proceed to payment",
+              title: 'Proceed to payment',
               onTap: () {
                 setState(
                   () {
-                    final amount = double.parse((double.parse(
-                                widget.snap["cart_amount"].toStringAsFixed(2)) +
-                            double.parse(
-                                (double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) * tax / 100)
-                                    .toStringAsFixed(2)) -
-                            double.parse(((double.parse(
-                                            (double.parse(widget.snap["cart_amount"].toStringAsFixed(2)) *
-                                                    tax /
-                                                    100)
-                                                .toStringAsFixed(2)) +
-                                        double.parse(widget.snap["cart_amount"].toStringAsFixed(2))) *
-                                    discount /
-                                    100)
-                                .toStringAsFixed(2)))
-                        .toStringAsFixed(2));
+                    final amount = _totalCartAmount;
 
                     totalAmount = amount + (quoteResponse?.fee ?? 0.0) / 100.0;
                   },
@@ -1017,27 +1077,33 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                         isPickup: widget.isPickup,
                         selectedAddressFullInfo: selectedAddressFullInfo,
                         discountAmount: double.parse(((double.parse(
-                                        (double.parse(widget.snap["cart_amount"]
+                                        (double.parse(widget.snap['cart_amount']
                                                     .toStringAsFixed(2)) *
                                                 tax /
                                                 100)
                                             .toStringAsFixed(2)) +
-                                    double.parse(widget.snap["cart_amount"]
+                                    double.parse(widget.snap['cart_amount']
                                         .toStringAsFixed(2))) *
                                 discount /
                                 100)
                             .toStringAsFixed(2)),
                         taxAmount: double.parse((double.parse(widget
-                                    .snap["cart_amount"]
+                                    .snap['cart_amount']
                                     .toStringAsFixed(2)) *
                                 tax /
                                 100)
                             .toStringAsFixed(2)),
+                        wbCoins: (_appliedWBCoins && _wbCoins != null)
+                            ? Coins.convertAmountToCoin(_wbCoinsAmount)
+                            : null,
+                        wbCash: (_appliedWBCash && _wbCash != null)
+                            ? _wbCashAmount
+                            : null,
                       ),
                     );
                   } else {
                     customToast(
-                      "Pick your preferred pickup time first.",
+                      'Pick your preferred pickup time first.',
                       darkGreyColor,
                       context,
                     );
@@ -1065,7 +1131,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                       currentTime.isBefore(endTime)) {
                     if (quoteResponse == null) {
                       customToast(
-                        "Please select delivery address first.",
+                        'Please select delivery address first.',
                         darkGreyColor,
                         context,
                       );
@@ -1085,22 +1151,28 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                         dropOffPhone: dropOffPhone,
                         selectedAddressFullInfo: selectedAddressFullInfo,
                         discountAmount: double.parse(((double.parse(
-                                        (double.parse(widget.snap["cart_amount"]
+                                        (double.parse(widget.snap['cart_amount']
                                                     .toStringAsFixed(2)) *
                                                 tax /
                                                 100)
                                             .toStringAsFixed(2)) +
-                                    double.parse(widget.snap["cart_amount"]
+                                    double.parse(widget.snap['cart_amount']
                                         .toStringAsFixed(2))) *
                                 discount /
                                 100)
                             .toStringAsFixed(2)),
                         taxAmount: double.parse((double.parse(widget
-                                    .snap["cart_amount"]
+                                    .snap['cart_amount']
                                     .toStringAsFixed(2)) *
                                 tax /
                                 100)
                             .toStringAsFixed(2)),
+                        wbCoins: (_appliedWBCoins && _wbCoins != null)
+                            ? Coins.convertAmountToCoin(_wbCoinsAmount)
+                            : null,
+                        wbCash: (_appliedWBCash && _wbCash != null)
+                            ? _wbCashAmount
+                            : null,
                       ),
                     );
                   } else {
@@ -1115,6 +1187,174 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
           ),
         ],
       ),
+    );
+  }
+
+  double get subCartAmount {
+    return double.parse((double.parse(widget.snap['cart_amount'].toStringAsFixed(2)) +
+            double.parse(
+                (double.parse(widget.snap['cart_amount'].toStringAsFixed(2)) *
+                        tax /
+                        100)
+                    .toStringAsFixed(2)) -
+            double.parse(((double.parse((double.parse(
+                                    widget.snap['cart_amount'].toStringAsFixed(2)) *
+                                tax /
+                                100)
+                            .toStringAsFixed(2)) +
+                        double.parse(widget.snap['cart_amount'].toStringAsFixed(2))) *
+                    discount /
+                    100)
+                .toStringAsFixed(2)))
+        .toStringAsFixed(2));
+  }
+
+  double get _totalCartAmount {
+    double totalCartAmount = subCartAmount;
+
+    if (_appliedWBCoins && _wbCoins != null) {
+      totalCartAmount = totalCartAmount - _wbCoinsAmount;
+    }
+
+    if (_appliedWBCash && _wbCash != null) {
+      totalCartAmount = totalCartAmount - _wbCashAmount;
+    }
+    return totalCartAmount.isNegative ? 0 : totalCartAmount;
+  }
+
+  double get _wbCoinsAmount {
+    double coinsAmount = _wbCoins?.usedCoinAmount ?? 0.0;
+    if (coinsAmount > subCartAmount) {
+      coinsAmount = subCartAmount;
+    }
+    return coinsAmount;
+  }
+
+  double get _wbCashAmount {
+    double cashAmount = _wbCash ?? 0.0;
+    if (cashAmount > subCartAmount) {
+      cashAmount = subCartAmount;
+    }
+    return cashAmount;
+  }
+}
+
+class _RewardCoins extends StatelessWidget {
+  final double totalCartAmount;
+  final bool appliedWBCoins;
+  final bool appliedWBCash;
+  final Function(bool, Coins?) onAppliedWBCoins;
+  final Function(bool, double) onAppliedWBCash;
+
+  const _RewardCoins({
+    required this.totalCartAmount,
+    required this.appliedWBCoins,
+    required this.appliedWBCash,
+    required this.onAppliedWBCoins,
+    required this.onAppliedWBCash,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    TextStyle textStyle = const TextStyle(
+      fontSize: 15,
+      fontWeight: FontWeight.w600,
+      color: Colors.black,
+    );
+    return StreamBuilder<Coins>(
+      stream: RewardMethods.coinsStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          Coins? coins = snapshot.data;
+          return Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+            ).copyWith(top: 8, bottom: 16),
+            decoration: const BoxDecoration(
+              color: whiteColor,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Redeem Rewards',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                12.heightBox,
+                Row(
+                  children: [
+                    SizedBox.square(
+                      dimension: 18,
+                      child: Checkbox(
+                        value: appliedWBCoins,
+                        onChanged: ((coins?.totalAmount ?? 0) >= 8) &&
+                                ((coins?.totalAmount ?? 0) >= 8)
+                            ? (value) {
+                                onAppliedWBCoins(value ?? false, coins);
+                              }
+                            : null,
+                      ),
+                    ),
+                    20.widthBox,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'WB Coins: ${coins?.coins?.toStringAsFixed(0)}',
+                            style: textStyle,
+                          ),
+                          5.heightBox,
+                          Text(
+                            '${coins?.coins?.toStringAsFixed(0)} WB Coins = \$${coins?.totalAmount.toStringAsFixed(2)}',
+                            style: textStyle.copyWith(
+                              fontSize: 13,
+                              color: lightGreyColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                20.heightBox,
+                Row(
+                  children: [
+                    SizedBox.square(
+                      dimension: 18,
+                      child: Checkbox(
+                        value: appliedWBCash,
+                        onChanged: (coins?.cash ?? 0.0) >= totalCartAmount
+                            ? (value) {
+                                onAppliedWBCash(value ?? false,
+                                    coins?.cash?.toDouble() ?? 0.0);
+                              }
+                            : null,
+                      ),
+                    ),
+                    15.widthBox,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'WB Cash: \$${coins?.cash?.toStringAsFixed(2)}',
+                            style: textStyle,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      },
     );
   }
 }
