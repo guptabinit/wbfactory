@@ -290,6 +290,7 @@ class ShopMethods {
         'delivery_info': deliveryInfo,
         'delivery_id': deliveryId,
         'read': false,
+        'order_accepted': 0, //0: not decided; 1 : accepted; 2: cancelled
         'transaction': transactionResponse != null
             ? {
                 "responseCode": transactionResponse.responseCode,

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/components/buttons/main_button.dart';
 import 'package:wbfactory/constants/colors.dart';
 import 'package:wbfactory/views/drawer/drawer_screens/setting_screens/address/verify_address_screen.dart';
 
+import '../../../../../components/buttons/back_button.dart';
 import '../../../../../components/textfield/custom_textfield.dart';
 import '../../../../../constants/consts.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 class AddNewAddressPage extends StatefulWidget {
   const AddNewAddressPage({super.key});
@@ -42,34 +45,30 @@ class _AddNewAddressPageState extends State<AddNewAddressPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: secondaryColor,
-        centerTitle: true,
-        title: const Text(
-          "Add Address",
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-            color: lightColor,
-          ),
-        ),
-        leading: IconButton(
-          onPressed: () {
+        backgroundColor: lightColor,
+        automaticallyImplyLeading: false,
+        elevation: 0.0,
+        leading: backButton(
+          onTap: () {
             Get.back();
           },
-          icon: const Icon(
-            Icons.arrow_back,
-            color: lightColor,
-          ),
         ),
+        leadingWidth: 90,
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              16.heightBox,
+            children: [const Text(
+              "Add Address",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w500,
+                color: darkColor,
+              ),
+            ),
+              8.heightBox,
               CustomTextfield(
                 controller: titleController,
                 hintText: "Home or Work",
@@ -88,16 +87,19 @@ class _AddNewAddressPageState extends State<AddNewAddressPage> {
               12.heightBox,
               CustomTextfield(
                 controller: phoneController,
-                hintText: "eg. +1XXXXXXXXXX",
+                hintText: "eg. +1 (XXX) XXX-XXXX",
                 title: "Receiver's Contact Number",
                 showTitle: true,
                 keyboardType: TextInputType.phone,
+                inputFormatter: <TextInputFormatter>[
+                  MaskedInputFormatter('+# (###) ###-####')
+                ],
               ),
               12.heightBox,
               CustomTextfield(
                 controller: streetController,
                 hintText: "eg. 54th Lincoln Street",
-                title: "Street Address",
+                title: "Street & Locality",
                 showTitle: true,
                 keyboardType: TextInputType.streetAddress,
               ),
@@ -124,7 +126,7 @@ class _AddNewAddressPageState extends State<AddNewAddressPage> {
                   Map<String, String> addressInput = {
                     'title': titleController.text,
                     'name': nameController.text,
-                    'phone': phoneController.text,
+                    'phone': "+${phoneController.text.replaceAll(RegExp(r'[^\d]'), '')}",
                     'street': streetController.text,
                     'city': cityController.text,
                     'country': "United States",
@@ -138,13 +140,15 @@ class _AddNewAddressPageState extends State<AddNewAddressPage> {
                       cityController.text != "" &&
                       zipController.text != "") {
                     Get.to(
-                          () => VerifyAddressPage(
+                      () => VerifyAddressPage(
                         addressInput: addressInput,
                       ),
                     );
                   } else {
-                    customToast("Enter all the fields first.", lightGreyColor, context);
+                    customToast(
+                        "Enter all the fields first.", lightGreyColor, context);
                   }
+
                 },
               ),
             ],
@@ -154,3 +158,4 @@ class _AddNewAddressPageState extends State<AddNewAddressPage> {
     );
   }
 }
+

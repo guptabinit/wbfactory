@@ -49,7 +49,7 @@ class _DrawerListState extends State<DrawerList> {
 
 
   final Uri url = Uri.parse(
-      "https://whitestonebagelfactory.com/terms-conditions/#toc");
+      "https://whitestonebagelfactory.com/terms-conditions/");
 
   @override
   Widget build(BuildContext context) {

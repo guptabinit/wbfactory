@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/constants/colors.dart';
 
@@ -9,6 +10,7 @@ class OnboardingTextField extends StatefulWidget {
   final bool isPass;
   final Widget? suffixIcon;
   final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatter;
 
   const OnboardingTextField({
     super.key,
@@ -18,6 +20,7 @@ class OnboardingTextField extends StatefulWidget {
     this.isPass = false,
     this.suffixIcon,
     this.keyboardType,
+    this.inputFormatter,
   });
 
   @override
@@ -40,6 +43,7 @@ class _OnboardingTextFieldState extends State<OnboardingTextField> {
         ),
         6.heightBox,
         TextField(
+          inputFormatters: widget.inputFormatter,
           keyboardType: widget.keyboardType,
           obscureText: widget.isPass,
           controller: widget.controller,

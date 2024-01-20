@@ -7,6 +7,7 @@ import 'package:wbfactory/components/buttons/main_button.dart';
 import 'package:wbfactory/models/coins.dart';
 import 'package:wbfactory/resources/reward_methods.dart';
 import 'package:wbfactory/views/onboarding_screens/login_page.dart';
+import 'package:wbfactory/views/other_screens/coin_rules_screen.dart';
 
 import '../../components/cards/promotional_card.dart';
 import '../../constants/colors.dart';
@@ -15,6 +16,7 @@ import '../../resources/auth_methods.dart';
 
 class OffersPage extends StatefulWidget {
   final bool userAvailable;
+
   const OffersPage({super.key, required this.userAvailable});
 
   @override
@@ -97,7 +99,17 @@ class _OffersPageState extends State<OffersPage> {
                         Get.offAll(() => const LoginPage());
                       },
                     ),
-              25.heightBox,
+              12.heightBox,
+              MainButton(
+                title: "Click here for rules",
+                onTap: () {
+                  Get.to(()=> CoinRulesScreen());
+                },
+                color: secondaryColor.withOpacity(0.16),
+                textColor: secondaryColor,
+                fontSize: 14,
+              ),
+              16.heightBox,
               const Text(
                 'Promo-codes for you',
                 style: TextStyle(
@@ -137,7 +149,7 @@ class _OffersPageState extends State<OffersPage> {
                           ),
                         )
                       : ListView.builder(
-                          physics: const BouncingScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           padding: const EdgeInsets.only(top: 12),
                           itemCount: orderLength,
                           shrinkWrap: true,

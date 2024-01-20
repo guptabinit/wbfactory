@@ -123,7 +123,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
       double packagePrice = widget.snap["price"].toDouble() + totalVarientPrice;
 
-      double cartAmount = cartData["cart_amount"] + packagePrice;
+      double cartAmount = (cartData["cart_amount"] ?? 0) + packagePrice;
 
       String message = await ShopMethods().addToCart(
         pid: widget.snap["pid"],
@@ -169,7 +169,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         double packagePrice =
             widget.snap["price"].toDouble() + selectedQuantityPrice;
 
-        double cartAmount = cartData["cart_amount"] + packagePrice;
+        double cartAmount = (cartData["cart_amount"] ?? 0 )+ packagePrice;
 
         String message = await ShopMethods().addToCart(
           pid: widget.snap["pid"],
@@ -237,7 +237,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             selectedQuantityPrice +
             totalVarientPrice;
 
-        double cartAmount = cartData["cart_amount"] + packagePrice;
+        double cartAmount = (cartData["cart_amount"]  ?? 0 ) + packagePrice;
 
         String message = await ShopMethods().addToCart(
           pid: widget.snap["pid"],
@@ -279,7 +279,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
       double packagePrice = widget.snap["price"].toDouble();
 
-      double cartAmount = cartData["cart_amount"] + packagePrice;
+      double cartAmount = (cartData["cart_amount"] ?? 0)+ packagePrice;
 
       String message = await ShopMethods().addToCart(
         pid: widget.snap["pid"],

@@ -34,6 +34,20 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     return redColor;
   }
 
+  String did = "";
+
+  @override
+  void initState() {
+    try{
+      setState(() {
+        did = widget.snap['delivery_id'];
+      });
+    } catch (e) {
+      print("did doesn't exists.");
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -898,6 +912,27 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                             ),
                             Text(
                               widget.snap['delivery_info']['title'],
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: secondaryColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        6.heightBox,
+                        Row(
+                          children: [
+                            const Text(
+                              "Delivery ID: ",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                color: darkColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                            Text(
+                              did,
                               style: const TextStyle(
                                 fontWeight: FontWeight.w500,
                                 color: secondaryColor,

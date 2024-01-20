@@ -8,6 +8,8 @@ import 'package:wbfactory/components/buttons/main_button.dart';
 import 'package:wbfactory/constants/colors.dart';
 import 'package:wbfactory/constants/consts.dart';
 import 'package:wbfactory/resources/shop_methods.dart';
+import 'package:wbfactory/views/order_screens/order_palaced_screens/new_order_placed_screen.dart';
+import 'package:wbfactory/views/order_screens/order_status_screen.dart';
 
 import '../../components/buttons/back_button.dart';
 import 'credit_card_payment_screen.dart';
@@ -346,7 +348,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       if (isCod == true && context.mounted) {
                         DateTime now = DateTime.now();
                         String formattedDate = DateFormat(
-                          'dd/MM/yy kk:mm:ss',
+                          'MM/dd/yy kk:mm:ss',
                         ).format(now);
 
                         String oid = "${totalOrder + 1}";
@@ -388,7 +390,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         });
 
                         Get.close(3);
-                        Get.to(() => const OrderPlacedScreen());
+                        Get.to(() => OrderStatusScreen(oid: oid));
                       } else if (isCod == false) {
                         // await makePayment();
                         // setState(() {

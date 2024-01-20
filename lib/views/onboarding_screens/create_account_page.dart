@@ -1,5 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_multi_formatter/formatters/masked_input_formatter.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -118,32 +120,42 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                       keyboardType: TextInputType.emailAddress,
                     ),
                     12.heightBox,
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: lightGreyColor,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Text(
-                            "🇺🇸",
-                            style: TextStyle(fontSize: 24),
-                          ),
-                        ),
-                        8.widthBox,
-                        Expanded(
-                          child: OnboardingTextField(
-                            controller: phoneController,
-                            keyboardType: TextInputType.phone,
-                            title: "Mobile Number",
-                            hintText: "123-1234-123",
-                          ),
-                        ),
+                    OnboardingTextField(
+                      controller: phoneController,
+                      keyboardType: TextInputType.phone,
+                      title: "Mobile Number",
+                      hintText: "eg. +1 (XXX) XXX-XXXX",
+                      inputFormatter: <TextInputFormatter>[
+                        MaskedInputFormatter('+# (###) ###-####')
                       ],
                     ),
                     12.heightBox,
+                    // Row(
+                    //   crossAxisAlignment: CrossAxisAlignment.end,
+                    //   children: [
+                    //     Container(
+                    //       padding: const EdgeInsets.all(12),
+                    //       decoration: BoxDecoration(
+                    //         color: lightGreyColor,
+                    //         borderRadius: BorderRadius.circular(8),
+                    //       ),
+                    //       child: const Text(
+                    //         "🇺🇸",
+                    //         style: TextStyle(fontSize: 24),
+                    //       ),
+                    //     ),
+                    //     8.widthBox,
+                    //     Expanded(
+                    //       child: OnboardingTextField(
+                    //         controller: phoneController,
+                    //         keyboardType: TextInputType.phone,
+                    //         title: "Mobile Number",
+                    //         hintText: "123-1234-123",
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    // 12.heightBox,
                     OnboardingTextField(
                       controller: passwordController,
                       title: "Password",
@@ -192,8 +204,6 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                                   customToast("Please enter a password greater than 6 characters", redColor, context);
                                 } else if (passwordController.text != confirmPasswordController.text) {
                                   customToast("Password does not match with confirm password", redColor, context);
-                                } else if (phoneController.text.length != 10) {
-                                  customToast("Please enter the correct phone number", redColor, context);
                                 } else if (!EmailValidator.validate(emailController.text)) {
                                   customToast("Enter a correct email address", redColor, context);
                                 } else {
@@ -201,7 +211,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                                     'full_name': fullNameController.text,
                                     'email': emailController.text,
                                     'password': passwordController.text,
-                                    'phone': "+1${phoneController.text}",
+                                    'phone': "+${phoneController.text.replaceAll(RegExp(r'[^\d]'), '')}",
                                   };
                 
                                   // do-something

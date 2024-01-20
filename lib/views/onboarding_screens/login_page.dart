@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     String message = await AuthMethods().loginUser(
-      email: emailController.text,
+      email: emailController.text.trim(),
       password: passwordController.text,
     );
 
@@ -154,8 +154,6 @@ class _LoginPageState extends State<LoginPage> {
                       if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
                         if (passwordController.text.length < 6) {
                           customToast("Please enter a password greater than 6 characters", redColor, context);
-                        } else if (!EmailValidator.validate(emailController.text)) {
-                          customToast("Enter a correct email address", redColor, context);
                         } else {
                           loginUser();
                         }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/constants/colors.dart';
 
@@ -11,6 +12,7 @@ class CustomTextfield extends StatefulWidget {
   final TextInputType? keyboardType;
   final void Function()? onEditingCompleted;
   final bool showTitle;
+  final List<TextInputFormatter>? inputFormatter;
 
   const CustomTextfield({
     super.key,
@@ -22,6 +24,7 @@ class CustomTextfield extends StatefulWidget {
     this.keyboardType,
     this.onEditingCompleted,
     this.showTitle = false,
+    this.inputFormatter,
   });
 
   @override
@@ -45,6 +48,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
             borderRadius: BorderRadius.circular(8)
           ),
           child: TextField(
+            inputFormatters: widget.inputFormatter,
             onEditingComplete: widget.onEditingCompleted,
             keyboardType: widget.keyboardType,
             obscureText: widget.isPass,

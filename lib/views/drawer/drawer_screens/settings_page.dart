@@ -20,7 +20,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final Uri url = Uri.parse(
-        "https://whitestonebagelfactory.com/terms-conditions/#toc");
+        "https://whitestonebagelfactory.com/terms-conditions/");
 
     return Scaffold(
       appBar: AppBar(

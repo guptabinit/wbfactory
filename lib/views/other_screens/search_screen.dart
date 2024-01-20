@@ -6,6 +6,9 @@ import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/components/cards/item_card.dart';
 import 'package:wbfactory/components/textfield/custom_textfield.dart';
 import 'package:wbfactory/constants/colors.dart';
+import 'package:wbfactory/views/order_screens/order_palaced_screens/new_order_placed_screen.dart';
+import 'package:wbfactory/views/order_screens/order_palaced_screens/order_waiting_screen.dart';
+import 'package:wbfactory/views/order_screens/order_palaced_screens/some_error_screen.dart';
 import 'package:wbfactory/views/other_screens/product_detail_page.dart';
 
 import '../../components/buttons/back_button.dart';
@@ -41,6 +44,19 @@ class _SearchScreenState extends State<SearchScreen> {
           },
         ),
         leadingWidth: 90,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Get.to(() => const SomeErrorScreen());
+            },
+            tooltip: "Test",
+            icon: const Icon(
+              Icons.warning_amber,
+              color: secondaryColor,
+            ),
+          ),
+          8.widthBox,
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),

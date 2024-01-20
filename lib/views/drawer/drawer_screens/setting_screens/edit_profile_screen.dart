@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_multi_formatter/formatters/masked_input_formatter.dart';
 import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -97,10 +99,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           12.heightBox,
                           CustomTextfield(
                             controller: phoneController,
-                            hintText: "eg. +1XXXXXXXXXX",
+                            hintText: "eg. +1 (XXX) XXX-XXXX",
                             title: "Mobile Number",
                             showTitle: true,
-                            keyboardType: TextInputType.name,
+                            keyboardType: TextInputType.phone,
+                            inputFormatter: <TextInputFormatter>[
+                              MaskedInputFormatter('+# (###) ###-####')
+                            ],
                           ),
                           12.heightBox,
                           CustomTextfield(
