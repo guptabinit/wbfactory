@@ -8,7 +8,8 @@ import 'package:wbfactory/views/home_screens/main_nav_page.dart';
 import 'package:wbfactory/views/order_screens/order_palaced_screens/new_order_placed_screen.dart';
 
 class OrderWaitingScreen extends StatefulWidget {
-  const OrderWaitingScreen({super.key});
+  final bool isPaid;
+  const OrderWaitingScreen({super.key, required this.isPaid});
 
   @override
   State<OrderWaitingScreen> createState() => _OrderWaitingScreenState();
@@ -36,7 +37,7 @@ class _OrderWaitingScreenState extends State<OrderWaitingScreen> {
             child: SafeArea(
               child: Column(
                 children: [
-                  Row(
+                  !widget.isPaid ? Container() : Row(
                     children: [
                       CircleAvatar(
                         backgroundColor: greenColor,
@@ -54,7 +55,7 @@ class _OrderWaitingScreenState extends State<OrderWaitingScreen> {
                       ),
                     ],
                   ),
-                  12.heightBox,
+                  !widget.isPaid ? Container() : 12.heightBox,
 
                   Row(
                     children: [

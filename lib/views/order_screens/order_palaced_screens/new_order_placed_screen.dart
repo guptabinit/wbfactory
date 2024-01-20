@@ -8,7 +8,8 @@ import 'package:wbfactory/views/home_screens/main_nav_page.dart';
 import 'package:wbfactory/views/order_screens/order_palaced_screens/order_rejected_screen.dart';
 
 class NewOrderPlacedScreen extends StatefulWidget {
-  const NewOrderPlacedScreen({super.key});
+  final bool isPaid;
+  const NewOrderPlacedScreen({super.key, required this.isPaid});
 
   @override
   State<NewOrderPlacedScreen> createState() => _NewOrderPlacedScreenState();
@@ -36,7 +37,7 @@ class _NewOrderPlacedScreenState extends State<NewOrderPlacedScreen> {
             child: SafeArea(
               child: Column(
                 children: [
-                  Row(
+                  !widget.isPaid ? Container() : Row(
                     children: [
                       CircleAvatar(
                         backgroundColor: greenColor,
@@ -54,7 +55,7 @@ class _NewOrderPlacedScreenState extends State<NewOrderPlacedScreen> {
                       ),
                     ],
                   ),
-                  12.heightBox,
+                  !widget.isPaid ? Container() : 12.heightBox,
 
                   Row(
                     children: [

@@ -19,6 +19,7 @@ class OrderCard extends StatefulWidget {
 }
 
 class _OrderCardState extends State<OrderCard> {
+
   String orderStatus() {
     if (widget.snap['order_status'] == 0) {
       return "In Process";
@@ -43,7 +44,7 @@ class _OrderCardState extends State<OrderCard> {
     } else if (widget.snap['order_accepted'] == 1) {
       return "Order is accepted";
     }
-    return "Cancelled by restaurant";
+    return "Rejected by restaurant";
   }
 
   Color acceptedColorStatus() {

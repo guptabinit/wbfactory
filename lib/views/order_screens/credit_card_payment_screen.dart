@@ -283,7 +283,7 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
                                     ?.transactionResponse;
                                 String oid = await storingInfo(res, trackingUrl);
                                 Get.close(3);
-                                Get.to(() => OrderStatusScreen(oid: oid));
+                                Get.to(() => OrderStatusScreen(oid: oid, isPaid: true,));
                               }
                             } catch (e) {
                               e.log();

@@ -390,7 +390,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         });
 
                         Get.close(3);
-                        Get.to(() => OrderStatusScreen(oid: oid));
+                        Get.to(() => OrderStatusScreen(oid: oid, isPaid: false,));
                       } else if (isCod == false) {
                         // await makePayment();
                         // setState(() {

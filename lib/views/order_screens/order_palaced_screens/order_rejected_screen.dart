@@ -8,7 +8,8 @@ import 'package:wbfactory/views/home_screens/main_nav_page.dart';
 import 'package:wbfactory/views/order_screens/order_palaced_screens/new_order_placed_screen.dart';
 
 class OrderRejectedScreen extends StatefulWidget {
-  const OrderRejectedScreen({super.key});
+  final bool isPaid;
+  const OrderRejectedScreen({super.key, required this.isPaid});
 
   @override
   State<OrderRejectedScreen> createState() => _OrderRejectedScreenState();
@@ -36,7 +37,7 @@ class _OrderRejectedScreenState extends State<OrderRejectedScreen> {
             child: SafeArea(
               child: Column(
                 children: [
-                  Row(
+                  !widget.isPaid ? Container() : Row(
                     children: [
                       CircleAvatar(
                         backgroundColor: greenColor,
@@ -52,7 +53,7 @@ class _OrderRejectedScreenState extends State<OrderRejectedScreen> {
                       ),
                     ],
                   ),
-                  12.heightBox,
+                  !widget.isPaid ? Container() : 12.heightBox,
                   Row(
                     children: [
                       CircleAvatar(
@@ -71,8 +72,8 @@ class _OrderRejectedScreenState extends State<OrderRejectedScreen> {
                       ),
                     ],
                   ),
-                  12.heightBox,
-                  Row(
+                  !widget.isPaid ? Container() : 12.heightBox,
+                  !widget.isPaid ? Container() : Row(
                     children: [
                       CircleAvatar(
                         backgroundColor: Colors.amber,
@@ -150,8 +151,8 @@ class _OrderRejectedScreenState extends State<OrderRejectedScreen> {
               ),
             ),
           ),
-          12.heightBox,
-          Padding(
+          !widget.isPaid ? Container() : 12.heightBox,
+          !widget.isPaid ? Container() : Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
               "Don’t worry we are processing the refund. You will receive it in 2-3 working days",
