@@ -1,11 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/components/buttons/main_button.dart';
-import 'package:wbfactory/constants/consts.dart';
+import 'package:wbfactory/models/coins.dart';
+import 'package:wbfactory/resources/reward_methods.dart';
 import 'package:wbfactory/views/onboarding_screens/login_page.dart';
 
 import '../../components/cards/promotional_card.dart';
@@ -14,7 +14,6 @@ import '../../models/user_model.dart' as user_model;
 import '../../resources/auth_methods.dart';
 
 class OffersPage extends StatefulWidget {
-
   final bool userAvailable;
   const OffersPage({super.key, required this.userAvailable});
 
@@ -30,11 +29,11 @@ class _OffersPageState extends State<OffersPage> {
   @override
   void initState() {
     super.initState();
-    if(widget.userAvailable){
+    if (widget.userAvailable) {
       try {
         getUserData();
       } catch (e) {
-        print("Error while fetching user");
+        print('Error while fetching user');
       }
     }
   }
@@ -59,7 +58,7 @@ class _OffersPageState extends State<OffersPage> {
             children: [
               12.heightBox,
               const Text(
-                "Your Offers",
+                'Your Offers',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w500,
@@ -68,7 +67,7 @@ class _OffersPageState extends State<OffersPage> {
               ),
               8.heightBox,
               const Text(
-                "Here you will find all the active discounts and offers running on our app.",
+                'Here you will find all the active discounts and offers running on our app.',
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
@@ -77,106 +76,30 @@ class _OffersPageState extends State<OffersPage> {
               ),
               12.heightBox,
               // Coins Section
-              widget.userAvailable ? Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                decoration: BoxDecoration(
-                  color: secondaryColor,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      "assets/images/coins.webp",
-                      height: 100,
-                      width: 100,
-                      fit: BoxFit.fitHeight,
+              widget.userAvailable
+                  ? StreamBuilder<Coins>(
+                      stream: RewardMethods.coinsStream,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          Coins? coins = snapshot.data;
+
+                          return _WBCoinsView(
+                            totalCoins: coins?.coins?.toDouble() ?? 0,
+                            totalCash: coins?.cash?.toDouble() ?? 0,
+                          );
+                        }
+                        return SizedBox.shrink();
+                      },
+                    )
+                  : MainButton(
+                      title: 'Login/Signup to view more',
+                      onTap: () {
+                        Get.offAll(() => const LoginPage());
+                      },
                     ),
-                    16.widthBox,
-                    showCoins
-                        ? Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  "You have",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                    color: lightColor,
-                                  ),
-                                ),
-                                2.heightBox,
-                                user == null
-                                    ? const Text(
-                                        "-- WB Coins",
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w600,
-                                          color: lightColor,
-                                        ),
-                                      )
-                                    : Text(
-                                        "${user!.coins} WB Coins",
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w600,
-                                          color: lightColor,
-                                        ),
-                                      ),
-                                6.heightBox,
-                                const Text(
-                                  "1 WB Coin = \$1.00",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    color: lightColor,
-                                  ),
-                                ),
-                                2.heightBox,
-                                const Text(
-                                  "You can use them in your next purchase on WB App.",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400,
-                                    color: lightColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : Expanded(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  "Stay Tuned!",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                    color: lightColor,
-                                  ),
-                                ),
-                                4.heightBox,
-                                const Text(
-                                  "WB Coins are coming soon!",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600,
-                                    color: lightColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                    Container(),
-                  ],
-                ),
-              ) : MainButton(title: "Login/Signup to view more", onTap: (){ Get.offAll(() => const LoginPage()); }),
-              16.heightBox,
+              25.heightBox,
               const Text(
-                "Promo-codes for you",
+                'Promo-codes for you',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w500,
@@ -186,7 +109,7 @@ class _OffersPageState extends State<OffersPage> {
               StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection('commons')
-                    .doc("coupons")
+                    .doc('coupons')
                     .snapshots(),
                 builder: (context,
                     AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
@@ -221,7 +144,10 @@ class _OffersPageState extends State<OffersPage> {
                           itemBuilder: (BuildContext context, index) {
                             var mainSnap = snap[snap['code_list'][index]];
 
-                            return PromotionalCard(snap: mainSnap, couponPage: false,);
+                            return PromotionalCard(
+                              snap: mainSnap,
+                              couponPage: false,
+                            );
                           },
                         );
                 },
@@ -232,5 +158,106 @@ class _OffersPageState extends State<OffersPage> {
       ),
     );
   }
+}
 
+class _WBCoinsView extends StatelessWidget {
+  final double totalCash;
+  final double totalCoins;
+
+  const _WBCoinsView({
+    required this.totalCoins,
+    required this.totalCash,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    TextStyle textStyle = const TextStyle(
+      fontSize: 14,
+      color: Colors.white,
+      fontWeight: FontWeight.w700,
+    );
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: secondaryColor,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                flex: 4,
+                child: Image.asset(
+                  'assets/images/coins.webp',
+                  height: 100,
+                  width: 100,
+                  filterQuality: FilterQuality.high,
+                ),
+              ),
+              Expanded(
+                flex: 7,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15)
+                      .copyWith(right: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'You have',
+                        style: textStyle.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      4.heightBox,
+                      Text(
+                        '${totalCoins.toStringAsFixed(0)} WB Coins',
+                        style: textStyle.copyWith(fontSize: 22),
+                      ),
+                      8.heightBox,
+                      Text(
+                        '100 WB Coin = \$8.00',
+                        style: textStyle.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      4.heightBox,
+                      Text(
+                        'You can use them in your next purchase on WB App.',
+                        style: textStyle.copyWith(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        10.heightBox,
+        Text.rich(
+          TextSpan(
+            text: 'You have WB Cash: ',
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: Colors.black,
+            ),
+            children: [
+              TextSpan(
+                text: '\$${totalCash.toStringAsFixed(0)}',
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: secondaryColor,
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
+  }
 }

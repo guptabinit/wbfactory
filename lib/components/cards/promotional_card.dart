@@ -1,12 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
-// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/constants/consts.dart';
 
 import '../../constants/colors.dart';
-import '../../resources/shop_methods.dart';
 
 class PromotionalCard extends StatefulWidget {
   final dynamic snap;

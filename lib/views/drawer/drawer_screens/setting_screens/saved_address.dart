@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -9,7 +8,6 @@ import 'package:velocity_x/velocity_x.dart';
 import '../../../../components/buttons/back_button.dart';
 import '../../../../components/cards/address_card.dart';
 import '../../../../constants/colors.dart';
-import '../../../../constants/consts.dart';
 import 'address/add_address_screen.dart';
 
 class SavedAddressPage extends StatefulWidget {

@@ -33,6 +33,8 @@ class CreditCardPaymentScreen extends StatefulWidget {
   final String? deliveryId;
   final String? dropOffPhone;
   final Map<String, dynamic>? selectedAddressFullInfo;
+  final double? wbCoins;
+  final double? wbCash;
 
   const CreditCardPaymentScreen({
     super.key,
@@ -51,10 +53,13 @@ class CreditCardPaymentScreen extends StatefulWidget {
     required this.selectedAddressFullInfo,
     this.deliveryId,
     this.dropOffPhone,
+    required this.wbCoins,
+    required this.wbCash,
   });
 
   @override
-  State<CreditCardPaymentScreen> createState() => _CreditCardPaymentScreenState();
+  State<CreditCardPaymentScreen> createState() =>
+      _CreditCardPaymentScreenState();
 }
 
 class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
@@ -69,14 +74,16 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
   bool isCvvFocused = false;
   CardType? cardType = CardType.otherBrand;
 
-
   var orderData = {};
 
   int totalOrder = 0;
 
   getTotalOrder() async {
     try {
-      var orderSnap = await FirebaseFirestore.instance.collection('commons').doc('orders').get();
+      var orderSnap = await FirebaseFirestore.instance
+          .collection('commons')
+          .doc('orders')
+          .get();
 
       orderData = orderSnap.data()!;
 
@@ -90,15 +97,12 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final c = Get.put(PaymentController());
 
     return Scaffold(
-      appBar: AppBar(
-
-      ),
+      appBar: AppBar(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -198,9 +202,11 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
                               final data = widget.snap?.data() as Map?;
                               final items = data?['items'] as List?;
 
-                              final strItems = items?.map((el) => "$el").join(", ");
+                              final strItems =
+                                  items?.map((el) => "$el").join(", ");
 
-                              final invoiceRef = data?['invoice_ref']?.toString() ?? "";
+                              final invoiceRef =
+                                  data?['invoice_ref']?.toString() ?? "";
 
                               if (invoiceRef.isEmptyOrNull) {
                                 Get.snackbar(
@@ -231,13 +237,20 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
                               await c.makePayment(contracts);
 
                               String? trackingUrl;
-                              if (widget.deliveryId != null && widget.dropOffPhone != null && c.creditCardResponse.value?.messages?.resultCode?.toLowerCase() == "ok") {
+                              if (widget.deliveryId != null &&
+                                  widget.dropOffPhone != null &&
+                                  c.creditCardResponse.value?.messages
+                                          ?.resultCode
+                                          ?.toLowerCase() ==
+                                      "ok") {
                                 try {
-                                  final res = await DoordashApiClient().acceptDeliveryQuote(
+                                  final res = await DoordashApiClient()
+                                      .acceptDeliveryQuote(
                                     deliveryId: widget.deliveryId!,
                                     dropoffPhoneNumber: widget.dropOffPhone,
                                   );
-                                  if (!res.containsKey('status') || res['status'] != true) {
+                                  if (!res.containsKey('status') ||
+                                      res['status'] != true) {
                                     Get.snackbar(
                                       'Error',
                                       'Delivery Failed',
@@ -261,8 +274,12 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
 
                               await getTotalOrder();
 
-                              if (c.creditCardResponse.value?.messages?.resultCode?.toLowerCase() == "ok") {
-                                final res = c.creditCardResponse.value?.transactionResponse;
+                              if (c.creditCardResponse.value?.messages
+                                      ?.resultCode
+                                      ?.toLowerCase() ==
+                                  "ok") {
+                                final res = c.creditCardResponse.value
+                                    ?.transactionResponse;
                                 await storingInfo(res, trackingUrl);
                                 Get.close(3);
                                 Get.to(() => const OrderPlacedScreen());
@@ -318,6 +335,8 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
         deliveryId: widget.deliveryId,
         discountAmount: widget.discountAmount,
         taxAmount: widget.taxAmount,
+        wbCash: widget.wbCash,
+        wbCoins: widget.wbCoins,
       );
 
       await resetCartFunction();

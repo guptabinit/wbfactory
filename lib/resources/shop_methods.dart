@@ -16,12 +16,14 @@ class ShopMethods {
   Future<order_model.Order> getOrderDetails() async {
     User currentUser = _auth.currentUser!;
 
-    DocumentSnapshot snap = await _firestore.collection('orders').doc(currentUser.uid).get();
+    DocumentSnapshot snap =
+        await _firestore.collection('orders').doc(currentUser.uid).get();
 
     return order_model.Order.fromSnap(snap);
   }
 
-  Future<String> addFavourite({required Map<dynamic, dynamic> product, required String pid}) async {
+  Future<String> addFavourite(
+      {required Map<dynamic, dynamic> product, required String pid}) async {
     String res = "Some error occurred";
 
     try {
@@ -42,7 +44,8 @@ class ShopMethods {
     return res;
   }
 
-  Future<String> removeFavourite({required Map<dynamic, dynamic> product, required String pid}) async {
+  Future<String> removeFavourite(
+      {required Map<dynamic, dynamic> product, required String pid}) async {
     String res = "Some error occurred";
 
     try {
@@ -204,7 +207,10 @@ class ShopMethods {
     return res;
   }
 
-  Future<String> deleteCart({required String pid, required context, required double cartAmount}) async {
+  Future<String> deleteCart(
+      {required String pid,
+      required context,
+      required double cartAmount}) async {
     String res = "Some error occurred";
 
     try {
@@ -248,6 +254,8 @@ class ShopMethods {
     required String? trackingUrl,
     String? deliveryId,
     TransactionResponse? transactionResponse,
+    required double? wbCoins,
+    required double? wbCash,
   }) async {
     try {
       await _firestore.collection('orders').doc(curUser).set({
@@ -275,6 +283,8 @@ class ShopMethods {
         'name': name,
         'email': email,
         'mobile': phone,
+        'used_wb_coins': wbCoins,
+        'used_wb_cash': wbCash,
         'tracking_url': trackingUrl,
         'usingDoorDash': trackingUrl != null,
         'delivery_info': deliveryInfo,
@@ -297,12 +307,19 @@ class ShopMethods {
             : null,
       }, SetOptions(merge: true));
 
-      if(couponCode != "") {
+      if (couponCode != "") {
         await _firestore.collection('users').doc(curUser).set({
           'usedCoupons': FieldValue.arrayUnion([couponCode]),
         }, SetOptions(merge: true));
       }
 
+      // Handle Reward WB Coins & Cash
+      if (wbCoins != null || wbCash != null) {
+        await _firestore.collection('coins').doc(curUser).set({
+          if (wbCoins != null) 'coins': FieldValue.increment(-wbCoins),
+          if (wbCash != null) 'cash': FieldValue.increment(-wbCash),
+        }, SetOptions(merge: true));
+      }
     } catch (e) {
       customToast(e.toString(), darkGreyColor, context);
     }
@@ -341,7 +358,10 @@ class ShopMethods {
 
   Future<void> updateOrder({required int totalOrder}) async {
     try {
-      await _firestore.collection('commons').doc('orders').update({'totalOrder': totalOrder});
+      await _firestore
+          .collection('commons')
+          .doc('orders')
+          .update({'totalOrder': totalOrder});
     } catch (e) {}
   }
 }

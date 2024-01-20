@@ -1,15 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:velocity_x/velocity_x.dart';
-import 'package:wbfactory/components/textfield/custom_textfield.dart';
 import 'package:wbfactory/constants/colors.dart';
 import 'package:wbfactory/constants/consts.dart';
 import 'package:wbfactory/views/other_screens/product_detail_page.dart';
-import 'package:wbfactory/views/other_screens/product_panel.dart';
 
 import '../../components/buttons/back_button.dart';
 import '../../components/cards/item_card.dart';
