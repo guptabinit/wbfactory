@@ -213,6 +213,9 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
   bool isPickup = true;
   double totalAmount = 0.00;
 
+  CreateQuoteModel? selectedQuoteModel;
+  List<Item>? selectedItems;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -579,6 +582,9 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                             pickupPhoneNumber,
                                             items: kItems,
                                           );
+
+                                          selectedQuoteModel = quoteModel;
+                                          selectedItems = kItems;
 
                                           final info = await client
                                               .getDeliveryInfo(
@@ -1148,9 +1154,9 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                     0,
                   );
 
-                  if (true
-                  //currentTime.isAfter(startTime) &&
-                      //currentTime.isBefore(endTime)
+                  if (
+                  currentTime.isAfter(startTime) &&
+                      currentTime.isBefore(endTime)
                   ) {
                     if (quoteResponse == null) {
                       customToast(
@@ -1160,6 +1166,11 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                       );
                       return;
                     }
+
+                    print('---------');
+                    print(selectedQuoteModel);
+                    print(selectedItems);
+                    print('---------');
 
                     Get.to(
                           () =>
@@ -1197,6 +1208,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                             wbCash: (_appliedWBCash && _wbCash != null)
                                 ? _wbCashAmount
                                 : null,
+                            quoteModel: selectedQuoteModel,
+                            kItems: selectedItems,
                           ),
                     );
                   } else {

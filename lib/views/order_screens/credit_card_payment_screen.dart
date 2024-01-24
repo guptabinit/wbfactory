@@ -8,7 +8,8 @@ import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/components/buttons/main_button.dart';
 import 'package:wbfactory/constants/colors.dart';
 import 'package:wbfactory/constants/consts.dart';
-import 'package:wbfactory/resources/doordash_api_client.dart';
+import 'package:wbfactory/models/create_quote_model.dart';
+import 'package:wbfactory/models/doordash/quote_response.dart';
 import 'package:wbfactory/resources/shop_methods.dart';
 import 'package:wbfactory/utils/send_notification.dart';
 import 'package:wbfactory/views/order_screens/order_status_screen.dart';
@@ -36,6 +37,8 @@ class CreditCardPaymentScreen extends StatefulWidget {
   final Map<String, dynamic>? selectedAddressFullInfo;
   final double? wbCoins;
   final double? wbCash;
+  final CreateQuoteModel? quoteModel;
+  final List<Item>? kItems;
 
   const CreditCardPaymentScreen({
     super.key,
@@ -56,6 +59,8 @@ class CreditCardPaymentScreen extends StatefulWidget {
     this.dropOffPhone,
     required this.wbCoins,
     required this.wbCash,
+    required this.quoteModel,
+    required this.kItems,
   });
 
   @override
@@ -244,33 +249,33 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
                                           ?.resultCode
                                           ?.toLowerCase() ==
                                       "ok") {
-                                try {
-                                  final res = await DoordashApiClient()
-                                      .acceptDeliveryQuote(
-                                    deliveryId: widget.deliveryId!,
-                                    dropoffPhoneNumber: widget.dropOffPhone,
-                                  );
-                                  if (!res.containsKey('status') ||
-                                      res['status'] != true) {
-                                    Get.snackbar(
-                                      'Error',
-                                      'Delivery Failed',
-                                      snackPosition: SnackPosition.BOTTOM,
-                                      backgroundColor: Colors.red,
-                                    );
-                                    return;
-                                  } else {
-                                    trackingUrl = res['tracking_url'];
-                                  }
-                                } catch (e) {
-                                  Get.snackbar(
-                                    'Error',
-                                    e.toString(),
-                                    snackPosition: SnackPosition.BOTTOM,
-                                    backgroundColor: Colors.red,
-                                  );
-                                  return;
-                                }
+                                // try {
+                                // final res = await DoordashApiClient()
+                                //     .acceptDeliveryQuote(
+                                //   deliveryId: widget.deliveryId!,
+                                //   dropoffPhoneNumber: widget.dropOffPhone,
+                                // );
+                                // if (!res.containsKey('status') ||
+                                //     res['status'] != true) {
+                                //   Get.snackbar(
+                                //     'Error',
+                                //     'Delivery Failed',
+                                //     snackPosition: SnackPosition.BOTTOM,
+                                //     backgroundColor: Colors.red,
+                                //   );
+                                //   return;
+                                // } else {
+                                //   trackingUrl = res['tracking_url'];
+                                // }
+                                // } catch (e) {
+                                //   Get.snackbar(
+                                //     'Error',
+                                //     e.toString(),
+                                //     snackPosition: SnackPosition.BOTTOM,
+                                //     backgroundColor: Colors.red,
+                                //   );
+                                //   return;
+                                // }
                               }
 
                               await getTotalOrder();
@@ -281,9 +286,16 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
                                   "ok") {
                                 final res = c.creditCardResponse.value
                                     ?.transactionResponse;
-                                String oid =
-                                    await storingInfo(res, trackingUrl);
+
+                                String oid = await storingInfo(
+                                  res,
+                                  trackingUrl,
+                                  widget.quoteModel,
+                                  widget.kItems,
+                                );
+
                                 Get.close(3);
+
                                 Get.to(() => OrderStatusScreen(
                                       oid: oid,
                                       isPaid: true,
@@ -310,6 +322,8 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
   Future<String> storingInfo([
     TransactionResponse? paymentIntentData,
     String? trackingUrl,
+    CreateQuoteModel? selectedQuoteModel,
+    List<Item>? items,
   ]) async {
     try {
       DateTime now = DateTime.now();
@@ -342,6 +356,8 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
         taxAmount: widget.taxAmount,
         wbCash: widget.wbCash,
         wbCoins: widget.wbCoins,
+        quote: selectedQuoteModel,
+        selectedItems: items,
       );
 
       await resetCartFunction();

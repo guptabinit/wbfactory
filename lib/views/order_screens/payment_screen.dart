@@ -7,6 +7,8 @@ import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/components/buttons/main_button.dart';
 import 'package:wbfactory/constants/colors.dart';
 import 'package:wbfactory/constants/consts.dart';
+import 'package:wbfactory/models/create_quote_model.dart';
+import 'package:wbfactory/models/doordash/quote_response.dart';
 import 'package:wbfactory/resources/shop_methods.dart';
 import 'package:wbfactory/utils/send_notification.dart';
 import 'package:wbfactory/views/order_screens/order_status_screen.dart';
@@ -31,6 +33,8 @@ class PaymentScreen extends StatefulWidget {
   final Map<String, dynamic>? selectedAddressFullInfo;
   final double? wbCoins;
   final double? wbCash;
+  final CreateQuoteModel? quoteModel;
+  final List<Item>? kItems;
 
   const PaymentScreen({
     super.key,
@@ -49,6 +53,8 @@ class PaymentScreen extends StatefulWidget {
     this.dropOffPhone,
     required this.wbCash,
     required this.wbCoins,
+    this.quoteModel,
+    this.kItems,
   });
 
   @override
@@ -423,6 +429,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             taxAmount: widget.taxAmount,
                             wbCash: widget.wbCash,
                             wbCoins: widget.wbCoins,
+                            quoteModel: widget.quoteModel,
+                            kItems: widget.kItems,
                           ),
                         );
 

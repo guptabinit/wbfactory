@@ -63,7 +63,7 @@ class DoordashApiClient {
       '/drive/v2/quotes',
     );
 
-    final token = generateJwt();
+    final token = await generateJwt();
 
     final createQuoteResponse = await _httpClient.post(
       createQuoteRequest,
@@ -223,93 +223,93 @@ class DoordashApiClient {
     }
   }
 
-  Future<Map<String, dynamic>> acceptDeliveryQuote({
-    required String deliveryId,
-    String? dropoffPhoneNumber,
-  }) async {
-    final acceptQuoteRequest = Uri.https(
-      _baseUrlDoorDash,
-      '/drive/v2/quotes/$deliveryId/accept',
-    );
-
-    final token = generateJwt();
-
-    final createDeliveryResponse = await _httpClient.post(
-      acceptQuoteRequest,
-      body: jsonEncode({
-        "dropoff_phone_number": dropoffPhoneNumber,
-      }),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-        "Accept-Language": "en-US,en;q=0.9",
-        "Accept-Encoding": "deflate, compress",
-      },
-    );
-
-    final createDeliveryJson = jsonDecode(
-      createDeliveryResponse.body,
-    ) as Map<String, dynamic>;
-
-    switch (createDeliveryResponse.statusCode) {
-      case 200:
-        if (createDeliveryJson.containsKey('tracking_url') &&
-            createDeliveryJson['tracking_url'] != null) {
-          return {
-            'status': true,
-            'tracking_url': createDeliveryJson['tracking_url'],
-          };
-        }
-        return {'status': false};
-      case 400:
-        if (!createDeliveryJson.containsKey("code")) {
-          throw const FormatException('Something went wrong!');
-        }
-        final errors = createDeliveryJson["field_errors"] as List;
-        if (errors.isEmpty) {
-          throw const FormatException('Something went wrong!');
-        }
-        final message = errors.map((e) => e["error"]).join(". ");
-        throw FormatException(message);
-      case 401:
-        if (!createDeliveryJson.containsKey("code")) {
-          throw const FormatException('Something went wrong!');
-        }
-        final message =
-            createDeliveryJson["message"] ?? "Something went wrong!";
-        throw FormatException(message);
-      case 403:
-        if (!createDeliveryJson.containsKey("code")) {
-          throw const FormatException('Something went wrong!');
-        }
-        final message =
-            createDeliveryJson["message"] ?? "Something went wrong!";
-        throw Exception(message);
-      case 409:
-        if (!createDeliveryJson.containsKey("code")) {
-          throw const FormatException('Something went wrong!');
-        }
-        final message =
-            createDeliveryJson["message"] ?? "Something went wrong!";
-        throw FormatException(message);
-      case 422:
-        if (!createDeliveryJson.containsKey("code")) {
-          throw const FormatException('Something went wrong!');
-        }
-        final message =
-            createDeliveryJson["message"] ?? "Something went wrong!";
-        throw FormatException(message);
-      case 500:
-        if (!createDeliveryJson.containsKey("code")) {
-          throw const FormatException('Something went wrong!');
-        }
-        final message =
-            createDeliveryJson["message"] ?? "Something went wrong!";
-        throw FormatException(message);
-      default:
-        throw const FormatException('Something went wrong!');
-    }
-  }
+  // Future<Map<String, dynamic>> acceptDeliveryQuote({
+  //   required String deliveryId,
+  //   String? dropoffPhoneNumber,
+  // }) async {
+  //   final acceptQuoteRequest = Uri.https(
+  //     _baseUrlDoorDash,
+  //     '/drive/v2/quotes/$deliveryId/accept',
+  //   );
+  //
+  //   final token = generateJwt();
+  //
+  //   final createDeliveryResponse = await _httpClient.post(
+  //     acceptQuoteRequest,
+  //     body: jsonEncode({
+  //       "dropoff_phone_number": dropoffPhoneNumber,
+  //     }),
+  //     headers: {
+  //       'Authorization': 'Bearer $token',
+  //       'Content-Type': 'application/json',
+  //       "Accept-Language": "en-US,en;q=0.9",
+  //       "Accept-Encoding": "deflate, compress",
+  //     },
+  //   );
+  //
+  //   final createDeliveryJson = jsonDecode(
+  //     createDeliveryResponse.body,
+  //   ) as Map<String, dynamic>;
+  //
+  //   switch (createDeliveryResponse.statusCode) {
+  //     case 200:
+  //       if (createDeliveryJson.containsKey('tracking_url') &&
+  //           createDeliveryJson['tracking_url'] != null) {
+  //         return {
+  //           'status': true,
+  //           'tracking_url': createDeliveryJson['tracking_url'],
+  //         };
+  //       }
+  //       return {'status': false};
+  //     case 400:
+  //       if (!createDeliveryJson.containsKey("code")) {
+  //         throw const FormatException('Something went wrong!');
+  //       }
+  //       final errors = createDeliveryJson["field_errors"] as List;
+  //       if (errors.isEmpty) {
+  //         throw const FormatException('Something went wrong!');
+  //       }
+  //       final message = errors.map((e) => e["error"]).join(". ");
+  //       throw FormatException(message);
+  //     case 401:
+  //       if (!createDeliveryJson.containsKey("code")) {
+  //         throw const FormatException('Something went wrong!');
+  //       }
+  //       final message =
+  //           createDeliveryJson["message"] ?? "Something went wrong!";
+  //       throw FormatException(message);
+  //     case 403:
+  //       if (!createDeliveryJson.containsKey("code")) {
+  //         throw const FormatException('Something went wrong!');
+  //       }
+  //       final message =
+  //           createDeliveryJson["message"] ?? "Something went wrong!";
+  //       throw Exception(message);
+  //     case 409:
+  //       if (!createDeliveryJson.containsKey("code")) {
+  //         throw const FormatException('Something went wrong!');
+  //       }
+  //       final message =
+  //           createDeliveryJson["message"] ?? "Something went wrong!";
+  //       throw FormatException(message);
+  //     case 422:
+  //       if (!createDeliveryJson.containsKey("code")) {
+  //         throw const FormatException('Something went wrong!');
+  //       }
+  //       final message =
+  //           createDeliveryJson["message"] ?? "Something went wrong!";
+  //       throw FormatException(message);
+  //     case 500:
+  //       if (!createDeliveryJson.containsKey("code")) {
+  //         throw const FormatException('Something went wrong!');
+  //       }
+  //       final message =
+  //           createDeliveryJson["message"] ?? "Something went wrong!";
+  //       throw FormatException(message);
+  //     default:
+  //       throw const FormatException('Something went wrong!');
+  //   }
+  // }
 
   static const _baseUrlDoorDash = 'openapi.doordash.com';
 

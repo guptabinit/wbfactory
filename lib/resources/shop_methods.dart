@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:wbfactory/constants/colors.dart';
+import 'package:wbfactory/models/create_quote_model.dart';
+import 'package:wbfactory/models/doordash/quote_response.dart';
 import 'package:wbfactory/models/order_model.dart' as order_model;
 
 import '../constants/consts.dart';
@@ -256,6 +258,8 @@ class ShopMethods {
     TransactionResponse? transactionResponse,
     required double? wbCoins,
     required double? wbCash,
+    CreateQuoteModel? quote,
+    List<Item>? selectedItems,
   }) async {
     try {
       await _firestore.collection('orders').doc(curUser).set({
@@ -263,6 +267,8 @@ class ShopMethods {
         'orders': FieldValue.arrayUnion([oid]),
         'unreviewed': FieldValue.arrayUnion([oid]),
       }, SetOptions(merge: true));
+
+      print('-------> $quote <------');
 
       await _firestore.collection('allOrders').doc(oid).set({
         'uid': curUser,
@@ -306,6 +312,8 @@ class ShopMethods {
                 "accountType": transactionResponse.accountType,
               }
             : null,
+        'quote': quote != null ? quote.toJson() : null,
+        'selected_items': selectedItems?.map((e) => e.toJson()).toList(),
       }, SetOptions(merge: true));
 
       if (couponCode != "") {

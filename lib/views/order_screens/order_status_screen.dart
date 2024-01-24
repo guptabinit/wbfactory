@@ -9,19 +9,23 @@ import 'order_palaced_screens/some_error_screen.dart';
 class OrderStatusScreen extends StatefulWidget {
   final String oid;
   final bool isPaid;
-  const OrderStatusScreen({super.key, required this.oid, required this.isPaid});
+
+  const OrderStatusScreen({
+    super.key,
+    required this.oid,
+    required this.isPaid,
+  });
 
   @override
   State<OrderStatusScreen> createState() => _OrderStatusScreenState();
 }
 
 class _OrderStatusScreenState extends State<OrderStatusScreen> {
-
   bool isError = false;
 
   @override
   void initState() {
-    if(widget.oid == "error"){
+    if (widget.oid == "error") {
       setState(() {
         isError = true;
       });
@@ -33,25 +37,43 @@ class _OrderStatusScreenState extends State<OrderStatusScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: isError ? SomeErrorScreen() : StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('allOrders').where("oid", isEqualTo: widget.oid).snapshots(),
-          builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return OrderWaitingScreen(isPaid: widget.isPaid,);
-            }
+      body: isError
+          ? SomeErrorScreen()
+          : StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('allOrders')
+                  .where("oid", isEqualTo: widget.oid)
+                  .snapshots(),
+              builder: (context,
+                  AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return OrderWaitingScreen(
+                    isPaid: widget.isPaid,
+                  );
+                }
 
-            int fOid = snapshot.data!.docs[0]["order_accepted"];
+                if (snapshot.data?.docs == null ||
+                    snapshot.data?.docs.isEmpty == true) {
+                  return SomeErrorScreen();
+                }
 
-            if(fOid == 0){
-              return OrderWaitingScreen(isPaid: widget.isPaid,);
-            } else if (fOid == 1){
-              return NewOrderPlacedScreen(isPaid: widget.isPaid,);
-            } else {
-              return OrderRejectedScreen(isPaid: widget.isPaid,);
-            }
+                int fOid = snapshot.data?.docs.elementAt(0)["order_accepted"];
 
-          },
-      ),
+                if (fOid == 0) {
+                  return OrderWaitingScreen(
+                    isPaid: widget.isPaid,
+                  );
+                } else if (fOid == 1) {
+                  return NewOrderPlacedScreen(
+                    isPaid: widget.isPaid,
+                  );
+                } else {
+                  return OrderRejectedScreen(
+                    isPaid: widget.isPaid,
+                  );
+                }
+              },
+            ),
     );
   }
 }

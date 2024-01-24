@@ -87,8 +87,12 @@ class _CartPageState extends State<CartPage> {
         ],
       ),
       body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('cart').where("uid", isEqualTo: FirebaseAuth.instance.currentUser!.uid).snapshots(),
-          builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+          stream: FirebaseFirestore.instance
+              .collection('cart')
+              .where("uid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+              .snapshots(),
+          builder: (context,
+              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(
@@ -134,15 +138,19 @@ class _CartPageState extends State<CartPage> {
                             Expanded(
                               child: GestureDetector(
                                 onTap: () {
-                                  !isPickup ? setState(() {
-                                    isPickup = true;
-                                  }) : null;
+                                  !isPickup
+                                      ? setState(() {
+                                          isPickup = true;
+                                        })
+                                      : null;
                                 },
                                 child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: disableDelivery ? 12 : 8),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: disableDelivery ? 12 : 8),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
-                                    color: isPickup ? secondaryColor : lightColor,
+                                    color:
+                                        isPickup ? secondaryColor : lightColor,
                                   ),
                                   child: Center(
                                     child: Text(
@@ -150,7 +158,8 @@ class _CartPageState extends State<CartPage> {
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
-                                        color: isPickup ? lightColor : darkColor,
+                                        color:
+                                            isPickup ? lightColor : darkColor,
                                       ),
                                     ),
                                   ),
@@ -161,15 +170,19 @@ class _CartPageState extends State<CartPage> {
                             Expanded(
                               child: GestureDetector(
                                 onTap: () {
-                                  !disableDelivery ? setState(() {
-                                    isPickup = false;
-                                  }) :  null;
+                                  !disableDelivery
+                                      ? setState(() {
+                                          isPickup = false;
+                                        })
+                                      : null;
                                 },
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
-                                    color: isPickup ? lightColor : secondaryColor,
+                                    color:
+                                        isPickup ? lightColor : secondaryColor,
                                   ),
                                   child: Center(
                                     child: Column(
@@ -179,17 +192,21 @@ class _CartPageState extends State<CartPage> {
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.w500,
-                                            color: isPickup ? darkColor : lightColor,
+                                            color: isPickup
+                                                ? darkColor
+                                                : lightColor,
                                           ),
                                         ),
-                                        disableDelivery ? const Text(
-                                          "Coming Soon",
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w500,
-                                            color: secondaryColor,
-                                          ),
-                                        ) : Container(),
+                                        disableDelivery
+                                            ? const Text(
+                                                "Coming Soon",
+                                                style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: secondaryColor,
+                                                ),
+                                              )
+                                            : Container(),
                                       ],
                                     ),
                                   ),
@@ -209,18 +226,21 @@ class _CartPageState extends State<CartPage> {
                     Expanded(
                       child: cartLength != 0
                           ? SingleChildScrollView(
-                              physics: const BouncingScrollPhysics(decelerationRate: ScrollDecelerationRate.fast),
+                              physics: const BouncingScrollPhysics(
+                                  decelerationRate:
+                                      ScrollDecelerationRate.fast),
                               child: Column(
                                 children: [
                                   ListView.builder(
-                                    physics: const NeverScrollableScrollPhysics(),
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
                                     itemCount: cartLength,
                                     shrinkWrap: true,
                                     itemBuilder: (BuildContext context, index) {
-
                                       var itemSnap = snap[snap['items'][index]];
 
-                                      return CartCard(itemSnap: itemSnap, snap: snap);
+                                      return CartCard(
+                                          itemSnap: itemSnap, snap: snap);
                                     },
                                   ),
                                   82.heightBox,
@@ -246,13 +266,16 @@ class _CartPageState extends State<CartPage> {
                   child: MainButton(
                     title: "Continue",
                     onTap: () {
-
-                      if(cartLength != 0){
-                        Get.to(() => CartSummaryPage(isPickup : isPickup, snap: snap,));
+                      if (cartLength != 0) {
+                        Get.to(
+                          () => CartSummaryPage(
+                            isPickup: isPickup,
+                            snap: snap,
+                          ),
+                        );
                       } else {
                         customToast("Nothing in the cart", redColor, context);
                       }
-
                     },
                   ),
                 ),
@@ -261,5 +284,4 @@ class _CartPageState extends State<CartPage> {
           }),
     );
   }
-
 }
