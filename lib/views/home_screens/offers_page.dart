@@ -156,9 +156,12 @@ class _OffersPageState extends State<OffersPage> {
                           itemBuilder: (BuildContext context, index) {
                             var mainSnap = snap[snap['code_list'][index]];
 
-                            return PromotionalCard(
-                              snap: mainSnap,
-                              couponPage: false,
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: PromotionalCard(
+                                snap: mainSnap,
+                                couponPage: false,
+                              ),
                             );
                           },
                         );
