@@ -10,12 +10,12 @@ import 'package:wbfactory/constants/colors.dart';
 import 'package:wbfactory/constants/consts.dart';
 import 'package:wbfactory/resources/doordash_api_client.dart';
 import 'package:wbfactory/resources/shop_methods.dart';
+import 'package:wbfactory/utils/send_notification.dart';
 import 'package:wbfactory/views/order_screens/order_status_screen.dart';
 
 import '../../models/authorize/transaction_response.dart';
 import '../../provider/controller/payment_controller.dart';
 import '../../resources/authorize_gateway_service.dart';
-import 'order_placed_screen.dart';
 
 class CreditCardPaymentScreen extends StatefulWidget {
   final dynamic snap;
@@ -281,9 +281,13 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
                                   "ok") {
                                 final res = c.creditCardResponse.value
                                     ?.transactionResponse;
-                                String oid = await storingInfo(res, trackingUrl);
+                                String oid =
+                                    await storingInfo(res, trackingUrl);
                                 Get.close(3);
-                                Get.to(() => OrderStatusScreen(oid: oid, isPaid: true,));
+                                Get.to(() => OrderStatusScreen(
+                                      oid: oid,
+                                      isPaid: true,
+                                    ));
                               }
                             } catch (e) {
                               e.log();
@@ -341,6 +345,8 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
       );
 
       await resetCartFunction();
+
+      await sendNotifications(oid);
 
       await ShopMethods().updateOrder(totalOrder: (totalOrder + 1));
 

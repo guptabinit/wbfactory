@@ -8,12 +8,11 @@ import 'package:wbfactory/components/buttons/main_button.dart';
 import 'package:wbfactory/constants/colors.dart';
 import 'package:wbfactory/constants/consts.dart';
 import 'package:wbfactory/resources/shop_methods.dart';
-import 'package:wbfactory/views/order_screens/order_palaced_screens/new_order_placed_screen.dart';
+import 'package:wbfactory/utils/send_notification.dart';
 import 'package:wbfactory/views/order_screens/order_status_screen.dart';
 
 import '../../components/buttons/back_button.dart';
 import 'credit_card_payment_screen.dart';
-import 'order_placed_screen.dart';
 
 class PaymentScreen extends StatefulWidget {
   final double totalAmount;
@@ -385,12 +384,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         await ShopMethods()
                             .updateOrder(totalOrder: (totalOrder + 1));
 
+                        await sendNotifications(oid);
+
                         setState(() {
                           isLoading = false;
                         });
 
                         Get.close(3);
-                        Get.to(() => OrderStatusScreen(oid: oid, isPaid: false,));
+                        Get.to(() => OrderStatusScreen(
+                              oid: oid,
+                              isPaid: false,
+                            ));
                       } else if (isCod == false) {
                         // await makePayment();
                         // setState(() {

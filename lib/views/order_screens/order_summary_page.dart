@@ -446,7 +446,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                 TextButton(
                                   onPressed: () {
                                     Get.to(
-                                            () => const AddNewAddressPage());
+                                          () => const AddNewAddressPage(),
+                                    );
                                   },
                                   child: const Text('Add New'),
                                 ),
@@ -523,6 +524,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                             widget.snap['items']
                                             [i]]['quantity'])))
                                             .toList();
+
+                                        print('------- ${docSnap['phone']}');
 
                                         final quoteModel =
                                         CreateQuoteModel(
@@ -1145,8 +1148,10 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                     0,
                   );
 
-                  if (currentTime.isAfter(startTime) &&
-                      currentTime.isBefore(endTime)) {
+                  if (true
+                  //currentTime.isAfter(startTime) &&
+                      //currentTime.isBefore(endTime)
+                  ) {
                     if (quoteResponse == null) {
                       customToast(
                         'Please select delivery address first.',
