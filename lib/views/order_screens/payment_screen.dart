@@ -7,6 +7,7 @@ import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/components/buttons/main_button.dart';
 import 'package:wbfactory/constants/colors.dart';
 import 'package:wbfactory/constants/consts.dart';
+import 'package:wbfactory/models/card/card_info.dart';
 import 'package:wbfactory/models/create_quote_model.dart';
 import 'package:wbfactory/models/doordash/quote_response.dart';
 import 'package:wbfactory/resources/shop_methods.dart';
@@ -66,7 +67,22 @@ class _PaymentScreenState extends State<PaymentScreen> {
   bool isLoading = false;
   var userData = {};
 
+  CardInfo? selectedCard;
+
   Map<String, dynamic>? paymentIntentData;
+
+  Stream<List<CardInfo>?> getAvailableCards() {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    return FirebaseFirestore.instance
+        .collection(
+          'users',
+        )
+        .doc(uid)
+        .snapshots()
+        .map((event) => (event.data()?['cards'] as List?)
+            ?.map((e) => CardInfo.fromJson(e))
+            .toList());
+  }
 
   @override
   void initState() {
@@ -326,13 +342,130 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
             ),
             28.heightBox,
-            Expanded(
-              child: Text(
-                "Total Payable Amount: \$${widget.totalAmount.toStringAsFixed(2)}",
-                textAlign: TextAlign.center,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              "Total Payable Amount: \$${widget.totalAmount.toStringAsFixed(2)}",
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            20.heightBox,
+            if (isCod == false) ...[
+              Padding(
+                padding: const EdgeInsets.only(left: 18.0),
+                child: Text(
+                  'Your previously saved cards',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
               ),
+            ],
+            Expanded(
+              child: Builder(builder: (context) {
+                return SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  child: isCod == false
+                      ? StreamBuilder<List<CardInfo>?>(
+                          stream: getAvailableCards(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Padding(
+                                padding: const EdgeInsets.all(25.0),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  height: 150.0,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                              );
+                            }
+
+                            if (snapshot.hasData == false) {
+                              return Padding(
+                                padding: const EdgeInsets.all(25.0),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  height: 150.0,
+                                  child: Center(
+                                    child: Text(
+                                      "No saved card",
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+
+                            if (snapshot.hasError) {
+                              return Padding(
+                                padding: const EdgeInsets.all(25.0),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  height: 150.0,
+                                  child: Center(
+                                    child: Text(
+                                      snapshot.error?.toString() ??
+                                          'Something went wrong!',
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+
+                            if (snapshot.data?.isEmpty == true) {
+                              return Padding(
+                                padding: const EdgeInsets.all(25.0),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  height: 150.0,
+                                  child: Center(
+                                    child: Text(
+                                      "No saved card",
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+
+                            return ListView.builder(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 20.0,
+                                horizontal: 20.0,
+                              ),
+                              itemBuilder: (context, index) {
+                                final cardInfo =
+                                    snapshot.data?.elementAt(index);
+                                return Card(
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    side: BorderSide(color: Colors.white10),
+                                  ),
+                                  child: CheckboxListTile(
+                                    title: Text(
+                                      cardInfo?.cardNumber ?? '',
+                                    ),
+                                    subtitle: Text(
+                                      cardInfo?.cardHolderName ?? '',
+                                    ),
+                                    value: selectedCard == cardInfo,
+                                    onChanged: (bool? value) {
+                                      if (value == true) {
+                                        selectedCard = cardInfo;
+                                      } else {
+                                        selectedCard = null;
+                                      }
+                                      setState(() {});
+                                    },
+                                    secondary: Icon(Icons.credit_card),
+                                  ),
+                                );
+                              },
+                              itemCount: snapshot.data?.length ?? 0,
+                            );
+                          },
+                        )
+                      : SizedBox.shrink(),
+                );
+              }),
             ),
             12.heightBox,
             isLoading
@@ -409,6 +542,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
                         Get.to(
                           () => CreditCardPaymentScreen(
+                            cardInfo: selectedCard,
                             amount: (double.parse(
                                     widget.totalAmount.toStringAsFixed(2)) *
                                 100),

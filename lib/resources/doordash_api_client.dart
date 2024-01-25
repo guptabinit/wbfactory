@@ -12,7 +12,7 @@ String generateJwt() {
   final claims = JsonWebTokenClaims.fromJson({
     "aud": "doordash",
     "iss": 'fc160dbc-9283-4e26-b568-9ee0efd384fc', // "fc160dbc-9283-4e26-b568-9ee0efd384fc" = Live,
-    "kid": '0b863bc5-41d3-420d-b9c6-58560e6bd961', // "0b863bc5-41d3-420d-b9c6-58560e6bd961" - Live, // 84437014-fe30-4a75-b931-62a8c60a07d9 = Sandbox
+    "kid": '84437014-fe30-4a75-b931-62a8c60a07d9', // "0b863bc5-41d3-420d-b9c6-58560e6bd961" - Live, // 84437014-fe30-4a75-b931-62a8c60a07d9 = Sandbox
     "iat": currentTimer,
     "exp": currentTimer + 1800,
   });
@@ -28,7 +28,7 @@ String generateJwt() {
     JsonWebKey.fromJson(
       {
         "kty": "oct",
-        "k": 'wFhHqQ8AvqlMex3FU6x2-CZ13KiB6fdtnCEUTkNoWr8'
+        "k": 'UMITk03e1-EldszRof6ZqI2QeduL7mgSONjcIrDGXUs'
         // "wFhHqQ8AvqlMex3FU6x2-CZ13KiB6fdtnCEUTkNoWr8" - Live,
         // UMITk03e1-EldszRof6ZqI2QeduL7mgSONjcIrDGXUs - Sandbox
       },
