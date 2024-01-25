@@ -110,13 +110,13 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               ),
               4.heightBox,
 
-              if (widget.snap['usingDoorDash'] != null &&
-                  widget.snap['usingDoorDash'] == true) ...[
+              if (widget.snap['is_pickup'] == false &&
+                  widget.snap['order_accepted'] == 1) ...[
                 const Divider(),
               ],
 
-              if (widget.snap['usingDoorDash'] != null &&
-                  widget.snap['usingDoorDash'] == true) ...[
+              if (widget.snap['is_pickup'] == false &&
+                  widget.snap['order_accepted'] == 1) ...[
                 ElevatedButton(
                   onPressed: () async {
                     if (widget.snap['tracking_url'] != null) {

@@ -1150,7 +1150,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                     currentTime.year,
                     currentTime.month,
                     currentTime.day,
-                    13,
+                    24,
                     0,
                   );
 
