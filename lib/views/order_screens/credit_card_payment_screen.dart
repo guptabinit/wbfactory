@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:credit_card_type_detector/credit_card_type_detector.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:get/get.dart';
@@ -8,6 +9,7 @@ import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/components/buttons/main_button.dart';
 import 'package:wbfactory/constants/colors.dart';
 import 'package:wbfactory/constants/consts.dart';
+import 'package:wbfactory/models/card/card_info.dart';
 import 'package:wbfactory/models/create_quote_model.dart';
 import 'package:wbfactory/models/doordash/quote_response.dart';
 import 'package:wbfactory/resources/shop_methods.dart';
@@ -39,6 +41,7 @@ class CreditCardPaymentScreen extends StatefulWidget {
   final double? wbCash;
   final CreateQuoteModel? quoteModel;
   final List<Item>? kItems;
+  final CardInfo? cardInfo;
 
   const CreditCardPaymentScreen({
     super.key,
@@ -61,6 +64,7 @@ class CreditCardPaymentScreen extends StatefulWidget {
     required this.wbCash,
     required this.quoteModel,
     required this.kItems,
+    this.cardInfo,
   });
 
   @override
@@ -84,6 +88,8 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
 
   int totalOrder = 0;
 
+  List<CardInfo> savedCards = [];
+
   getTotalOrder() async {
     try {
       var orderSnap = await FirebaseFirestore.instance
@@ -101,6 +107,13 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
         customToast(e.toString(), redColor, context);
       }
     }
+  }
+
+  @override
+  void initState() {
+    cardNumber = widget.cardInfo?.cardNumber ?? '';
+    cardHolderName = widget.cardInfo?.cardHolderName ?? '';
+    super.initState();
   }
 
   @override
@@ -241,6 +254,24 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
                               );
 
                               await c.makePayment(contracts);
+
+                              await FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(
+                                    FirebaseAuth.instance.currentUser?.uid,
+                                  )
+                                  .update(
+                                {
+                                  'cards': FieldValue.arrayUnion(
+                                    [
+                                      {
+                                        'card_number': cardNumber,
+                                        'card_holder': cardHolderName,
+                                      }
+                                    ],
+                                  ),
+                                },
+                              );
 
                               String? trackingUrl;
                               if (widget.deliveryId != null &&

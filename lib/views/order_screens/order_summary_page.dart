@@ -548,7 +548,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                           '${docSnap['phone']}',
                                           dropoffContactName:
                                           '${docSnap['name']}',
-                                          orderValue: 10,
+                                          orderValue: ((widget.snap['cart_amount'] ?? 0) * 100).toInt(),
                                         );
 
                                         final client =
@@ -573,8 +573,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                             longitude: quoteModel
                                                 .dropoffLocation['lng']!
                                                 .toDouble(),
-                                            orderValue:
-                                            quoteModel.orderValue,
+                                            orderValue: quoteModel.orderValue,
                                             pickupAddress: pickupAddress,
                                             pickupBusinessName:
                                             pickupBusinessName,
@@ -1150,7 +1149,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                     currentTime.year,
                     currentTime.month,
                     currentTime.day,
-                    13,
+                    24,
                     0,
                   );
 
