@@ -32,8 +32,8 @@ class PaymentScreen extends StatefulWidget {
   final String? deliveryId;
   final String? dropOffPhone;
   final Map<String, dynamic>? selectedAddressFullInfo;
-  final double? wbCoins;
-  final double? wbCash;
+  // final double? wbCoins;
+  // final double? wbCash;
   final CreateQuoteModel? quoteModel;
   final List<Item>? kItems;
 
@@ -52,8 +52,8 @@ class PaymentScreen extends StatefulWidget {
     required this.selectedAddressFullInfo,
     this.deliveryId,
     this.dropOffPhone,
-    required this.wbCash,
-    required this.wbCoins,
+    // required this.wbCash,
+    // required this.wbCoins,
     this.quoteModel,
     this.kItems,
   });
@@ -514,8 +514,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           deliveryInfo: widget.selectedAddressFullInfo,
                           discountAmount: widget.discountAmount,
                           taxAmount: widget.taxAmount,
-                          wbCash: widget.wbCash,
-                          wbCoins: widget.wbCoins,
+                          // wbCash: widget.wbCash,
+                          // wbCoins: widget.wbCoins,
                         );
 
                         await resetCartFunction();
@@ -561,8 +561,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                 widget.selectedAddressFullInfo,
                             discountAmount: widget.discountAmount,
                             taxAmount: widget.taxAmount,
-                            wbCash: widget.wbCash,
-                            wbCoins: widget.wbCoins,
+                            // wbCash: widget.wbCash,
+                            // wbCoins: widget.wbCoins,
                             quoteModel: widget.quoteModel,
                             kItems: widget.kItems,
                           ),

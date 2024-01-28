@@ -44,19 +44,19 @@ class _SearchScreenState extends State<SearchScreen> {
           },
         ),
         leadingWidth: 90,
-        actions: [
-          IconButton(
-            onPressed: () {
-              Get.to(() => const SomeErrorScreen());
-            },
-            tooltip: "Test",
-            icon: const Icon(
-              Icons.warning_amber,
-              color: secondaryColor,
-            ),
-          ),
-          8.widthBox,
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {
+        //       Get.to(() => const SomeErrorScreen());
+        //     },
+        //     tooltip: "Test",
+        //     icon: const Icon(
+        //       Icons.warning_amber,
+        //       color: secondaryColor,
+        //     ),
+        //   ),
+        //   8.widthBox,
+        // ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),

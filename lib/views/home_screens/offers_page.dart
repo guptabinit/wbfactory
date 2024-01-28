@@ -24,28 +24,28 @@ class OffersPage extends StatefulWidget {
 }
 
 class _OffersPageState extends State<OffersPage> {
-  user_model.User? user;
+  // user_model.User? user;
+  //
+  // bool showCoins = false;
+  //
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   if (widget.userAvailable) {
+  //     try {
+  //       getUserData();
+  //     } catch (e) {
+  //       print('Error while fetching user');
+  //     }
+  //   }
+  // }
 
-  bool showCoins = false;
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.userAvailable) {
-      try {
-        getUserData();
-      } catch (e) {
-        print('Error while fetching user');
-      }
-    }
-  }
-
-  getUserData() async {
-    var tempUser = await AuthMethods().getUserDetails();
-    setState(() {
-      user = tempUser;
-    });
-  }
+  // getUserData() async {
+  //   var tempUser = await AuthMethods().getUserDetails();
+  //   setState(() {
+  //     user = tempUser;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -76,39 +76,39 @@ class _OffersPageState extends State<OffersPage> {
                   color: darkGreyColor,
                 ),
               ),
-              12.heightBox,
+              // 12.heightBox,
               // Coins Section
-              widget.userAvailable
-                  ? StreamBuilder<Coins>(
-                      stream: RewardMethods.coinsStream,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          Coins? coins = snapshot.data;
-
-                          return _WBCoinsView(
-                            totalCoins: coins?.coins?.toDouble() ?? 0,
-                            totalCash: coins?.cash?.toDouble() ?? 0,
-                          );
-                        }
-                        return SizedBox.shrink();
-                      },
-                    )
-                  : MainButton(
-                      title: 'Login/Signup to view more',
-                      onTap: () {
-                        Get.offAll(() => const LoginPage());
-                      },
-                    ),
-              12.heightBox,
-              MainButton(
-                title: "Click here for rules",
-                onTap: () {
-                  Get.to(()=> CoinRulesScreen());
-                },
-                color: secondaryColor.withOpacity(0.16),
-                textColor: secondaryColor,
-                fontSize: 14,
-              ),
+              // widget.userAvailable
+              //     ? StreamBuilder<Coins>(
+              //         stream: RewardMethods.coinsStream,
+              //         builder: (context, snapshot) {
+              //           if (snapshot.hasData) {
+              //             Coins? coins = snapshot.data;
+              //
+              //             return _WBCoinsView(
+              //               totalCoins: coins?.coins?.toDouble() ?? 0,
+              //               totalCash: coins?.cash?.toDouble() ?? 0,
+              //             );
+              //           }
+              //           return SizedBox.shrink();
+              //         },
+              //       )
+              //     : MainButton(
+              //         title: 'Login/Signup to view more',
+              //         onTap: () {
+              //           Get.offAll(() => const LoginPage());
+              //         },
+              //       ),
+              // 12.heightBox,
+              // MainButton(
+              //   title: "Click here for rules",
+              //   onTap: () {
+              //     Get.to(()=> CoinRulesScreen());
+              //   },
+              //   color: secondaryColor.withOpacity(0.16),
+              //   textColor: secondaryColor,
+              //   fontSize: 14,
+              // ),
               16.heightBox,
               const Text(
                 'Promo-codes for you',
@@ -175,104 +175,104 @@ class _OffersPageState extends State<OffersPage> {
   }
 }
 
-class _WBCoinsView extends StatelessWidget {
-  final double totalCash;
-  final double totalCoins;
-
-  const _WBCoinsView({
-    required this.totalCoins,
-    required this.totalCash,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    TextStyle textStyle = const TextStyle(
-      fontSize: 14,
-      color: Colors.white,
-      fontWeight: FontWeight.w700,
-    );
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: secondaryColor,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                flex: 4,
-                child: Image.asset(
-                  'assets/images/coins.webp',
-                  height: 100,
-                  width: 100,
-                  filterQuality: FilterQuality.high,
-                ),
-              ),
-              Expanded(
-                flex: 7,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15)
-                      .copyWith(right: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'You have',
-                        style: textStyle.copyWith(fontWeight: FontWeight.w600),
-                      ),
-                      4.heightBox,
-                      Text(
-                        '${totalCoins.toStringAsFixed(0)} WB Coins',
-                        style: textStyle.copyWith(fontSize: 22),
-                      ),
-                      8.heightBox,
-                      Text(
-                        '100 WB Coin = \$8.00',
-                        style: textStyle.copyWith(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      4.heightBox,
-                      Text(
-                        'You can use them in your next purchase on WB App.',
-                        style: textStyle.copyWith(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        10.heightBox,
-        Text.rich(
-          TextSpan(
-            text: 'You have WB Cash: ',
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              color: Colors.black,
-            ),
-            children: [
-              TextSpan(
-                text: '\$${totalCash.toStringAsFixed(0)}',
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: secondaryColor,
-                ),
-              ),
-            ],
-          ),
-        )
-      ],
-    );
-  }
-}
+// class _WBCoinsView extends StatelessWidget {
+//   final double totalCash;
+//   final double totalCoins;
+//
+//   const _WBCoinsView({
+//     required this.totalCoins,
+//     required this.totalCash,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     TextStyle textStyle = const TextStyle(
+//       fontSize: 14,
+//       color: Colors.white,
+//       fontWeight: FontWeight.w700,
+//     );
+//     return Column(
+//       mainAxisSize: MainAxisSize.min,
+//       children: [
+//         Container(
+//           decoration: BoxDecoration(
+//             color: secondaryColor,
+//             borderRadius: BorderRadius.circular(16),
+//           ),
+//           child: Row(
+//             crossAxisAlignment: CrossAxisAlignment.center,
+//             children: [
+//               Expanded(
+//                 flex: 4,
+//                 child: Image.asset(
+//                   'assets/images/coins.webp',
+//                   height: 100,
+//                   width: 100,
+//                   filterQuality: FilterQuality.high,
+//                 ),
+//               ),
+//               Expanded(
+//                 flex: 7,
+//                 child: Padding(
+//                   padding: const EdgeInsets.symmetric(vertical: 15)
+//                       .copyWith(right: 10),
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       Text(
+//                         'You have',
+//                         style: textStyle.copyWith(fontWeight: FontWeight.w600),
+//                       ),
+//                       4.heightBox,
+//                       Text(
+//                         '${totalCoins.toStringAsFixed(0)} WB Coins',
+//                         style: textStyle.copyWith(fontSize: 22),
+//                       ),
+//                       8.heightBox,
+//                       Text(
+//                         '100 WB Coin = \$8.00',
+//                         style: textStyle.copyWith(
+//                           fontSize: 16,
+//                           fontWeight: FontWeight.w600,
+//                         ),
+//                       ),
+//                       4.heightBox,
+//                       Text(
+//                         'You can use them in your next purchase on WB App.',
+//                         style: textStyle.copyWith(
+//                           fontSize: 12,
+//                           fontWeight: FontWeight.w500,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//         10.heightBox,
+//         Text.rich(
+//           TextSpan(
+//             text: 'You have WB Cash: ',
+//             style: const TextStyle(
+//               fontSize: 22,
+//               fontWeight: FontWeight.w700,
+//               color: Colors.black,
+//             ),
+//             children: [
+//               TextSpan(
+//                 text: '\$${totalCash.toStringAsFixed(0)}',
+//                 style: const TextStyle(
+//                   fontSize: 22,
+//                   fontWeight: FontWeight.w700,
+//                   color: secondaryColor,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         )
+//       ],
+//     );
+//   }
+// }

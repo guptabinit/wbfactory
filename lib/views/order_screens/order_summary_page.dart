@@ -548,7 +548,9 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                           '${docSnap['phone']}',
                                           dropoffContactName:
                                           '${docSnap['name']}',
-                                          orderValue: ((widget.snap['cart_amount'] ?? 0) * 100).toInt(),
+                                          orderValue: ((widget
+                                              .snap['cart_amount'] ?? 0) * 100)
+                                              .toInt(),
                                         );
 
                                         final client =
@@ -677,27 +679,27 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                         ),
                       ),
                       // Divider
-                      Container(
-                        height: 8,
-                        color: veryLightGreyColor,
-                      ),
-                      _RewardCoins(
-                        totalCartAmount: subCartAmount,
-                        appliedWBCoins: _appliedWBCoins,
-                        onAppliedWBCoins: (value, coins) {
-                          setState(() {
-                            _appliedWBCoins = value;
-                            _wbCoins = coins;
-                          });
-                        },
-                        appliedWBCash: _appliedWBCash,
-                        onAppliedWBCash: (value, cash) {
-                          setState(() {
-                            _appliedWBCash = value;
-                            _wbCash = cash;
-                          });
-                        },
-                      ),
+                      // Container(
+                      //   height: 8,
+                      //   color: veryLightGreyColor,
+                      // ),
+                      // _RewardCoins(
+                      //   totalCartAmount: subCartAmount,
+                      //   appliedWBCoins: _appliedWBCoins,
+                      //   onAppliedWBCoins: (value, coins) {
+                      //     setState(() {
+                      //       _appliedWBCoins = value;
+                      //       _wbCoins = coins;
+                      //     });
+                      //   },
+                      //   appliedWBCash: _appliedWBCash,
+                      //   onAppliedWBCash: (value, cash) {
+                      //     setState(() {
+                      //       _appliedWBCash = value;
+                      //       _wbCash = cash;
+                      //     });
+                      //   },
+                      // ),
                       Container(
                         height: 8,
                         color: veryLightGreyColor,
@@ -1119,12 +1121,12 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                 tax /
                                 100)
                                 .toStringAsFixed(2)),
-                            wbCoins: (_appliedWBCoins && _wbCoins != null)
-                                ? Coins.convertAmountToCoin(_wbCoinsAmount)
-                                : null,
-                            wbCash: (_appliedWBCash && _wbCash != null)
-                                ? _wbCashAmount
-                                : null,
+                            // wbCoins: (_appliedWBCoins && _wbCoins != null)
+                            //     ? Coins.convertAmountToCoin(_wbCoinsAmount)
+                            //     : null,
+                            // wbCash: (_appliedWBCash && _wbCash != null)
+                            //     ? _wbCashAmount
+                            //     : null,
                           ),
                     );
                   } else {
@@ -1201,12 +1203,12 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                 tax /
                                 100)
                                 .toStringAsFixed(2)),
-                            wbCoins: (_appliedWBCoins && _wbCoins != null)
-                                ? Coins.convertAmountToCoin(_wbCoinsAmount)
-                                : null,
-                            wbCash: (_appliedWBCash && _wbCash != null)
-                                ? _wbCashAmount
-                                : null,
+                            // wbCoins: (_appliedWBCoins && _wbCoins != null)
+                            //     ? Coins.convertAmountToCoin(_wbCoinsAmount)
+                            //     : null,
+                            // wbCash: (_appliedWBCash && _wbCash != null)
+                            //     ? _wbCashAmount
+                            //     : null,
                             quoteModel: selectedQuoteModel,
                             kItems: selectedItems,
                           ),
@@ -1276,124 +1278,124 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
   }
 }
 
-class _RewardCoins extends StatelessWidget {
-  final double totalCartAmount;
-  final bool appliedWBCoins;
-  final bool appliedWBCash;
-  final Function(bool, Coins?) onAppliedWBCoins;
-  final Function(bool, double) onAppliedWBCash;
-
-  const _RewardCoins({
-    required this.totalCartAmount,
-    required this.appliedWBCoins,
-    required this.appliedWBCash,
-    required this.onAppliedWBCoins,
-    required this.onAppliedWBCash,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    TextStyle textStyle = const TextStyle(
-      fontSize: 15,
-      fontWeight: FontWeight.w500,
-      color: Colors.black,
-    );
-    return StreamBuilder<Coins>(
-      stream: RewardMethods.coinsStream,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          Coins? coins = snapshot.data;
-          return Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-            ).copyWith(top: 16, bottom: 16),
-            decoration: const BoxDecoration(
-              color: whiteColor,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Redeem Rewards',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 18,
-                  ),
-                ),
-                12.heightBox,
-                Row(
-                  children: [
-                    SizedBox.square(
-                      dimension: 18,
-                      child: Checkbox(
-                        value: appliedWBCoins,
-                        onChanged: ((coins?.totalAmount ?? 0) >= 8) &&
-                            ((coins?.totalAmount ?? 0) >= 8)
-                            ? (value) {
-                          onAppliedWBCoins(value ?? false, coins);
-                        }
-                            : null,
-                      ),
-                    ),
-                    20.widthBox,
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'WB Coins: ${coins?.coins?.toStringAsFixed(0)}',
-                            style: textStyle,
-                          ),
-                          5.heightBox,
-                          Text(
-                            '${coins?.coins?.toStringAsFixed(
-                                0)} WB Coins = \$${coins?.totalAmount
-                                .toStringAsFixed(2)}',
-                            style: textStyle.copyWith(
-                              fontSize: 13,
-                              color: lightGreyColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                20.heightBox,
-                Row(
-                  children: [
-                    SizedBox.square(
-                      dimension: 18,
-                      child: Checkbox(
-                        value: appliedWBCash,
-                        onChanged: (coins?.cash ?? 0.0) >= totalCartAmount
-                            ? (value) {
-                          onAppliedWBCash(value ?? false,
-                              coins?.cash?.toDouble() ?? 0.0);
-                        }
-                            : null,
-                      ),
-                    ),
-                    15.widthBox,
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'WB Cash: \$${coins?.cash?.toStringAsFixed(2)}',
-                            style: textStyle,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        }
-        return const SizedBox.shrink();
-      },
-    );
-  }
-}
+// class _RewardCoins extends StatelessWidget {
+//   final double totalCartAmount;
+//   final bool appliedWBCoins;
+//   final bool appliedWBCash;
+//   final Function(bool, Coins?) onAppliedWBCoins;
+//   final Function(bool, double) onAppliedWBCash;
+//
+//   const _RewardCoins({
+//     required this.totalCartAmount,
+//     required this.appliedWBCoins,
+//     required this.appliedWBCash,
+//     required this.onAppliedWBCoins,
+//     required this.onAppliedWBCash,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     TextStyle textStyle = const TextStyle(
+//       fontSize: 15,
+//       fontWeight: FontWeight.w500,
+//       color: Colors.black,
+//     );
+//     return StreamBuilder<Coins>(
+//       stream: RewardMethods.coinsStream,
+//       builder: (context, snapshot) {
+//         if (snapshot.hasData) {
+//           Coins? coins = snapshot.data;
+//           return Container(
+//             padding: const EdgeInsets.symmetric(
+//               horizontal: 16,
+//             ).copyWith(top: 16, bottom: 16),
+//             decoration: const BoxDecoration(
+//               color: whiteColor,
+//             ),
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 const Text(
+//                   'Redeem Rewards',
+//                   style: TextStyle(
+//                     fontWeight: FontWeight.w500,
+//                     fontSize: 18,
+//                   ),
+//                 ),
+//                 12.heightBox,
+//                 Row(
+//                   children: [
+//                     SizedBox.square(
+//                       dimension: 18,
+//                       child: Checkbox(
+//                         value: appliedWBCoins,
+//                         onChanged: ((coins?.totalAmount ?? 0) >= 8) &&
+//                             ((coins?.totalAmount ?? 0) >= 8)
+//                             ? (value) {
+//                           onAppliedWBCoins(value ?? false, coins);
+//                         }
+//                             : null,
+//                       ),
+//                     ),
+//                     20.widthBox,
+//                     Expanded(
+//                       child: Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           Text(
+//                             'WB Coins: ${coins?.coins?.toStringAsFixed(0)}',
+//                             style: textStyle,
+//                           ),
+//                           5.heightBox,
+//                           Text(
+//                             '${coins?.coins?.toStringAsFixed(
+//                                 0)} WB Coins = \$${coins?.totalAmount
+//                                 .toStringAsFixed(2)}',
+//                             style: textStyle.copyWith(
+//                               fontSize: 13,
+//                               color: lightGreyColor,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//                 20.heightBox,
+//                 Row(
+//                   children: [
+//                     SizedBox.square(
+//                       dimension: 18,
+//                       child: Checkbox(
+//                         value: appliedWBCash,
+//                         onChanged: (coins?.cash ?? 0.0) >= totalCartAmount
+//                             ? (value) {
+//                           onAppliedWBCash(value ?? false,
+//                               coins?.cash?.toDouble() ?? 0.0);
+//                         }
+//                             : null,
+//                       ),
+//                     ),
+//                     15.widthBox,
+//                     Expanded(
+//                       child: Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           Text(
+//                             'WB Cash: \$${coins?.cash?.toStringAsFixed(2)}',
+//                             style: textStyle,
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ],
+//             ),
+//           );
+//         }
+//         return const SizedBox.shrink();
+//       },
+//     );
+//   }
+// }

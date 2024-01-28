@@ -36,11 +36,11 @@ class _NavScreenState extends State<NavScreen> {
 
     getSharedPrefDetails();
 
-    try {
-      getUser();
-    } catch (e) {
-      print("Error while fetching user");
-    }
+    // try {
+    //   getUser();
+    // } catch (e) {
+    //   print("Error while fetching user");
+    // }
 
     // if(userAvailable){
     //   try {
@@ -57,16 +57,28 @@ class _NavScreenState extends State<NavScreen> {
   getSharedPrefDetails() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final bool? isLogin = prefs.getBool('isLogin');
+
+    if(isLogin == true && isLogin != null) {
+      try {
+        getUser();
+      } catch (e) {
+        print("Error while fetching user");
+      }
+    }
+
     setState(() {
       userAvailable = isLogin ?? false;
     });
+
   }
 
   getUser() async {
+
     var tempUser = await AuthMethods().getUserDetails();
     setState(() {
       user = tempUser;
     });
+
   }
 
   getUserData() async {

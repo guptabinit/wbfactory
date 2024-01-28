@@ -256,8 +256,8 @@ class ShopMethods {
     required String? trackingUrl,
     String? deliveryId,
     TransactionResponse? transactionResponse,
-    required double? wbCoins,
-    required double? wbCash,
+    // required double? wbCoins,
+    // required double? wbCash,
     CreateQuoteModel? quote,
     List<Item>? selectedItems,
   }) async {
@@ -289,8 +289,8 @@ class ShopMethods {
         'name': name,
         'email': email,
         'mobile': phone,
-        'used_wb_coins': wbCoins,
-        'used_wb_cash': wbCash,
+        // 'used_wb_coins': wbCoins,
+        // 'used_wb_cash': wbCash,
         'tracking_url': trackingUrl,
         'usingDoorDash': trackingUrl != null,
         'delivery_info': deliveryInfo,
@@ -322,13 +322,14 @@ class ShopMethods {
         }, SetOptions(merge: true));
       }
 
-      // Handle Reward WB Coins & Cash
-      if (wbCoins != null || wbCash != null) {
-        await _firestore.collection('coins').doc(curUser).set({
-          if (wbCoins != null) 'coins': FieldValue.increment(-wbCoins),
-          if (wbCash != null) 'cash': FieldValue.increment(-wbCash),
-        }, SetOptions(merge: true));
-      }
+      // // Handle Reward WB Coins & Cash
+      // if (wbCoins != null || wbCash != null) {
+      //   await _firestore.collection('coins').doc(curUser).set({
+      //     if (wbCoins != null) 'coins': FieldValue.increment(-wbCoins),
+      //     if (wbCash != null) 'cash': FieldValue.increment(-wbCash),
+      //   }, SetOptions(merge: true));
+      // }
+
     } catch (e) {
       customToast(e.toString(), darkGreyColor, context);
     }

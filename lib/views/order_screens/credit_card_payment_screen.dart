@@ -37,8 +37,8 @@ class CreditCardPaymentScreen extends StatefulWidget {
   final String? deliveryId;
   final String? dropOffPhone;
   final Map<String, dynamic>? selectedAddressFullInfo;
-  final double? wbCoins;
-  final double? wbCash;
+  // final double? wbCoins;
+  // final double? wbCash;
   final CreateQuoteModel? quoteModel;
   final List<Item>? kItems;
   final CardInfo? cardInfo;
@@ -60,8 +60,8 @@ class CreditCardPaymentScreen extends StatefulWidget {
     required this.selectedAddressFullInfo,
     this.deliveryId,
     this.dropOffPhone,
-    required this.wbCoins,
-    required this.wbCash,
+    // required this.wbCoins,
+    // required this.wbCash,
     required this.quoteModel,
     required this.kItems,
     this.cardInfo,
@@ -385,8 +385,8 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
         deliveryId: widget.deliveryId,
         discountAmount: widget.discountAmount,
         taxAmount: widget.taxAmount,
-        wbCash: widget.wbCash,
-        wbCoins: widget.wbCoins,
+        // wbCash: widget.wbCash,
+        // wbCoins: widget.wbCoins,
         quote: selectedQuoteModel,
         selectedItems: items,
       );
