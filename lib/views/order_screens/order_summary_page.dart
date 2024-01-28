@@ -193,7 +193,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
     restaurantOpeningTime = DateTime(
         currentTime.year, currentTime.month, currentTime.day, 6, 0); // 6:00 AM
     restaurantClosingTime = DateTime(currentTime.year, currentTime.month,
-        currentTime.day, 24, 00, 1); // 1:00 PM
+        currentTime.day, 13, 00, 1); // 1:00 PM
 
     // Calculate available pickup times at 30-minute intervals.
     availableTimes = calculateAvailablePickupTimes(
@@ -1151,8 +1151,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                     currentTime.year,
                     currentTime.month,
                     currentTime.day,
-                    24,
-                    0,
+                    12,
+                    30,
                   );
 
                   if (
