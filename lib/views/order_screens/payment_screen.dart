@@ -486,7 +486,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       if (isCod == true && context.mounted) {
                         DateTime now = DateTime.now();
                         String formattedDate = DateFormat(
-                          'MM/dd/yy kk:mm:ss',
+                          'MM-dd-yyyy hh:mm a',
                         ).format(now);
 
                         String oid = "${totalOrder + 1}";

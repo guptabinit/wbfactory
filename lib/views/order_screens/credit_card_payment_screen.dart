@@ -358,7 +358,7 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
   ]) async {
     try {
       DateTime now = DateTime.now();
-      String formattedDate = DateFormat('MM/dd/yy kk:mm:ss').format(now);
+      String formattedDate = DateFormat('MM-dd-yyyy hh:mm a').format(now);
 
       String oid = "${totalOrder + 1}";
 
