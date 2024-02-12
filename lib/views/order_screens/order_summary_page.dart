@@ -548,7 +548,9 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                           '${docSnap['phone']}',
                                           dropoffContactName:
                                           '${docSnap['name']}',
-                                          orderValue: ((widget.snap['cart_amount'] ?? 0) * 100).toInt(),
+                                          orderValue: ((widget
+                                              .snap['cart_amount'] ?? 0) * 100)
+                                              .toInt(),
                                         );
 
                                         final client =
