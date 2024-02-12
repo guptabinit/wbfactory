@@ -17,6 +17,8 @@ Future<bool> sendNotification({
     "notification": {
       "title": title,
       "body": body,
+      "sound": "bing.wav",
+      "android_channel_id": "notification_foreground_service"
     },
     if (data != null) 'data': data,
   };
