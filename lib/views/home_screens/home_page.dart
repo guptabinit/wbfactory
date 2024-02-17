@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -48,14 +47,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-
     getData();
 
     super.initState();
   }
 
   getData() async {
-
     try {
       var snap = await FirebaseFirestore.instance
           .collection('commons')
@@ -68,7 +65,6 @@ class _HomePageState extends State<HomePage> {
     } catch (e) {
       print("ERROR: Error in fetching");
     }
-
   }
 
   bool showDeals = false;
@@ -81,7 +77,8 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(
-            decelerationRate: ScrollDecelerationRate.fast),
+          decelerationRate: ScrollDecelerationRate.fast,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -328,7 +325,6 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            16.heightBox,
             showDeals
                 ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),

@@ -1,18 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:velocity_x/velocity_x.dart';
-import 'package:wbfactory/components/buttons/main_button.dart';
-import 'package:wbfactory/models/coins.dart';
-import 'package:wbfactory/resources/reward_methods.dart';
-import 'package:wbfactory/views/onboarding_screens/login_page.dart';
-import 'package:wbfactory/views/other_screens/coin_rules_screen.dart';
 
 import '../../components/cards/promotional_card.dart';
 import '../../constants/colors.dart';
-import '../../models/user_model.dart' as user_model;
-import '../../resources/auth_methods.dart';
 
 class OffersPage extends StatefulWidget {
   final bool userAvailable;
