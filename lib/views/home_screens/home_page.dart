@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/constants/colors.dart';
+import 'package:wbfactory/models/category.dart';
 import 'package:wbfactory/views/home_screens/main_nav_page.dart';
 import 'package:wbfactory/views/other_screens/search_screen.dart';
 
@@ -45,6 +46,8 @@ class _HomePageState extends State<HomePage> {
     },
   ];
 
+  List<Category> catItems = [];
+
   @override
   void initState() {
     getData();
@@ -59,8 +62,22 @@ class _HomePageState extends State<HomePage> {
           .doc('banners')
           .get();
 
+      final catDoc = await FirebaseFirestore.instance
+          .collection('categories')
+          .orderBy('category', descending: false)
+          .get();
+
+      final catList = catDoc.docs
+          .map(
+            (doc) => Category.fromJson(
+              doc.data(),
+            ),
+          )
+          .toList();
+
       setState(() {
         imageList = snap.data()!['banner_links'];
+        catItems = catList;
       });
     } catch (e) {
       print("ERROR: Error in fetching");
@@ -309,16 +326,14 @@ class _HomePageState extends State<HomePage> {
                         decelerationRate: ScrollDecelerationRate.fast),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: categories
-                          .map(
-                            (item) => Container(
-                              margin: const EdgeInsets.only(right: 12),
-                              child: itemWidget(
-                                item['image_path'],
-                                item['name'],
-                              ),
-                            ),
-                          )
+                      children: catItems
+                          .mapIndexed((currentValue, index) => Container(
+                                margin: const EdgeInsets.only(right: 12),
+                                child: itemWidget(
+                                  currentValue.thumbnail!,
+                                  currentValue.name!,
+                                ),
+                              ))
                           .toList(),
                     ),
                   ),
