@@ -327,6 +327,7 @@ class _HomePageState extends State<HomePage> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: catItems
+                          .take(12)
                           .mapIndexed((currentValue, index) => Container(
                                 margin: const EdgeInsets.only(right: 12),
                                 child: itemWidget(
