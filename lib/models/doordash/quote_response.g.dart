@@ -24,17 +24,17 @@ QuoteResponse _$QuoteResponseFromJson(Map<String, dynamic> json) =>
       dropoffLocation: json['dropoff_location'] == null
           ? null
           : DropoffLocation.fromJson(
-          json['dropoff_location'] as Map<String, dynamic>),
+              json['dropoff_location'] as Map<String, dynamic>),
       dropoffPhoneNumber: json['dropoff_phone_number'] as String?,
       dropoffInstructions: json['dropoff_instructions'] as String?,
       dropoffContactGivenName: json['dropoff_contact_given_name'] as String?,
       dropoffContactFamilyName: json['dropoff_contact_family_name'] as String?,
       dropoffContactSendNotifications:
-      json['dropoff_contact_send_notifications'] as bool?,
+          json['dropoff_contact_send_notifications'] as bool?,
       dropoffOptions: json['dropoff_options'] == null
           ? null
           : DropoffOptions.fromJson(
-          json['dropoff_options'] as Map<String, dynamic>),
+              json['dropoff_options'] as Map<String, dynamic>),
       orderValue: json['order_value'] as int?,
       currency: json['currency'] as String?,
       items: (json['items'] as List<dynamic>?)
@@ -43,7 +43,7 @@ QuoteResponse _$QuoteResponseFromJson(Map<String, dynamic> json) =>
       shoppingOptions: json['shopping_options'] == null
           ? null
           : ShoppingOptions.fromJson(
-          json['shopping_options'] as Map<String, dynamic>),
+              json['shopping_options'] as Map<String, dynamic>),
       deliveryStatus: json['delivery_status'] as String?,
       cancellationReason: json['cancellation_reason'] as String?,
       updatedAt: json['updated_at'] as String?,
@@ -65,13 +65,13 @@ QuoteResponse _$QuoteResponseFromJson(Map<String, dynamic> json) =>
       supportReference: json['support_reference'] as String?,
       trackingUrl: json['tracking_url'] as String?,
       dropoffVerificationImageUrl:
-      json['dropoff_verification_image_url'] as String?,
+          json['dropoff_verification_image_url'] as String?,
       pickupVerificationImageUrl: json['pickup_signature_image_url'] as String?,
       dropoffSignatureImageUrl: json['dropoff_signature_image_url'] as String?,
       shippingLabel: json['shipping_label'] == null
           ? null
           : ShippingLabel.fromJson(
-          json['shipping_label'] as Map<String, dynamic>),
+              json['shipping_label'] as Map<String, dynamic>),
       droppedItems: (json['dropped_items'] as List<dynamic>?)
           ?.map((e) => DroppedItem.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -81,14 +81,14 @@ QuoteResponse _$QuoteResponseFromJson(Map<String, dynamic> json) =>
       orderContains: json['order_contains'] == null
           ? null
           : OrderContains.fromJson(
-          json['order_contains'] as Map<String, dynamic>),
+              json['order_contains'] as Map<String, dynamic>),
       dasherAllowedVehicles: (json['dasher_allowed_vehicles'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
       dropoffRequiresSignature: json['dropoff_requires_signature'] as bool?,
       promotionId: json['promotion_id'] as String?,
       dropoffCashOnDelivery:
-      (json['dropoff_cash_on_delivery'] as num?)?.toDouble(),
+          (json['dropoff_cash_on_delivery'] as num?)?.toDouble(),
       dasherId: json['dasher_id'] as int?,
       dasherName: json['dasher_name'] as String?,
       dasherDropoffPhoneNumber: json['dasher_dropoff_phone_number'] as String?,
@@ -96,7 +96,7 @@ QuoteResponse _$QuoteResponseFromJson(Map<String, dynamic> json) =>
       dasherLocation: json['dasher_location'] == null
           ? null
           : DasherLocation.fromJson(
-          json['dasher_location'] as Map<String, dynamic>),
+              json['dasher_location'] as Map<String, dynamic>),
       dasherVehicleMake: json['dasher_vehicle_make'] as String?,
       dasherVehicleModel: json['dasher_vehicle_model'] as String?,
       dasherVehicleYear: json['dasher_vehicle_year'] as String?,
@@ -123,7 +123,7 @@ Map<String, dynamic> _$QuoteResponseToJson(QuoteResponse instance) =>
       'dropoff_contact_given_name': instance.dropoffContactGivenName,
       'dropoff_contact_family_name': instance.dropoffContactFamilyName,
       'dropoff_contact_send_notifications':
-      instance.dropoffContactSendNotifications,
+          instance.dropoffContactSendNotifications,
       'dropoff_options': instance.dropoffOptions,
       'order_value': instance.orderValue,
       'currency': instance.currency,
@@ -195,46 +195,46 @@ Map<String, dynamic> _$DropoffOptionsToJson(DropoffOptions instance) =>
     };
 
 Item _$ItemFromJson(Map<String, dynamic> json) => Item(
-  name: json['name'] as String?,
-  description: json['description'] as String?,
-  quantity: json['quantity'] as int?,
-  externalId: json['external_id'] as String?,
-  externalInstanceId: json['external_instance_id'] as int?,
-  volume: (json['volume'] as num?)?.toDouble(),
-  weight: (json['weight'] as num?)?.toDouble(),
-  length: (json['length'] as num?)?.toDouble(),
-  width: (json['width'] as num?)?.toDouble(),
-  height: (json['height'] as num?)?.toDouble(),
-  price: (json['price'] as num?)?.toDouble(),
-  barcode: json['barcode'] as int?,
-  itemOptions: json['item_options'] == null
-      ? null
-      : ItemOptions.fromJson(json['item_options'] as Map<String, dynamic>),
-);
+      name: json['name'] as String?,
+      description: json['description'] as String?,
+      quantity: json['quantity'] as int?,
+      externalId: json['external_id'] as String?,
+      externalInstanceId: json['external_instance_id'] as int?,
+      volume: (json['volume'] as num?)?.toDouble(),
+      weight: (json['weight'] as num?)?.toDouble(),
+      length: (json['length'] as num?)?.toDouble(),
+      width: (json['width'] as num?)?.toDouble(),
+      height: (json['height'] as num?)?.toDouble(),
+      price: (json['price'] as num?)?.toDouble(),
+      barcode: json['barcode'] as int?,
+      itemOptions: json['item_options'] == null
+          ? null
+          : ItemOptions.fromJson(json['item_options'] as Map<String, dynamic>),
+    );
 
 Map<String, dynamic> _$ItemToJson(Item instance) => <String, dynamic>{
-  'name': instance.name,
-  'description': instance.description,
-  'quantity': instance.quantity,
-  'external_id': instance.externalId,
-  'external_instance_id': instance.externalInstanceId,
-  'volume': instance.volume,
-  'weight': instance.weight,
-  'length': instance.length,
-  'width': instance.width,
-  'height': instance.height,
-  'price': instance.price,
-  'barcode': instance.barcode,
-  'item_options': instance.itemOptions,
-};
+      'name': instance.name,
+      'description': instance.description,
+      'quantity': instance.quantity,
+      'external_id': instance.externalId,
+      'external_instance_id': instance.externalInstanceId,
+      'volume': instance.volume,
+      'weight': instance.weight,
+      'length': instance.length,
+      'width': instance.width,
+      'height': instance.height,
+      'price': instance.price,
+      'barcode': instance.barcode,
+      'item_options': instance.itemOptions,
+    };
 
 ItemOptions _$ItemOptionsFromJson(Map<String, dynamic> json) => ItemOptions(
-  substituteItemIds: (json['substitute_item_ids'] as List<dynamic>?)
-      ?.map((e) => e as String)
-      .toList(),
-  weightUnit: json['weight_unit'] as String?,
-  substitutionPreference: json['substitution_preference'] as String?,
-);
+      substituteItemIds: (json['substitute_item_ids'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      weightUnit: json['weight_unit'] as String?,
+      substitutionPreference: json['substitution_preference'] as String?,
+    );
 
 Map<String, dynamic> _$ItemOptionsToJson(ItemOptions instance) =>
     <String, dynamic>{
@@ -252,7 +252,7 @@ ShoppingOptions _$ShoppingOptionsFromJson(Map<String, dynamic> json) =>
           .toList(),
       readyForPickupBy: json['ready_for_pickup_by'] as String?,
       dropoffContactLoyaltyNumber:
-      json['dropoff_contact_loyalty_number'] as String?,
+          json['dropoff_contact_loyalty_number'] as String?,
     );
 
 Map<String, dynamic> _$ShoppingOptionsToJson(ShoppingOptions instance) =>
@@ -265,9 +265,9 @@ Map<String, dynamic> _$ShoppingOptionsToJson(ShoppingOptions instance) =>
     };
 
 FeeComponent _$FeeComponentFromJson(Map<String, dynamic> json) => FeeComponent(
-  type: json['type'] as String?,
-  amount: (json['amount'] as num?)?.toDouble(),
-);
+      type: json['type'] as String?,
+      amount: (json['amount'] as num?)?.toDouble(),
+    );
 
 Map<String, dynamic> _$FeeComponentToJson(FeeComponent instance) =>
     <String, dynamic>{
@@ -276,9 +276,9 @@ Map<String, dynamic> _$FeeComponentToJson(FeeComponent instance) =>
     };
 
 TaxComponent _$TaxComponentFromJson(Map<String, dynamic> json) => TaxComponent(
-  type: json['type'] as String?,
-  amount: (json['amount'] as num?)?.toDouble(),
-);
+      type: json['type'] as String?,
+      amount: (json['amount'] as num?)?.toDouble(),
+    );
 
 Map<String, dynamic> _$TaxComponentToJson(TaxComponent instance) =>
     <String, dynamic>{
@@ -303,10 +303,10 @@ Map<String, dynamic> _$ShippingLabelToJson(ShippingLabel instance) =>
     };
 
 DroppedItem _$DroppedItemFromJson(Map<String, dynamic> json) => DroppedItem(
-  externalId: json['external_id'] as String?,
-  type: json['type'] as String?,
-  reason: json['reason'] as String?,
-);
+      externalId: json['external_id'] as String?,
+      type: json['type'] as String?,
+      reason: json['reason'] as String?,
+    );
 
 Map<String, dynamic> _$DroppedItemToJson(DroppedItem instance) =>
     <String, dynamic>{

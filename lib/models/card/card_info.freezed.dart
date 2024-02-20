@@ -12,7 +12,7 @@ part of 'card_info.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 CardInfo _$CardInfoFromJson(Map<String, dynamic> json) {
   return _CardInfo.fromJson(json);
@@ -21,9 +21,11 @@ CardInfo _$CardInfoFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$CardInfo {
   @JsonKey(name: 'card_number')
-  String get cardNumber => throw _privateConstructorUsedError;
+  String? get cardNumber => throw _privateConstructorUsedError;
   @JsonKey(name: 'card_holder')
-  String get cardHolderName => throw _privateConstructorUsedError;
+  String? get cardHolderName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'expiration_date')
+  String? get expirationDate => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -37,8 +39,9 @@ abstract class $CardInfoCopyWith<$Res> {
       _$CardInfoCopyWithImpl<$Res, CardInfo>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'card_number') String cardNumber,
-      @JsonKey(name: 'card_holder') String cardHolderName});
+      {@JsonKey(name: 'card_number') String? cardNumber,
+      @JsonKey(name: 'card_holder') String? cardHolderName,
+      @JsonKey(name: 'expiration_date') String? expirationDate});
 }
 
 /// @nodoc
@@ -54,18 +57,23 @@ class _$CardInfoCopyWithImpl<$Res, $Val extends CardInfo>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? cardNumber = null,
-    Object? cardHolderName = null,
+    Object? cardNumber = freezed,
+    Object? cardHolderName = freezed,
+    Object? expirationDate = freezed,
   }) {
     return _then(_value.copyWith(
-      cardNumber: null == cardNumber
+      cardNumber: freezed == cardNumber
           ? _value.cardNumber
           : cardNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-      cardHolderName: null == cardHolderName
+              as String?,
+      cardHolderName: freezed == cardHolderName
           ? _value.cardHolderName
           : cardHolderName // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      expirationDate: freezed == expirationDate
+          ? _value.expirationDate
+          : expirationDate // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -79,8 +87,9 @@ abstract class _$$CardInfoImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'card_number') String cardNumber,
-      @JsonKey(name: 'card_holder') String cardHolderName});
+      {@JsonKey(name: 'card_number') String? cardNumber,
+      @JsonKey(name: 'card_holder') String? cardHolderName,
+      @JsonKey(name: 'expiration_date') String? expirationDate});
 }
 
 /// @nodoc
@@ -94,18 +103,23 @@ class __$$CardInfoImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? cardNumber = null,
-    Object? cardHolderName = null,
+    Object? cardNumber = freezed,
+    Object? cardHolderName = freezed,
+    Object? expirationDate = freezed,
   }) {
     return _then(_$CardInfoImpl(
-      cardNumber: null == cardNumber
+      cardNumber: freezed == cardNumber
           ? _value.cardNumber
           : cardNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-      cardHolderName: null == cardHolderName
+              as String?,
+      cardHolderName: freezed == cardHolderName
           ? _value.cardHolderName
           : cardHolderName // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      expirationDate: freezed == expirationDate
+          ? _value.expirationDate
+          : expirationDate // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -114,22 +128,26 @@ class __$$CardInfoImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CardInfoImpl implements _CardInfo {
   const _$CardInfoImpl(
-      {@JsonKey(name: 'card_number') required this.cardNumber,
-      @JsonKey(name: 'card_holder') required this.cardHolderName});
+      {@JsonKey(name: 'card_number') this.cardNumber,
+      @JsonKey(name: 'card_holder') this.cardHolderName,
+      @JsonKey(name: 'expiration_date') this.expirationDate});
 
   factory _$CardInfoImpl.fromJson(Map<String, dynamic> json) =>
       _$$CardInfoImplFromJson(json);
 
   @override
   @JsonKey(name: 'card_number')
-  final String cardNumber;
+  final String? cardNumber;
   @override
   @JsonKey(name: 'card_holder')
-  final String cardHolderName;
+  final String? cardHolderName;
+  @override
+  @JsonKey(name: 'expiration_date')
+  final String? expirationDate;
 
   @override
   String toString() {
-    return 'CardInfo(cardNumber: $cardNumber, cardHolderName: $cardHolderName)';
+    return 'CardInfo(cardNumber: $cardNumber, cardHolderName: $cardHolderName, expirationDate: $expirationDate)';
   }
 
   @override
@@ -140,12 +158,15 @@ class _$CardInfoImpl implements _CardInfo {
             (identical(other.cardNumber, cardNumber) ||
                 other.cardNumber == cardNumber) &&
             (identical(other.cardHolderName, cardHolderName) ||
-                other.cardHolderName == cardHolderName));
+                other.cardHolderName == cardHolderName) &&
+            (identical(other.expirationDate, expirationDate) ||
+                other.expirationDate == expirationDate));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, cardNumber, cardHolderName);
+  int get hashCode =>
+      Object.hash(runtimeType, cardNumber, cardHolderName, expirationDate);
 
   @JsonKey(ignore: true)
   @override
@@ -163,8 +184,9 @@ class _$CardInfoImpl implements _CardInfo {
 
 abstract class _CardInfo implements CardInfo {
   const factory _CardInfo(
-          {@JsonKey(name: 'card_number') required final String cardNumber,
-          @JsonKey(name: 'card_holder') required final String cardHolderName}) =
+          {@JsonKey(name: 'card_number') final String? cardNumber,
+          @JsonKey(name: 'card_holder') final String? cardHolderName,
+          @JsonKey(name: 'expiration_date') final String? expirationDate}) =
       _$CardInfoImpl;
 
   factory _CardInfo.fromJson(Map<String, dynamic> json) =
@@ -172,10 +194,13 @@ abstract class _CardInfo implements CardInfo {
 
   @override
   @JsonKey(name: 'card_number')
-  String get cardNumber;
+  String? get cardNumber;
   @override
   @JsonKey(name: 'card_holder')
-  String get cardHolderName;
+  String? get cardHolderName;
+  @override
+  @JsonKey(name: 'expiration_date')
+  String? get expirationDate;
   @override
   @JsonKey(ignore: true)
   _$$CardInfoImplCopyWith<_$CardInfoImpl> get copyWith =>

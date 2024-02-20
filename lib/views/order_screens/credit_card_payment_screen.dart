@@ -37,6 +37,7 @@ class CreditCardPaymentScreen extends StatefulWidget {
   final String? deliveryId;
   final String? dropOffPhone;
   final Map<String, dynamic>? selectedAddressFullInfo;
+
   // final double? wbCoins;
   // final double? wbCash;
   final CreateQuoteModel? quoteModel;
@@ -113,6 +114,7 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
   void initState() {
     cardNumber = widget.cardInfo?.cardNumber ?? '';
     cardHolderName = widget.cardInfo?.cardHolderName ?? '';
+    expiryDate = widget.cardInfo?.expirationDate ?? '';
     super.initState();
   }
 
@@ -267,6 +269,7 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
                                       {
                                         'card_number': cardNumber,
                                         'card_holder': cardHolderName,
+                                        'expiration_date': expiryDate,
                                       }
                                     ],
                                   ),
