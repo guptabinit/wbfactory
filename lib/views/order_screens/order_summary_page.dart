@@ -125,10 +125,10 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
     DateTime time = openingTime;
 
     while (time.isBefore(closingTime)) {
-      if (time.isAfter(currentTime.add(const Duration(minutes: 30)))) {
+      if (time.isAfter(currentTime.add(const Duration(minutes: 15)))) {
         times.add(time);
       }
-      time = time.add(const Duration(minutes: 30));
+      time = time.add(const Duration(minutes: 15));
     }
 
     return times;
@@ -160,7 +160,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                         2, '0')} ${time.hour >= 12 ? 'PM' : 'AM'}',
                     style: const TextStyle(fontSize: 16),
                   ),
-                  subtitle: Text('Time: ${DateFormat('dd MMM yyyy').format(
+                  subtitle: Text('Date: ${DateFormat('dd MMM yyyy').format(
                       time)}'),
                   onTap: () {
                     Navigator.of(context).pop(time);
@@ -181,7 +181,7 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                         2, '0')} ${time.hour >= 12 ? 'PM' : 'AM'}',
                     style: const TextStyle(fontSize: 16),
                   ),
-                  subtitle: Text('Time: ${DateFormat('dd MMM yyyy').format(
+                  subtitle: Text('Date: ${DateFormat('dd MMM yyyy').format(
                       time)}'),
                   onTap: () {
                     Navigator.of(context).pop(time);
