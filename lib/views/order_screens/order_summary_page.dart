@@ -115,6 +115,9 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
   late DateTime restaurantOpeningTime;
   late DateTime restaurantClosingTime;
   List<DateTime> availableTimes = [];
+  late DateTime nextRestaurantClosingTime;
+  late DateTime nextRestaurantOpeningTime;
+  List<DateTime> nextAvailableTimes = [];
 
   List<DateTime> calculateAvailablePickupTimes(DateTime currentTime,
       DateTime openingTime, DateTime closingTime) {
@@ -142,15 +145,29 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
           title: const Text('Select Pickup Time'),
           content: SizedBox(
             width: double.maxFinite,
-            height: availableTimes.isEmpty
-                ? screenHeight(context) * 0.1
-                : screenHeight(context) * 0.4,
+            height: screenHeight(context) * 0.4,
             child: availableTimes.isEmpty
-                ? const Center(
-                child: Text(
-                  'Sorry!\nStore is closed now.\nCome back tomorrow.',
-                  textAlign: TextAlign.center,
-                ))
+                ? ListView.builder(
+              shrinkWrap: true,
+              physics: const BouncingScrollPhysics(),
+              itemCount: nextAvailableTimes.length,
+              padding: const EdgeInsets.only(bottom: 0),
+              itemBuilder: (context, index) {
+                final time = nextAvailableTimes[index];
+                return ListTile(
+                  title: Text(
+                    '${time.hour}:${time.minute.toString().padLeft(
+                        2, '0')} ${time.hour >= 12 ? 'PM' : 'AM'}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  subtitle: Text('Time: ${DateFormat('dd MMM yyyy').format(
+                      time)}'),
+                  onTap: () {
+                    Navigator.of(context).pop(time);
+                  },
+                );
+              },
+            )
                 : ListView.builder(
               shrinkWrap: true,
               physics: const BouncingScrollPhysics(),
@@ -164,6 +181,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                         2, '0')} ${time.hour >= 12 ? 'PM' : 'AM'}',
                     style: const TextStyle(fontSize: 16),
                   ),
+                  subtitle: Text('Time: ${DateFormat('dd MMM yyyy').format(
+                      time)}'),
                   onTap: () {
                     Navigator.of(context).pop(time);
                   },
@@ -198,6 +217,17 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
     // Calculate available pickup times at 30-minute intervals.
     availableTimes = calculateAvailablePickupTimes(
         currentTime, restaurantOpeningTime, restaurantClosingTime);
+
+
+    nextRestaurantOpeningTime = DateTime(
+        currentTime.year, currentTime.month, currentTime.day + 1, 6,
+        0); // 6:00 AM
+    nextRestaurantClosingTime = DateTime(currentTime.year, currentTime.month,
+        currentTime.day + 1, 13, 00, 1);
+
+    nextAvailableTimes = calculateAvailablePickupTimes(
+      currentTime, nextRestaurantOpeningTime, nextRestaurantClosingTime,
+    );
 
     try {
       getData();
