@@ -32,9 +32,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: UpgradeAlert(
         canDismissDialog: false,
-        upgrader: Upgrader(
-          debugDisplayAlways: true,
-        ),
+        upgrader: Upgrader(debugLogging: true),
         child: MultiProvider(
           providers: [
             ChangeNotifierProvider(
