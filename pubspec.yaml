@@ -71,6 +71,7 @@ dependencies:
   jose: ^0.3.4
   icons_launcher: ^2.1.7
   freezed_annotation: ^2.4.1
+  upgrader: ^9.0.0
 
 dev_dependencies:
   flutter_test:

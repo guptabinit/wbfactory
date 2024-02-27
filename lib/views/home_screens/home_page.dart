@@ -10,7 +10,6 @@ import 'package:wbfactory/models/category.dart';
 import 'package:wbfactory/views/home_screens/main_nav_page.dart';
 import 'package:wbfactory/views/other_screens/search_screen.dart';
 
-import '../../data/categories.dart';
 import '../other_screens/product_page.dart';
 
 class HomePage extends StatefulWidget {
