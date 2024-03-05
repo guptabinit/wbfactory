@@ -277,47 +277,12 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
                               );
 
                               String? trackingUrl;
-                              if (widget.deliveryId != null &&
-                                  widget.dropOffPhone != null &&
-                                  c.creditCardResponse.value?.messages
-                                          ?.resultCode
-                                          ?.toLowerCase() ==
-                                      "ok") {
-                                // try {
-                                // final res = await DoordashApiClient()
-                                //     .acceptDeliveryQuote(
-                                //   deliveryId: widget.deliveryId!,
-                                //   dropoffPhoneNumber: widget.dropOffPhone,
-                                // );
-                                // if (!res.containsKey('status') ||
-                                //     res['status'] != true) {
-                                //   Get.snackbar(
-                                //     'Error',
-                                //     'Delivery Failed',
-                                //     snackPosition: SnackPosition.BOTTOM,
-                                //     backgroundColor: Colors.red,
-                                //   );
-                                //   return;
-                                // } else {
-                                //   trackingUrl = res['tracking_url'];
-                                // }
-                                // } catch (e) {
-                                //   Get.snackbar(
-                                //     'Error',
-                                //     e.toString(),
-                                //     snackPosition: SnackPosition.BOTTOM,
-                                //     backgroundColor: Colors.red,
-                                //   );
-                                //   return;
-                                // }
-                              }
 
                               await getTotalOrder();
 
-                              if (c.creditCardResponse.value?.messages
-                                      ?.resultCode
-                                      ?.toLowerCase() ==
-                                  "ok") {
+                              if (c.creditCardResponse.value
+                                      ?.transactionResponse?.responseCode ==
+                                  '1') {
                                 final res = c.creditCardResponse.value
                                     ?.transactionResponse;
 
@@ -330,17 +295,28 @@ class _CreditCardPaymentScreenState extends State<CreditCardPaymentScreen> {
 
                                 Get.close(3);
 
-                                Get.to(() => OrderStatusScreen(
-                                      oid: oid,
-                                      isPaid: true,
-                                    ));
+                                Get.to(
+                                  () => OrderStatusScreen(
+                                    oid: oid,
+                                    isPaid: true,
+                                  ),
+                                );
+                              } else {
+                                setState(() {
+                                  isPaymentStarted = false;
+                                });
                               }
                             } catch (e) {
                               e.log();
-                            } finally {
-                              setState(() {
-                                isPaymentStarted = false;
-                              });
+                              if (context.mounted) {
+                                setState(() {
+                                  isPaymentStarted = false;
+                                });
+                              }
+                              Get.close(3);
+                              // setState(() {
+                              //   isPaymentStarted = false;
+                              // });
                             }
                           }
                         },

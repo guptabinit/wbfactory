@@ -35,12 +35,12 @@ class PaymentController extends GetxController {
       _describedError.value = '';
       _successMessage.value = '';
 
-      Get.defaultDialog(
-        title: 'Payment in progress',
-        middleText:
-        'Please wait while we process your payment, don\'t close this window',
-        barrierDismissible: false,
-      );
+      // Get.defaultDialog(
+      //   title: 'Payment in progress',
+      //   middleText:
+      //       'Please wait while we process your payment, don\'t close this window',
+      //   barrierDismissible: false,
+      // );
 
       final gateway = AuthorizeGateWayService(
         merchantAuthentication: merchantAuthentication,
@@ -51,16 +51,20 @@ class PaymentController extends GetxController {
 
       result.log();
 
-      if (result.messages?.resultCode?.toLowerCase() == 'ok') {
+      if (result.transactionResponse?.responseCode == '1') {
         _creditCardResponse.value = result;
         _status.value = Status.success;
         _error.value = '';
         _successMessage.value = result.transactionResponse?.messages
-            ?.map((e) => e.description)
-            .join(" ") ??
+                ?.map((e) => e.description)
+                .join(" ") ??
             "";
 
-        Get.back();
+        // if (Get.isDialogOpen == true) {
+        //   Get.back(closeOverlays: true);
+        // }
+
+        // Get.back();
 
         Get.snackbar(
           "Payment Successful",
@@ -72,15 +76,18 @@ class PaymentController extends GetxController {
         );
       } else {
         _status.value = Status.error;
-        _error.value =
-            result.messages?.message?.map((e) => e.text).join(' ') ?? "";
         _error.value = result.transactionResponse?.errors
-            ?.map((e) => e.errorText)
-            .join(" ") ??
+                ?.map((e) => e.errorText)
+                .join(" ") ??
+            result.messages?.message?.map((e) => e.text).join(' ') ??
             "";
         _successMessage.value = "";
 
-        Get.back();
+        // if (Get.isDialogOpen == true) {
+        //   Get.back(closeOverlays: true);
+        // }
+
+        // Get.back();
 
         Get.snackbar(
           "Payment Error",
@@ -98,8 +105,10 @@ class PaymentController extends GetxController {
   }
 
   final merchantAuthentication = const MerchantAuthentication(
-    apiLoginKey: '699xCpTny', // Live: 699xCpTny // Test: 5KP3u95bQpv
-    transactionKey: '7VNj6ynF95986H3D', // Live: 7VNj6ynF95986H3D // Test: 346HZ32z3fP4hTG2
+    apiLoginKey: '699xCpTny',
+    // Live: 699xCpTny // Test: 5KP3u95bQpv
+    transactionKey: '7VNj6ynF95986H3D',
+    // Live: 7VNj6ynF95986H3D // Test: 346HZ32z3fP4hTG2
     merchantId: '9011480', // Live: 9011480 // Test: 123456
   );
 }
