@@ -13,6 +13,7 @@ class CustomTextfield extends StatefulWidget {
   final void Function()? onEditingCompleted;
   final bool showTitle;
   final List<TextInputFormatter>? inputFormatter;
+  final String? Function(String?)? validator;
 
   const CustomTextfield({
     super.key,
@@ -25,6 +26,7 @@ class CustomTextfield extends StatefulWidget {
     this.onEditingCompleted,
     this.showTitle = false,
     this.inputFormatter,
+    this.validator,
   });
 
   @override
@@ -32,22 +34,22 @@ class CustomTextfield extends StatefulWidget {
 }
 
 class _CustomTextfieldState extends State<CustomTextfield> {
-
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        widget.showTitle ? Text(
-          widget.title,
-        ) : Container(),
-        widget.showTitle ? 4.heightBox: 0.heightBox,
+        widget.showTitle
+            ? Text(
+                widget.title,
+              )
+            : Container(),
+        widget.showTitle ? 4.heightBox : 0.heightBox,
         Container(
           decoration: BoxDecoration(
-            color: veryLightGreyColor,
-            borderRadius: BorderRadius.circular(8)
-          ),
-          child: TextField(
+              color: veryLightGreyColor,
+              borderRadius: BorderRadius.circular(8)),
+          child: TextFormField(
             inputFormatters: widget.inputFormatter,
             onEditingComplete: widget.onEditingCompleted,
             keyboardType: widget.keyboardType,
@@ -69,8 +71,9 @@ class _CustomTextfieldState extends State<CustomTextfield> {
               border: InputBorder.none,
               focusedBorder: InputBorder.none,
             ),
+            validator: widget.validator,
           ),
-        )
+        ),
       ],
     );
   }

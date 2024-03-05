@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:wbfactory/components/buttons/main_button.dart';
+import 'package:wbfactory/components/textfield/custom_textfield.dart';
 import 'package:wbfactory/constants/colors.dart';
 import 'package:wbfactory/constants/consts.dart';
 import 'package:wbfactory/models/card/card_info.dart';
@@ -32,6 +33,7 @@ class PaymentScreen extends StatefulWidget {
   final String? deliveryId;
   final String? dropOffPhone;
   final Map<String, dynamic>? selectedAddressFullInfo;
+
   // final double? wbCoins;
   // final double? wbCash;
   final CreateQuoteModel? quoteModel;
@@ -443,8 +445,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                     title: Text(
                                       cardInfo?.cardNumber ?? '',
                                     ),
-                                    subtitle: Text(
-                                      cardInfo?.cardHolderName ?? '',
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      children: [
+                                        Text(
+                                          cardInfo?.cardHolderName ?? '',
+                                        ),
+                                        if (cardInfo?.expirationDate !=
+                                            null) ...[
+                                          Text(
+                                            '${cardInfo?.expirationDate ?? ''}',
+                                          ),
+                                        ]
+                                      ],
                                     ),
                                     value: selectedCard == cardInfo,
                                     onChanged: (bool? value) {
@@ -466,6 +479,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       : SizedBox.shrink(),
                 );
               }),
+            ),
+            12.heightBox,
+            MainButton(
+              title: 'Add card',
+              onTap: () async {
+                await showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (context) {
+                    return _AddCardDialog();
+                  },
+                );
+              },
             ),
             12.heightBox,
             isLoading
@@ -584,4 +610,159 @@ class _PaymentScreenState extends State<PaymentScreen> {
       ),
     );
   }
+}
+
+class _AddCardDialog extends StatefulWidget {
+  const _AddCardDialog();
+
+  @override
+  State<_AddCardDialog> createState() => _AddCardDialogState();
+}
+
+class _AddCardDialogState extends State<_AddCardDialog> {
+  bool isLoading = false;
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late TextEditingController cardNumberController;
+  late TextEditingController holderNameController;
+  late TextEditingController expiryController;
+
+  @override
+  void initState() {
+    super.initState();
+    cardNumberController = TextEditingController();
+    holderNameController = TextEditingController();
+    expiryController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    cardNumberController.dispose();
+    holderNameController.dispose();
+    expiryController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text("Add Card"),
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CustomTextfield(
+              controller: cardNumberController,
+              title: 'Card Number',
+              hintText: 'Card Number',
+              keyboardType: TextInputType.number,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Card Number is required";
+                }
+                if (value.length != 16) {
+                  return "Card Number must be 16 digits";
+                }
+                return null;
+              },
+            ),
+            10.heightBox,
+            CustomTextfield(
+              controller: holderNameController,
+              title: 'Card Holder Name',
+              hintText: 'Card Holder Name',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Card Holder Name is required";
+                }
+                return null;
+              },
+            ),
+            10.heightBox,
+            CustomTextfield(
+              controller: expiryController,
+              title: 'Card Expiry',
+              hintText: 'e.g. 12/22',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Card Expiry is required";
+                }
+
+                if (!isExpirationDateFormatValid(value)) {
+                  return "Invalid Expiry Date";
+                }
+                return null;
+              },
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        isLoading
+            ? SizedBox.shrink()
+            : OutlinedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("Cancel"),
+              ),
+        isLoading
+            ? Center(child: CircularProgressIndicator())
+            : FilledButton(
+                onPressed: () async {
+                  if (_formKey.currentState?.validate() != true) return;
+                  isLoading = true;
+                  setState(() {});
+                  try {
+                    await FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(
+                          FirebaseAuth.instance.currentUser?.uid,
+                        )
+                        .update(
+                      {
+                        'cards': FieldValue.arrayUnion(
+                          [
+                            {
+                              'card_number': cardNumberController.text,
+                              'card_holder': holderNameController.text,
+                              'expiration_date': expiryController.text,
+                            }
+                          ],
+                        ),
+                      },
+                    );
+                    Get.snackbar(
+                      "Success",
+                      "Card added successfully",
+                      backgroundColor: Colors.green,
+                      snackPosition: SnackPosition.BOTTOM,
+                      colorText: Colors.white,
+                      margin: const EdgeInsets.all(10.0),
+                    );
+                    Navigator.of(context).pop();
+                  } catch (_) {
+                    Get.snackbar(
+                      "Error",
+                      "Something went wrong, please try again",
+                      backgroundColor: Colors.red,
+                      snackPosition: SnackPosition.BOTTOM,
+                      colorText: Colors.white,
+                      margin: const EdgeInsets.all(10.0),
+                    );
+                    isLoading = false;
+                    setState(() {});
+                  }
+                },
+                child: Text("Save"),
+              ),
+      ],
+    );
+  }
+}
+
+bool isExpirationDateFormatValid(String input) {
+  final RegExp regex = RegExp(r'^(0[1-9]|1[0-2])\/\d{2}$');
+  return regex.hasMatch(input);
 }
