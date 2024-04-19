@@ -243,8 +243,11 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
   bool isPickup = true;
   double totalAmount = 0.00;
 
+  bool _checkingDeliveryAddress = false;
+
   CreateQuoteModel? selectedQuoteModel;
   List<Item>? selectedItems;
+
 
   @override
   Widget build(BuildContext context) {
@@ -461,7 +464,20 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                         decoration: const BoxDecoration(
                           color: whiteColor,
                         ),
-                        child: Column(
+                        child: _checkingDeliveryAddress ? Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              children: [
+                                CircularProgressIndicator(),
+                                6.heightBox,
+                                Text('Checking Delivery Address', style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),),
+                              ],
+                            ),
+                          ),
+                        ) : Column(
                           children: [
                             Row(
                               children: [
@@ -539,12 +555,16 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                       value: docSnap['title'],
                                       groupValue: selectedAddress,
                                       onChanged: (value) async {
-                                        Get.defaultDialog(
-                                          title: 'Please Wait',
-                                          middleText:
-                                          'Checking order rate...',
-                                          barrierDismissible: false,
-                                        );
+                                        setState(() {
+                                          _checkingDeliveryAddress = true;
+                                        });
+
+                                        // Get.defaultDialog(
+                                        //   title: 'Please Wait',
+                                        //   middleText:
+                                        //   'Checking order rate...',
+                                        //   barrierDismissible: false,
+                                        // );
 
                                         final kItems = (widget
                                             .snap['items'] as List)
@@ -646,13 +666,8 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                             dropoffPhoneNumber =
                                             info.dropoffPhoneNumber!;
                                             items = info.items;
+                                            _checkingDeliveryAddress = false;
                                           });
-
-                                          if (Get.isDialogOpen == true) {
-                                            Navigator.of(
-                                              Get.overlayContext!,
-                                            ).pop();
-                                          }
 
                                           Get.snackbar(
                                             'Success',
@@ -665,12 +680,6 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                             colorText: Colors.white,
                                           );
                                         } on FormatException catch (e) {
-                                          e.message.log();
-                                          if (Get.isDialogOpen == true) {
-                                            Navigator.of(
-                                              Get.overlayContext!,
-                                            ).pop();
-                                          }
                                           Get.snackbar(
                                             'Error',
                                             e.message,
@@ -682,7 +691,6 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                             colorText: Colors.white,
                                           );
                                         } on Exception catch (e) {
-                                          e.log();
                                           if (Get.isDialogOpen == true) {
                                             Navigator.of(
                                               Get.overlayContext!,
@@ -693,11 +701,12 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                             'Something went wrong',
                                           );
                                         } finally {
-                                          if (Get.isDialogOpen == true) {
-                                            Navigator.of(
-                                              Get.overlayContext!,
-                                            ).pop();
-                                          }
+                                          setState(() {
+                                            totalAmount = _totalCartAmount +
+                                                (quoteResponse?.fee ?? 0.0) /
+                                                    100.0;
+                                            _checkingDeliveryAddress = false;
+                                          });
                                         }
                                       },
                                     );
@@ -1065,7 +1074,9 @@ class _CartSummaryPageState extends State<CartSummaryPage> {
                                   child: Container(),
                                 ),
                                 Text(
-                                  '\$${_totalCartAmount.toStringAsFixed(2)}',
+                                  '\$${(totalAmount <= 0
+                                      ? _totalCartAmount
+                                      : totalAmount).toStringAsFixed(2)}',
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
